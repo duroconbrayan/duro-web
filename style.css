@@ -1,0 +1,122 @@
+body {
+    margin: 0;
+    background: #0d0d0d;
+    color: white;
+    font-family: Inter, Arial, sans-serif;
+}
+
+main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0 0 5px;
+}
+
+p {
+    color: #b3b3b3;
+    font-size: 20px;
+}
+button {
+    background: #ff7a00;
+    color: white;
+    border: none;
+    padding: 18px 35px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: 0.3s;
+    width: 320px;
+
+margin-bottom: 15px;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+h2 {
+    color: #b3b3b3;
+    font-size: 24px;
+    font-weight: 400;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.profile {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 25px;
+  border: 3px solid white;
+  box-shadow: 0 0 25px rgba(255, 122, 0, 0.4);
+}
+
+.important-button {
+    background: #ff7a00;
+    box-shadow: 0 0 25px rgba(255, 122, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.important-button:hover {
+    transform: scale(1.07);
+}
+
+.container {
+    animation: aparecer 0.8s ease;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+a {
+    text-decoration: none;
+    width: 320px;
+}
+
+.playlist-table {
+    width: 90%;
+    max-width: 800px;
+    border-collapse: collapse;
+    margin: 30px 0;
+}
+
+.playlist-table th {
+    background: #ff7a00;
+    color: white;
+    padding: 15px;
+    font-size: 18px;
+}
+
+.playlist-table td {
+    background: #1a1a1a;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+.playlist-table tr:hover td {
+    background: #252525;
+}
