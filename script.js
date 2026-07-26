@@ -46,3 +46,10 @@ function seleccionarCancion(cancion) {
     menu.style.display = "block";
 
 }
+
+function cerrarMenu() {
+
+    document.getElementById("overlay").style.display = "none";
+    document.getElementById("song-menu").style.display = "none";
+
+}
