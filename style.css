@@ -129,7 +129,7 @@ a {
 }
 
 .song-card:hover {
-    transform: translateX(8px);
-    background: #222;
+    transform: scale(1.02);
+    background: #252525;
     border-color: #ff7a00;
 }
