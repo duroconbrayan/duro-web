@@ -76,7 +76,10 @@ function mostrarOpcionesSubir() {
         </div>
     </div>
 
-    <div class="action-reward">+5</div>
+    <div class="action-right">
+    <span class="action-reward">+5 puestos</span>
+    <span class="action-arrow">›</span>
+</div>
 </div>
 
 <div class="action-card">
@@ -88,7 +91,10 @@ function mostrarOpcionesSubir() {
         </div>
     </div>
 
-    <div class="action-reward">+10</div>
+    <div class="action-right">
+    <span class="action-reward">+10 puestos</span>
+    <span class="action-arrow">›</span>
+</div>
 </div>
 
 <div class="action-card">
@@ -100,7 +106,10 @@ function mostrarOpcionesSubir() {
         </div>
     </div>
 
-    <div class="action-reward">+20</div>
+    <div class="action-right">
+    <span class="action-reward">+20 puestos</span>
+    <span class="action-arrow">›</span>
+</div>
 </div>
 
 <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
