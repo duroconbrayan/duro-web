@@ -35,5 +35,12 @@ cargarPlaylist();
 setInterval(cargarPlaylist, 10000);
 
 function seleccionarCancion(cancion) {
-    alert("Seleccionaste: " + cancion);
+
+    const menu = document.getElementById("song-menu");
+    const titulo = document.getElementById("selected-song");
+
+    titulo.textContent = cancion;
+
+    menu.style.display = "block";
+
 }
