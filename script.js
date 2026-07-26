@@ -15,10 +15,10 @@ function cargarPlaylist() {
             canciones.forEach(cancion => {
 
                 table.innerHTML += `
-                    <tr>
-                        <td>${cancion.puesto}</td>
-                        <td>${cancion.cancion}</td>
-                    </tr>
+                    <div class="song-card">
+                        <span class="song-number">#${cancion.puesto}</span>
+                        <span class="song-name">${cancion.cancion}</span>
+                    </div>
                 `;
 
             });

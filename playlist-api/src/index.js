@@ -28,7 +28,12 @@ export default {
           cancion: fila[0],
         }));
 
-        return Response.json(canciones);
+        return new Response(JSON.stringify(canciones), {
+  headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "https://duroconbrayan.com"
+  }
+});
 
       } catch (error) {
         return new Response(
@@ -38,6 +43,10 @@ export default {
       }
     }
 
-    return new Response("Worker funcionando");
+    return new Response("Worker funcionando", {
+  headers: {
+    "Access-Control-Allow-Origin": "https://duroconbrayan.com"
+  }
+});
   },
 };

@@ -24,11 +24,11 @@ export default {
         const filas = response.data.values || [];
 
         const canciones = filas.slice(1).map((fila, index) => ({
-          puesto: index + 1,
-          cancion: fila[0],
-        }));
+  puesto: index + 1,
+  cancion: fila[0],
+}));
 
-        return Response.json(canciones);
+return Response.json(canciones);
 
       } catch (error) {
         return new Response(
@@ -38,6 +38,10 @@ export default {
       }
     }
 
-    return new Response("Worker funcionando");
+    return new Response("Worker funcionando", {
+  headers: {
+    "Access-Control-Allow-Origin": "https://duroconbrayan.com"
+  }
+});
   },
 };
