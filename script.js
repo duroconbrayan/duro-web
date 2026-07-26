@@ -67,7 +67,7 @@ function mostrarOpcionesSubir() {
 
     contenido.innerHTML = `
 
-<div class="action-card">
+<div class="action-card" onclick="window.open('https://instagram.com/brayan_trampa', '_blank')">
     <div class="action-left">
         <span class="action-icon">📸</span>
 
