@@ -189,3 +189,36 @@ a {
     letter-spacing: 2px;
     margin: 0;
 }
+
+.action-card {
+    background: #242424;
+    border: 1px solid #333;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: .25s;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    text-align: left;
+}
+
+.action-card:hover {
+    transform: scale(1.02);
+    border-color: #ff7a00;
+    background: #2b2b2b;
+}
+
+.action-title{
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:6px;
+}
+
+.action-description{
+    color:#b3b3b3;
+    font-size:15px;
+    line-height:1.4;
+}
