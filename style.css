@@ -156,12 +156,6 @@ a {
     z-index: 1000;
 }
 
-.song-menu h3 {
-    margin-top: 0;
-    margin-bottom: 25px;
-    font-size: 24px;
-}
-
 .song-menu button {
     width: 100%;
 }
@@ -181,7 +175,7 @@ a {
     margin-bottom: 25px;
 }
 
-.song-menu h2 {
+#selected-song {
     color: white;
     font-size: 28px;
     font-weight: 700;
