@@ -232,3 +232,21 @@ a {
     font-size: 24px;
     font-weight: 900;
 }
+
+.action-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.action-arrow {
+    color: #666;
+    font-size: 28px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.action-card:hover .action-arrow {
+    color: #ff7a00;
+    transform: translateX(4px);
+}
