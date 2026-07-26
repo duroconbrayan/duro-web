@@ -137,9 +137,17 @@ a {
     transition: 0.3s;
 }
 
-.song-card:hover {
-    transform: scale(1.02);
-    background: #252525;
+.song-card {
+    background: #1a1a1a;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid #333;
+    box-shadow: 0 0 20px rgba(255, 122, 0, 0.08);
+    transition: 0.3s;
 }
 
 .song-number {
