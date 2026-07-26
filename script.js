@@ -37,10 +37,12 @@ setInterval(cargarPlaylist, 10000);
 function seleccionarCancion(cancion) {
 
     const menu = document.getElementById("song-menu");
+    const overlay = document.getElementById("overlay");
     const titulo = document.getElementById("selected-song");
 
     titulo.textContent = cancion;
 
+    overlay.style.display = "block";
     menu.style.display = "block";
 
 }
