@@ -93,48 +93,10 @@ a {
     text-decoration: none;
     width: 320px;
 }
-
-.playlist-table {
-    width: 90%;
-    max-width: 800px;
-    border-collapse: collapse;
-    margin: 30px 0;
-}
-
-.playlist-table th {
-    background: #ff7a00;
-    color: white;
-    padding: 15px;
-    font-size: 18px;
-}
-
-.playlist-table td {
-    background: #1a1a1a;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    border-bottom: 1px solid #333;
-}
-
-.playlist-table tr:hover td {
-    background: #252525;
-}
 .playlist-container {
     width: 90%;
     max-width: 800px;
     margin: 30px 0;
-}
-
-.song-card {
-    background: #1a1a1a;
-    padding: 20px;
-    margin-bottom: 12px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    border: 1px solid #333;
-    transition: 0.3s;
 }
 
 .song-card {
@@ -152,13 +114,22 @@ a {
 
 .song-number {
     background: #ff7a00;
-    padding: 10px 15px;
-    border-radius: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
     font-weight: 900;
     font-size: 18px;
+    min-width: 35px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(255, 122, 0, 0.4);
 }
 
 .song-name {
     font-size: 22px;
     font-weight: 700;
+}
+
+.song-card:hover {
+    transform: translateX(8px);
+    background: #222;
+    border-color: #ff7a00;
 }
