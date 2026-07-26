@@ -33,3 +33,7 @@ function cargarPlaylist() {
 cargarPlaylist();
 
 setInterval(cargarPlaylist, 10000);
+
+function seleccionarCancion(cancion) {
+    alert("Seleccionaste: " + cancion);
+}
