@@ -1,6 +1,6 @@
 console.log("script.js cargado");
 
-const playlistURL = "http://localhost:3000/playlist";
+const playlistURL = "https://playlist-api.bookingelbrayan.workers.dev/playlist";
 
 function cargarPlaylist() {
 
