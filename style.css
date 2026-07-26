@@ -133,3 +133,8 @@ a {
     background: #252525;
     border-color: #ff7a00;
 }
+
+.song-card:active {
+    transform: scale(0.98);
+    background: #252525;
+}
