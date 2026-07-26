@@ -53,3 +53,19 @@ function cerrarMenu() {
     document.getElementById("song-menu").style.display = "none";
 
 }
+
+function mostrarOpcionesSubir() {
+
+    const contenido = document.getElementById("menu-contenido");
+
+    contenido.innerHTML = `
+        <button>📸 Seguir en Instagram (+5 puestos)</button>
+
+        <button>❤️ Like a la última publicación (+10 puestos)</button>
+
+        <button>📲 Compartir una publicación (+20 puestos)</button>
+
+        <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
+    `;
+
+}
