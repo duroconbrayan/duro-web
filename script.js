@@ -82,7 +82,7 @@ function mostrarOpcionesSubir() {
 </div>
 </div>
 
-<div class="action-card">
+<div class="action-card" onclick="window.open('https://www.instagram.com/p/DYXjV8YkTiA/', '_blank')">
     <div class="action-left">
         <span class="action-icon">❤️</span>
 
