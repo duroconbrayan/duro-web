@@ -69,3 +69,19 @@ function mostrarOpcionesSubir() {
     `;
 
 }
+
+function mostrarOpcionesSaltar() {
+
+    const contenido = document.getElementById("menu-contenido");
+
+    contenido.innerHTML = `
+        <p>🚀 Tu canción sonará a continuación.</p>
+
+        <p>Apoya el directo con <strong>$1 USD</strong> por PayPal.</p>
+
+        <button>💵 Ir a PayPal</button>
+
+        <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
+    `;
+
+}
