@@ -39,8 +39,10 @@ function seleccionarCancion(cancion) {
     const menu = document.getElementById("song-menu");
     const overlay = document.getElementById("overlay");
     const titulo = document.getElementById("selected-song");
+const subtitulo = document.getElementById("menu-subtitle");
 
-    titulo.textContent = cancion;
+titulo.textContent = cancion;
+subtitulo.textContent = "¿Qué quieres hacer?";
 
 volverMenuPrincipal();
 
