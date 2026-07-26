@@ -77,10 +77,27 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+5 puestos</span>
+    <span class="action-reward">+1 puesto</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
+
+
+<div class="action-card" onclick="window.open('https://www.facebook.com/duroconbrayan', '_blank')">
+    <div class="action-left">
+        <span class="action-icon">👍</span>
+
+        <div>
+            <div class="action-title">Seguir en Facebook</div>
+        </div>
+    </div>
+
+    <div class="action-right">
+    <span class="action-reward">+1 puesto</span>
+    <span class="action-arrow">›</span>
+</div>
+</div>
+
 
 <div class="action-card" onclick="window.open('https://www.instagram.com/p/DYXjV8YkTiA/', '_blank')">
     <div class="action-left">
@@ -92,25 +109,48 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
+    <span class="action-reward">+2 puestos</span>
+    <span class="action-arrow">›</span>
+</div>
+</div>
+
+
+<div class="action-card" onclick="window.open('https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P', '_blank')">
+    <div class="action-left">
+        <span class="action-icon">🎵</span>
+
+        <div>
+            <div class="action-title">Guardar playlist de Spotify</div>
+        </div>
+    </div>
+
+    <div class="action-right">
+    <span class="action-reward">+5 puestos</span>
+    <span class="action-arrow">›</span>
+</div>
+</div>
+
+
+<div class="action-card" onclick="window.open('https://www.twitch.tv/duroconbrayan', '_blank')">
+    <div class="action-left">
+        <span class="action-icon">🟣</span>
+
+        <div>
+            <div class="action-title">Seguir en Twitch</div>
+        </div>
+    </div>
+
+    <div class="action-right">
     <span class="action-reward">+10 puestos</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
 
-<div class="action-card">
-    <div class="action-left">
-        <span class="action-icon">📲</span>
 
-        <div>
-            <div class="action-title">Compartir una publicación</div>
-        </div>
-    </div>
+<p style="margin-top:20px;">
+📩 Envía la prueba por mensaje interno a @duroconbrayan en TikTok para validar tu subida.
+</p>
 
-    <div class="action-right">
-    <span class="action-reward">+20 puestos</span>
-    <span class="action-arrow">›</span>
-</div>
-</div>
 
 <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
 
