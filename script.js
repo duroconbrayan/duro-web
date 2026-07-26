@@ -42,8 +42,10 @@ function seleccionarCancion(cancion) {
 
     titulo.textContent = cancion;
 
-    overlay.style.display = "block";
-    menu.style.display = "block";
+volverMenuPrincipal();
+
+overlay.style.display = "block";
+menu.style.display = "block";
 
 }
 
