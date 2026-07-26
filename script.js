@@ -68,18 +68,39 @@ function mostrarOpcionesSubir() {
     contenido.innerHTML = `
 
 <div class="action-card">
-    <div class="action-title">📸 Seguir en Instagram</div>
-    <div class="action-description">Sube 5 puestos en la playlist.</div>
+    <div class="action-left">
+        <span class="action-icon">📸</span>
+
+        <div>
+            <div class="action-title">Seguir en Instagram</div>
+        </div>
+    </div>
+
+    <div class="action-reward">+5</div>
 </div>
 
 <div class="action-card">
-    <div class="action-title">❤️ Dar like a la última publicación</div>
-    <div class="action-description">Sube 10 puestos.</div>
+    <div class="action-left">
+        <span class="action-icon">❤️</span>
+
+        <div>
+            <div class="action-title">Dar like a la última publicación</div>
+        </div>
+    </div>
+
+    <div class="action-reward">+10</div>
 </div>
 
 <div class="action-card">
-    <div class="action-title">📲 Compartir una publicación</div>
-    <div class="action-description">Sube 20 puestos.</div>
+    <div class="action-left">
+        <span class="action-icon">📲</span>
+
+        <div>
+            <div class="action-title">Compartir una publicación</div>
+        </div>
+    </div>
+
+    <div class="action-reward">+20</div>
 </div>
 
 <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
