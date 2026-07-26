@@ -36,8 +36,6 @@ setInterval(cargarPlaylist, 10000);
 
 function seleccionarCancion(cancion) {
 
-alert("tocaste: " + cancion);
-
     const menu = document.getElementById("song-menu");
     const overlay = document.getElementById("overlay");
     const titulo = document.getElementById("selected-song");
