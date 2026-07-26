@@ -85,3 +85,17 @@ function mostrarOpcionesSaltar() {
     `;
 
 }
+
+function volverMenuPrincipal() {
+
+    const contenido = document.getElementById("menu-contenido");
+
+    contenido.innerHTML = `
+        <button id="btn-subir" onclick="mostrarOpcionesSubir()">⬆️ Subir canción</button>
+
+        <button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Saltar directo</button>
+
+        <button onclick="cerrarMenu()">❌ Cancelar</button>
+    `;
+
+}
