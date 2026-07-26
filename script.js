@@ -15,11 +15,11 @@ function cargarPlaylist() {
             canciones.forEach(cancion => {
 
                 table.innerHTML += `
-                    <div class="song-card">
-                        <span class="song-number">#${cancion.puesto}</span>
-                        <span class="song-name">${cancion.cancion}</span>
-                    </div>
-                `;
+    <div class="song-card" onclick="seleccionarCancion('${cancion.cancion}')">
+        <span class="song-number">#${cancion.puesto}</span>
+        <span class="song-name">${cancion.cancion}</span>
+    </div>
+`;
 
             });
 
