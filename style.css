@@ -69,34 +69,6 @@ h2 {
     0 0 60px rgba(255,122,0,0.2);
 }
 
-.important-button {
-    background: #ff7a00;
-    box-shadow: 0 0 30px rgba(255, 122, 0, 0.5);
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    position: relative;
-    overflow: hidden;
-}
-
-.important-button::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: rgba(255,255,255,0.25);
-    transform: skewX(-25deg);
-    transition: 0.5s;
-}
-
-.important-button:hover {
-    transform: scale(1.07);
-}
-
-.important-button:hover::before {
-    left: 150%;
-}
-
 .container {
     animation: aparecer 0.8s ease;
 }
@@ -273,28 +245,6 @@ transform: translateX(-50%);
 .action-card:hover .action-arrow {
     color: #ff7a00;
     transform: translateX(4px);
-}
-
-.main-button {
-    font-size: 21px;
-    padding: 22px 35px;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-
-    0% {
-        box-shadow: 0 0 30px rgba(255, 122, 0, 0.5);
-    }
-
-    50% {
-        box-shadow: 0 0 45px rgba(255, 122, 0, 0.9);
-    }
-
-    100% {
-        box-shadow: 0 0 30px rgba(255, 122, 0, 0.5);
-    }
-
 }
 
 .featured-actions {
