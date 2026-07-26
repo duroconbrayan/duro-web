@@ -60,6 +60,9 @@ function cerrarMenu() {
 
 function mostrarOpcionesSubir() {
 
+    document.getElementById("menu-subtitle").textContent =
+    "Elige una forma de subir tu canción.";
+
     const contenido = document.getElementById("menu-contenido");
 
     contenido.innerHTML = `
@@ -76,6 +79,9 @@ function mostrarOpcionesSubir() {
 
 function mostrarOpcionesSaltar() {
 
+    document.getElementById("menu-subtitle").textContent =
+    "Apoya el directo para pasar al siguiente turno.";
+
     const contenido = document.getElementById("menu-contenido");
 
     contenido.innerHTML = `
@@ -91,6 +97,9 @@ function mostrarOpcionesSaltar() {
 }
 
 function volverMenuPrincipal() {
+
+    document.getElementById("menu-subtitle").textContent =
+    "¿Qué quieres hacer?";
 
     const contenido = document.getElementById("menu-contenido");
 

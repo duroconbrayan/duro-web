@@ -173,3 +173,25 @@ a {
     background: rgba(0, 0, 0, 0.7);
     z-index: 999;
 }
+
+#menu-subtitle {
+    color: #b3b3b3;
+    font-size: 18px;
+    margin-top: -10px;
+    margin-bottom: 25px;
+}
+
+.song-menu h2 {
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 15px 0 10px;
+}
+
+.song-menu h3 {
+    color: #ff7a00;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+}
