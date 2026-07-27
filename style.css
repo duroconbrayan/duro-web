@@ -40,23 +40,34 @@ p {
     font-size: 18px;
 }
 button {
-    background: linear-gradient(135deg, #ff8c00, #ff5500);
+    width: 320px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    padding: 18px 24px;
+    margin: 14px auto;
+
+    background: #181818;
     color: white;
-    border: none;
-    padding: 18px 35px;
-    font-size: 18px;
-    font-weight: 800;
+
+    border: 1px solid #2d2d2d;
     border-radius: 16px;
+
+    font-size: 18px;
+    font-weight: 700;
+
     cursor: pointer;
-    margin-top: 20px;
-    transition: 0.3s;
-    width: 280px;
-    margin-bottom: 15px;
-    letter-spacing: 0.5px;
+
+    transition: all .25s ease;
 }
 
 button:hover {
-    transform: scale(1.05);
+    transform: translateY(-3px);
+    border-color: #ff7a00;
+    box-shadow: 0 0 20px rgba(255,122,0,.25);
 }
 
 h2 {
