@@ -45,29 +45,28 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
 
     padding: 18px 24px;
     margin: 14px auto;
 
-    background: #181818;
+    background: linear-gradient(135deg, #ff8c00, #ff5a00);
     color: white;
 
-    border: 1px solid #2d2d2d;
+    border: 1px solid rgba(255,255,255,.15);
     border-radius: 16px;
 
     font-size: 18px;
     font-weight: 700;
 
-    cursor: pointer;
+    box-shadow: 0 0 18px rgba(255,122,0,.25);
 
+    cursor: pointer;
     transition: all .25s ease;
 }
 
 button:hover {
-    transform: translateY(-3px);
-    border-color: #ff7a00;
-    box-shadow: 0 0 20px rgba(255,122,0,.25);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0 28px rgba(255,122,0,.45);
 }
 
 h2 {
