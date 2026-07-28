@@ -601,8 +601,8 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
     }
 
     50% {
-        transform: scale(1.03);
-    }
+    transform: scale(1.06);
+}
 
     100% {
         transform: scale(1);
@@ -612,6 +612,6 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
 
 .now-playing.nueva-cancion{
 
-    animation: popSong .45s ease;
+    animation: popSong .8s ease;
 
 }
