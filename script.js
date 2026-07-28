@@ -221,9 +221,9 @@ function mostrarOpcionesSaltar() {
     contenido.innerHTML = `
         <p>🚀 Tu canción sonará a continuación.</p>
 
-        <p>Apoya el directo con <strong>$1 USD</strong> por PayPal.</p>
+        <p>Apoya el directo con <strong>$2 USD</strong> por PayPal.</p>
 
-        <button onclick="window.open('https://www.paypal.com/paypalme/duroconbrayan/1', '_blank')">
+        <button onclick="window.open('https://www.paypal.com/paypalme/duroconbrayan/2', '_blank')">
     💵 Ir a PayPal
 </button>
 
