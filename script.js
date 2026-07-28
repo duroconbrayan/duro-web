@@ -2,6 +2,8 @@ console.log("script.js NUEVO CARGADO");
 
 const playlistURL = "https://playlist-api.bookingelbrayan.workers.dev/playlist";
 
+let ultimaPlaylist = "";
+
 function cargarPlaylist() {
 
     fetch(playlistURL)
@@ -9,6 +11,14 @@ function cargarPlaylist() {
         .then(canciones => {
 
 const currentSong = document.getElementById("current-song");
+
+const playlistActual = JSON.stringify(canciones);
+
+if (playlistActual === ultimaPlaylist) {
+    return;
+}
+
+ultimaPlaylist = playlistActual;
 
 if (currentSong && canciones.length > 0) {
     currentSong.textContent = canciones[0].cancion;
