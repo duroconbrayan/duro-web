@@ -616,34 +616,76 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
 
 }
 
-.next-song{
-
-    border:2px solid #ff8a00;
-
-    background:linear-gradient(180deg,#2b1a00,#1a1a1a);
-
-    box-shadow:0 0 18px rgba(255,138,0,.25);
-
-}
-
-.next-badge{
+.song-badge{
 
     display:inline-block;
 
     margin-bottom:10px;
 
-    padding:4px 10px;
+    padding:5px 12px;
 
     border-radius:999px;
 
-    background:#ff8a00;
-
-    color:#000;
-
-    font-size:12px;
+    font-size:11px;
 
     font-weight:900;
 
-    letter-spacing:1px;
+    letter-spacing:1.5px;
+
+    text-transform:uppercase;
+
+}
+
+.gold-song{
+
+    border:2px solid #f6c453;
+
+    background:linear-gradient(180deg,#3a2b00,#1a1a1a);
+
+    box-shadow:0 0 18px rgba(246,196,83,.25);
+
+}
+
+.gold-song .song-badge{
+
+    background:#f6c453;
+
+    color:#000;
+
+}
+
+.silver-song{
+
+    border:2px solid #c9ced6;
+
+    background:linear-gradient(180deg,#2b2e33,#1a1a1a);
+
+    box-shadow:0 0 16px rgba(201,206,214,.18);
+
+}
+
+.silver-song .song-badge{
+
+    background:#c9ced6;
+
+    color:#111;
+
+}
+
+.bronze-song{
+
+    border:2px solid #c47a42;
+
+    background:linear-gradient(180deg,#352012,#1a1a1a);
+
+    box-shadow:0 0 14px rgba(196,122,66,.18);
+
+}
+
+.bronze-song .song-badge{
+
+    background:#c47a42;
+
+    color:#111;
 
 }
