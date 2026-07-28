@@ -526,6 +526,14 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
 
     font-weight:800;
 
+    transition: opacity 0.3s ease;
+
+}
+
+#current-song.cambiando{
+
+    opacity:0;
+
 }
 
 .playing-animation{

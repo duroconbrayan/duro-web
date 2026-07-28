@@ -21,7 +21,17 @@ if (playlistActual === ultimaPlaylist) {
 ultimaPlaylist = playlistActual;
 
 if (currentSong && canciones.length > 0) {
-    currentSong.textContent = canciones[0].cancion;
+
+    currentSong.classList.add("cambiando");
+
+    setTimeout(() => {
+
+        currentSong.textContent = canciones[0].cancion;
+
+        currentSong.classList.remove("cambiando");
+
+    }, 300);
+
 }
 
             const table = document.getElementById("playlist-body");
