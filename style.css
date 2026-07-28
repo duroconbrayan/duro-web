@@ -735,3 +735,83 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
     }
 
 }
+
+.skip-banner{
+
+    width:90%;
+    max-width:800px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+
+    margin-bottom:25px;
+
+    padding:18px 22px;
+
+    border-radius:18px;
+
+    background:linear-gradient(180deg,#2a1800,#1b1b1b);
+
+    border:2px solid rgba(255,140,0,.35);
+
+}
+
+.skip-info{
+
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+
+}
+
+.skip-info strong{
+
+    font-size:18px;
+
+    color:#ffb347;
+
+    letter-spacing:.5px;
+
+}
+
+.skip-info span{
+
+    color:#d5d5d5;
+
+    font-size:14px;
+
+    line-height:1.4;
+
+}
+
+.skip-banner button{
+
+    background:#ff8a00;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:12px;
+
+    padding:14px 24px;
+
+    font-size:18px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.skip-banner button:hover{
+
+    transform:scale(1.05);
+
+    background:#ff9d2e;
+
+}
