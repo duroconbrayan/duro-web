@@ -47,12 +47,16 @@ if (currentSong && canciones.length > 0) {
 
             table.innerHTML = "";
 
-            canciones.slice(1).forEach(cancion => {
+            canciones.slice(1).forEach((cancion, index) => {
 
     table.innerHTML += `
-    <div class="song-card" onclick="seleccionarCancion('${cancion.cancion}')">
+    <div class="song-card ${index === 0 ? 'next-song' : ''}" onclick="seleccionarCancion('${cancion.cancion}')">
+
+        ${index === 0 ? '<div class="next-badge">⏭️ SIGUIENTE</div>' : ''}
+
         <span class="song-number">#${cancion.puesto}</span>
         <span class="song-name">${cancion.cancion}</span>
+
     </div>
 `;
 
