@@ -49,16 +49,30 @@ if (currentSong && canciones.length > 0) {
 
             canciones.slice(1).forEach((cancion, index) => {
 
-    table.innerHTML += `
-    <div class="song-card ${index === 0 ? 'next-song' : ''}" onclick="seleccionarCancion('${cancion.cancion}')">
+    let clase = "";
+    let badge = "";
 
-        ${index === 0 ? '<div class="next-badge">⏭️ SIGUIENTE</div>' : ''}
+    if (index === 0) {
+        clase = "gold-song";
+        badge = "PRÓXIMA";
+    } else if (index === 1) {
+        clase = "silver-song";
+        badge = "DESPUÉS";
+    } else if (index === 2) {
+        clase = "bronze-song";
+        badge = "EN COLA";
+    }
+
+    table.innerHTML += `
+    <div class="song-card ${clase}" onclick="seleccionarCancion('${cancion.cancion}')">
+
+        ${badge ? `<div class="song-badge">${badge}</div>` : ""}
 
         <span class="song-number">#${cancion.puesto}</span>
         <span class="song-name">${cancion.cancion}</span>
 
     </div>
-`;
+    `;
 
 });
 
