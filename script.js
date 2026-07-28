@@ -8,6 +8,12 @@ function cargarPlaylist() {
         .then(response => response.json())
         .then(canciones => {
 
+const currentSong = document.getElementById("current-song");
+
+if (currentSong && canciones.length > 0) {
+    currentSong.textContent = canciones[0].cancion;
+}
+
             const table = document.getElementById("playlist-body");
 
             table.innerHTML = "";
