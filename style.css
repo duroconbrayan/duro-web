@@ -415,3 +415,66 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
 .social-card:hover .social-arrow {
     transform: translateX(5px);
 }
+
+.playlist-header{
+    width:90%;
+    max-width:800px;
+
+    background:linear-gradient(180deg,#1b1b1b,#101010);
+
+    border:1px solid rgba(255,122,0,.25);
+
+    border-radius:24px;
+
+    padding:35px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 0 40px rgba(255,122,0,.12);
+}
+
+.live-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    background:#ff5a00;
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:800;
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    margin-bottom:20px;
+
+    letter-spacing:1px;
+
+}
+
+.playlist-header h1{
+
+    margin:0;
+
+    font-size:54px;
+
+    letter-spacing:3px;
+
+}
+
+.playlist-description{
+
+    margin-top:10px;
+
+    color:#9f9f9f;
+
+    font-size:18px;
+
+}
