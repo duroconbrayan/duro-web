@@ -1,4 +1,4 @@
-console.log("script.js cargado");
+console.log("script.js NUEVO CARGADO");
 
 const playlistURL = "https://playlist-api.bookingelbrayan.workers.dev/playlist";
 
