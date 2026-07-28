@@ -805,6 +805,9 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
     cursor:pointer;
 
     transition:.2s;
+        box-shadow:0 0 18px rgba(255,140,0,.35);
+
+    animation: skipPulse 3s ease-in-out infinite;
 
 }
 
@@ -827,5 +830,21 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
     font-size:12px;
 
     color:#888;
+
+}
+
+@keyframes skipPulse{
+
+    0%,100%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.04);
+
+    }
 
 }
