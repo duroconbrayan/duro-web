@@ -593,3 +593,25 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
     }
 
 }
+
+@keyframes popSong {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.03);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+.now-playing.nueva-cancion{
+
+    animation: popSong .45s ease;
+
+}

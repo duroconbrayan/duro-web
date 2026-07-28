@@ -3,6 +3,7 @@ console.log("script.js NUEVO CARGADO");
 const playlistURL = "https://playlist-api.bookingelbrayan.workers.dev/playlist";
 
 let ultimaPlaylist = "";
+let ultimaCancion = "";
 
 function cargarPlaylist() {
 
@@ -22,15 +23,23 @@ ultimaPlaylist = playlistActual;
 
 if (currentSong && canciones.length > 0) {
 
-    currentSong.classList.add("cambiando");
+    const nuevaCancion = canciones[0].cancion;
 
-    setTimeout(() => {
+    if (nuevaCancion !== ultimaCancion) {
 
-        currentSong.textContent = canciones[0].cancion;
+        ultimaCancion = nuevaCancion;
 
-        currentSong.classList.remove("cambiando");
+        currentSong.textContent = nuevaCancion;
 
-    }, 300);
+        const nowPlaying = document.querySelector(".now-playing");
+
+        nowPlaying.classList.remove("nueva-cancion");
+
+        void nowPlaying.offsetWidth;
+
+        nowPlaying.classList.add("nueva-cancion");
+
+    }
 
 }
 
