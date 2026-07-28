@@ -815,3 +815,25 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
     background:#ff9d2e;
 
 }
+
+.payment-note{
+
+    display:block;
+
+    margin-top:8px;
+
+    text-align:center;
+
+    font-size:12px;
+
+    color:#888;
+
+}
+
+.skip-info small{
+
+    color:#999;
+
+    font-size:12px;
+
+}
