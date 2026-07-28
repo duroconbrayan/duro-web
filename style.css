@@ -488,15 +488,27 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
     align-items:center;
     gap:20px;
 
-    background:#151515;
+    background:
+        radial-gradient(circle at top left, rgba(255,140,0,.08), transparent 45%),
+        linear-gradient(180deg,#1b1b1b,#111);
 
-    border:1px solid rgba(255,122,0,.25);
+    border:2px solid rgba(255,140,0,.45);
 
     border-radius:22px;
 
     padding:22px 25px;
 
     margin-bottom:25px;
+
+    box-shadow:
+        0 0 25px rgba(255,140,0,.15),
+        inset 0 0 15px rgba(255,140,0,.05);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+
+    animation: nowPlayingPulse 4s ease-in-out infinite;
 
 }
 
@@ -687,5 +699,39 @@ box-shadow: 0 0 20px rgba(255,122,0,.20);
     background:#c47a42;
 
     color:#111;
+
+}
+
+@keyframes nowPlayingPulse{
+
+    0%{
+
+        transform:scale(1);
+
+        box-shadow:
+            0 0 25px rgba(255,140,0,.15),
+            inset 0 0 15px rgba(255,140,0,.05);
+
+    }
+
+    50%{
+
+        transform:scale(1.01);
+
+        box-shadow:
+            0 0 35px rgba(255,140,0,.28),
+            inset 0 0 18px rgba(255,140,0,.08);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        box-shadow:
+            0 0 25px rgba(255,140,0,.15),
+            inset 0 0 15px rgba(255,140,0,.05);
+
+    }
 
 }
