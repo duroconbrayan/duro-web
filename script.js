@@ -18,16 +18,16 @@ if (currentSong && canciones.length > 0) {
 
             table.innerHTML = "";
 
-            canciones.forEach(cancion => {
+            canciones.slice(1).forEach(cancion => {
 
-                table.innerHTML += `
+    table.innerHTML += `
     <div class="song-card" onclick="seleccionarCancion('${cancion.cancion}')">
         <span class="song-number">#${cancion.puesto}</span>
         <span class="song-name">${cancion.cancion}</span>
     </div>
 `;
 
-            });
+});
 
         })
         .catch(error => {
