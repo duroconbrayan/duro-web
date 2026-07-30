@@ -224,7 +224,7 @@ function mostrarOpcionesSaltar() {
         <p>Apoya el directo con <strong>$2 USD</strong> por PayPal.</p>
 
         <button onclick="window.open('https://www.paypal.com/paypalme/duroconbrayan/2', '_blank')">
-    💵 Ir a PayPal
+    💵 Ir a PayPal 
 </button>
 
         <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
