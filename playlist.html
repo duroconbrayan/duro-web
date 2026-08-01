@@ -1,109 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Playlist del Directo | DURO</title>
-
-    <link rel="stylesheet" href="style.css?v=6">
+    <meta name="description" content="La comunidad controla la playlist del stream de DURO con Brayan.">
+    <link rel="stylesheet" href="style.css?v=8">
 </head>
-
 <body>
 
-    <main class="container">
+<div class="stage-glow"></div>
+
+<main>
+<div class="page-wrap">
 
     <div class="playlist-header">
-
-    <div class="live-badge">
-        🔴 EN DIRECTO
+        <h1 class="wordmark">DURO</h1>
+        <p class="playlist-description">La comunidad controla la playlist del stream.</p>
     </div>
 
-    <h1>DURO</h1>
-
-    <p class="playlist-description">
-        La comunidad controla la playlist del stream.
-    </p>
-
-</div>
-
-<div class="now-playing">
-
-    <div class="playing-animation">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-
-    <div class="playing-info">
-
-        <small>AHORA SONANDO</small>
-
-        <div id="current-song">
-            Esperando playlist...
+    <div class="now-playing">
+        <div class="playing-animation">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
+        <div class="playing-info">
+            <small>Ahora suena</small>
+            <div id="current-song">Esperando playlist...</div>
+        </div>
+    </div>
 
+    <div class="skip-banner">
+        <div class="skip-info">
+            <strong>⚡ Salta la fila</strong>
+            <span>Pasa al siguiente turno sin esperar la cola.</span>
+        </div>
+        <div>
+            <button onclick="window.open('https://www.paypal.com/paypalme/duroconbrayan/2','_blank')">Saltar por $2</button>
+        </div>
+    </div>
+    <p class="payment-note">Pago seguro mediante PayPal</p>
+
+    <div class="playlist-container">
+        <p class="playlist-container-label">Cola de canciones</p>
+        <div id="playlist-body"></div>
+    </div>
+
+    <div class="back-link">
+        <a href="index.html">
+            <button type="button" class="btn-ghost">⬅️ Volver al inicio</button>
+        </a>
     </div>
 
 </div>
-
-<div class="skip-banner">
-
-    <div class="skip-info">
-
-        <strong>⚡ SALTAR LA FILA</strong>
-
-        <span>Pasa al siguiente turno sin esperar la cola.</span>
-
-    </div>
-
-    <button onclick="window.open('https://www.paypal.com/paypalme/duroconbrayan/2','_blank')">
-
-    ⚡ SALTAR POR $2 USD
-
-</button>
-
-<small class="payment-note">
-    Pago seguro mediante PayPal
-</small>
-
-</div>
-
-<div class="playlist-container">
-
-    <div id="playlist-body"></div>
-
-</div>
+</main>
 
 <div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
 
 <div id="song-menu" class="song-menu">
-
-  <h3>🔥 OPCIONES DE LA CANCIÓN</h3>
-
-<div id="selected-song"></div>
-
-<p id="menu-subtitle"></p>
-
-<div id="menu-contenido">
-
-    <button id="btn-subir" onclick="mostrarOpcionesSubir()">⬆️ Subir canción</button>
-
-    <button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Saltar directo</button>
-
-    <button onclick="cerrarMenu()">❌ Cancelar</button>
-
+    <h3>Opciones de la canción</h3>
+    <div id="selected-song"></div>
+    <p id="menu-subtitle"></p>
+    <div id="menu-contenido">
+        <button id="btn-subir" onclick="mostrarOpcionesSubir()">⬆️ Subir canción</button>
+        <button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Saltar directo</button>
+        <button onclick="cerrarMenu()">❌ Cancelar</button>
+    </div>
 </div>
-</div>
-    <a href="index.html">
-        <button>⬅️ Volver al inicio</button>
-    </a>
 
-</main>
-
-    <script src="script.js?v=6"></script>
+<script src="script.js?v=8"></script>
 
 </body>
-
 </html>

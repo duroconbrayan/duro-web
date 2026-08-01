@@ -54,13 +54,13 @@ if (currentSong && canciones.length > 0) {
 
     if (index === 0) {
         clase = "gold-song";
-        badge = "PRÓXIMA";
+        badge = "Próxima";
     } else if (index === 1) {
         clase = "silver-song";
-        badge = "DESPUÉS";
+        badge = "Después";
     } else if (index === 2) {
         clase = "bronze-song";
-        badge = "EN COLA";
+        badge = "En cola";
     }
 
     table.innerHTML += `
@@ -130,7 +130,7 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+1 puesto</span>
+    <span class="action-reward">+1</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
@@ -146,7 +146,7 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+1 puesto</span>
+    <span class="action-reward">+1</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
@@ -162,7 +162,7 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+2 puestos</span>
+    <span class="action-reward">+2</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
@@ -178,7 +178,7 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+5 puestos</span>
+    <span class="action-reward">+5</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
@@ -194,13 +194,13 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+10 puestos</span>
+    <span class="action-reward">+10</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
 
 
-<p style="margin-top:20px;">
+<p class="menu-note">
 📩 Envía la prueba por mensaje interno a @duroconbrayan en TikTok para validar tu subida.
 </p>
 
@@ -223,8 +223,8 @@ function mostrarOpcionesSaltar() {
 
         <p>Apoya el directo con <strong>$2 USD</strong> por PayPal.</p>
 
-        <button onclick="window.open('https://www.paypal.com/paypalme/duroconbrayan/2', '_blank')">
-    💵 Ir a PayPal 
+        <button class="pay-btn" onclick="window.open('https://www.paypal.com/paypalme/duroconbrayan/2', '_blank')">
+    💵 Ir a PayPal
 </button>
 
         <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
