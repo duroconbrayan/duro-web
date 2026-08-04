@@ -716,6 +716,14 @@ a{ text-decoration: none; color: inherit; }
     color: #ffb28a;
 }
 
+.important-user{
+    margin: 10px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--orange);
+    text-align: center;
+}
+
 /* ============ MOTION SAFETY ============ */
 @media (prefers-reduced-motion: reduce){
     *{ animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
