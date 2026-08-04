@@ -120,6 +120,12 @@ function mostrarOpcionesSubir() {
 
     contenido.innerHTML = `
 
+<div class="important-box">
+    <h3>⚠️ IMPORTANTE</h3>
+    <p><strong>Después de completar cualquiera de estas opciones, envía la prueba por TikTok a @duroconbrayan.</strong></p>
+    <small>Sin la prueba no podremos subir tu canción.</small>
+</div>
+
 <div class="action-card" onclick="window.open('https://instagram.com/brayan_trampa', '_blank')">
     <div class="action-left">
         <span class="action-icon">📸</span>
@@ -198,12 +204,6 @@ function mostrarOpcionesSubir() {
     <span class="action-arrow">›</span>
 </div>
 </div>
-
-
-<p class="menu-note">
-📩 Envía la prueba por mensaje interno a @duroconbrayan en TikTok para validar tu subida.
-</p>
-
 
 <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
 
