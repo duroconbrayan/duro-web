@@ -189,7 +189,7 @@ function mostrarOpcionesSubir() {
         <span class="action-icon">🎵</span>
 
         <div>
-            <div class="action-title">Guardar playlist de Spotify</div>
+            <div class="action-title">Guardar playlist GAFAS CLUB</div>
         </div>
     </div>
 
@@ -197,6 +197,30 @@ function mostrarOpcionesSubir() {
     <span class="action-reward">+5</span>
     <span class="action-arrow">›</span>
 </div>
+</div>
+
+<div class="action-card" onclick="window.open('https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0', '_blank')">
+
+    <div class="action-left">
+
+        <span class="action-icon">🌴</span>
+
+        <div>
+
+            <div class="action-title">Guardar playlist URABÁ</div>
+
+        </div>
+
+    </div>
+
+    <div class="action-right">
+
+    <span class="action-reward">+5</span>
+
+    <span class="action-arrow">›</span>
+
+</div>
+
 </div>
 
 
