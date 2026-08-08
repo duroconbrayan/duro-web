@@ -469,6 +469,24 @@ a{ text-decoration: none; color: inherit; }
     padding-left: 4px;
 }
 
+.queue-help{
+    width: 100%;
+    margin: -4px 0 18px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,90,31,.08);
+    border: 1px solid rgba(255,90,31,.18);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.queue-help::first-line{
+    color: var(--text);
+}
+
 .song-card{
     position: relative;
     background: var(--surface);
