@@ -63,16 +63,32 @@ if (currentSong && canciones.length > 0) {
         badge = "En cola";
     }
 
-    table.innerHTML += `
-    <div class="song-card ${clase}" onclick="seleccionarCancion('${cancion.cancion}')">
+   const card = document.createElement("div");
+card.className = `song-card ${clase}`;
 
-        ${badge ? `<div class="song-badge">${badge}</div>` : ""}
+card.addEventListener("click", () => {
+    seleccionarCancion(cancion.cancion);
+});
 
-        <span class="song-number">#${cancion.puesto}</span>
-        <span class="song-name">${cancion.cancion}</span>
+if (badge) {
+    const badgeEl = document.createElement("div");
+    badgeEl.className = "song-badge";
+    badgeEl.textContent = badge;
+    card.appendChild(badgeEl);
+}
 
-    </div>
-    `;
+const number = document.createElement("span");
+number.className = "song-number";
+number.textContent = `#${cancion.puesto}`;
+
+const name = document.createElement("span");
+name.className = "song-name";
+name.textContent = cancion.cancion;
+
+card.appendChild(number);
+card.appendChild(name);
+
+table.appendChild(card);
 
 });
 
