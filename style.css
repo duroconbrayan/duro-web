@@ -401,7 +401,7 @@ a{ text-decoration: none; color: inherit; }
 
 .playing-animation{
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 4px;
     height: 42px;
     flex-shrink: 0;
