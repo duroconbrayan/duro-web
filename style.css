@@ -66,7 +66,7 @@ body::after{
         circle at 50% 50%,
         transparent 0px,
         transparent 34px,
-        rgba(255,179,71,.055) 36px,
+       rgba(255,179,71,.085)
         transparent 39px,
         transparent 70px
     ),
@@ -74,7 +74,7 @@ body::after{
         115deg,
         transparent 0px,
         transparent 28px,
-        rgba(255,90,31,.045) 30px,
+        rgba(255,90,31,.065)
         transparent 33px,
         transparent 62px
     );
@@ -90,16 +90,22 @@ body::after{
     }
 
     50%{
-        transform:
-            translate3d(4%, 3%, 0)
-            rotate(2deg);
-    }
+    transform:
+        translate3d(4%, 3%, 0)
+        rotate(2deg)
+        scale(1.12);
+
+        filter: brightness(1.25);
+}
 
     100%{
-        transform:
-            translate3d(-4%, -3%, 0)
-            rotate(0deg);
-    }
+    transform:
+        translate3d(-2%, 5%, 0)
+        rotate(-2deg)
+        scale(.96);
+
+    filter: brightness(.92);
+}
 }
 
 /* stage-light glow behind everything */
