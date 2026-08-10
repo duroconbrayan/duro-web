@@ -248,7 +248,7 @@ mix-blend-mode: screen;
         transform:
             translate(-50%, -50%)
             translate3d(5%, -3%, 0)
-            scale(1.08);
+            scale(1.18, .92);
     }
 
     100%{
