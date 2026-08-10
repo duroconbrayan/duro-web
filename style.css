@@ -1153,6 +1153,16 @@ a:focus-visible, button:focus-visible{
 /* ============ MENÚ MÓVIL ============ */
 @media (max-width: 600px){
 
+        .offline-playlists{
+        grid-template-columns: 1fr;
+    }
+
+    .offline-playlist-card{
+        max-width: 420px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
     .song-menu{
         top: auto;
         bottom: 0;
