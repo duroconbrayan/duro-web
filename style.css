@@ -84,6 +84,60 @@ body::before{
     }
 }
 
+.stage-glow::before{
+    content: "";
+    position: absolute;
+
+    width: 90vmax;
+    height: 90vmax;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 42% 58% 63% 37% / 45% 38% 62% 55%;
+
+    background:
+        conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            rgba(255,90,31,.22) 70deg,
+            transparent 130deg,
+            rgba(255,179,71,.14) 210deg,
+            transparent 280deg,
+            rgba(139,92,246,.12) 340deg,
+            transparent 360deg
+        );
+
+    filter: blur(45px);
+
+    animation: visualizerSpin 16s linear infinite;
+}
+
+@keyframes visualizerSpin{
+    0%{
+        transform:
+            translate(-50%, -50%)
+            rotate(0deg)
+            scale(1);
+    }
+
+    50%{
+        transform:
+            translate(-50%, -50%)
+            rotate(180deg)
+            scale(1.12, .92);
+    }
+
+    100%{
+        transform:
+            translate(-50%, -50%)
+            rotate(360deg)
+            scale(1);
+    }
+}
+
 main{
     position: relative;
     z-index: 1;
