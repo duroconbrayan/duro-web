@@ -78,7 +78,8 @@ body::after{
         transparent 33px,
         transparent 62px
     );
-
+opacity: .55;
+mix-blend-mode: screen;
     animation: visualizerWaves 9s linear infinite;
 }
 
