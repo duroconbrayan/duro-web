@@ -689,6 +689,21 @@ a{ text-decoration: none; color: inherit; }
     );
 
     box-shadow: 0 0 14px rgba(255,90,31,.45);
+    animation: playerProgress 12s ease-in-out infinite;
+}
+
+@keyframes playerProgress{
+    0%{
+        width: 8%;
+    }
+
+    50%{
+        width: 72%;
+    }
+
+    100%{
+        width: 38%;
+    }
 }
 
 @keyframes popSong{
