@@ -116,9 +116,13 @@ table.appendChild(card);
 
 }
 
+comprobarEstadoLive();
 cargarPlaylist();
 
-setInterval(cargarPlaylist, 10000);
+setInterval(() => {
+    comprobarEstadoLive();
+    cargarPlaylist();
+}, 10000);
 
 function seleccionarCancion(cancion) {
 
