@@ -636,7 +636,11 @@ a{ text-decoration: none; color: inherit; }
     50%{ height: 26px; }
 }
 
-.playing-info{ flex: 1; min-width: 0; }
+.playing-info{
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+}
 .playing-info small{
     display: block;
     color: var(--orange);
