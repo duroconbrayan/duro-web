@@ -104,7 +104,9 @@ body::after{
         radial-gradient(65% 45% at 22% -5%, rgba(255,90,31,.32), transparent 60%),
         radial-gradient(45% 35% at 88% 0%, rgba(139,92,246,.10), transparent 60%),
         radial-gradient(70% 50% at 50% 110%, rgba(255,90,31,.14), transparent 60%);
-        animation: stageDrift 14s ease-in-out infinite alternate;
+        animation:
+    stageDrift 14s ease-in-out infinite alternate,
+    stagePulse 6s ease-in-out infinite;
 }
 
 @keyframes stageDrift{
@@ -121,6 +123,16 @@ body::after{
     100%{
         transform: scale(1.12) translate3d(2%, -2%, 0);
         filter: hue-rotate(-6deg);
+    }
+}
+
+@keyframes stagePulse{
+    0%, 100%{
+        opacity: 1;
+    }
+
+    50%{
+        opacity: .82;
     }
 }
 
