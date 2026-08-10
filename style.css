@@ -1062,6 +1062,25 @@ a{ text-decoration: none; color: inherit; }
     text-align: center;
 }
 
+.offline-mode{
+    display: none;
+}
+
+body.offline .offline-mode{
+    display: block;
+}
+
+body.offline .now-playing,
+body.offline .skip-banner,
+body.offline .payment-note,
+body.offline .playlist-container{
+    display: none;
+}
+
+body.offline .live-status{
+    display: none;
+}
+
 /* ============ MOTION SAFETY ============ */
 @media (prefers-reduced-motion: reduce){
     *{ animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
