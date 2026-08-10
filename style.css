@@ -54,6 +54,46 @@ body::before{
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+body::after{
+    content: "";
+    position: fixed;
+    inset: -30%;
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+        repeating-linear-gradient(
+            115deg,
+            transparent 0px,
+            transparent 28px,
+            rgba(255,90,31,.045) 30px,
+            transparent 33px,
+            transparent 62px
+        );
+
+    animation: visualizerWaves 9s linear infinite;
+}
+
+@keyframes visualizerWaves{
+    0%{
+        transform:
+            translate3d(-4%, -3%, 0)
+            rotate(0deg);
+    }
+
+    50%{
+        transform:
+            translate3d(4%, 3%, 0)
+            rotate(2deg);
+    }
+
+    100%{
+        transform:
+            translate3d(-4%, -3%, 0)
+            rotate(0deg);
+    }
+}
+
 /* stage-light glow behind everything */
 .stage-glow{
     position: fixed;
@@ -195,6 +235,10 @@ body::before{
             translate3d(2%, 6%, 0)
             scale(.96);
     }
+}
+
+.stage-glow{
+    overflow: hidden;
 }
 
 main{
