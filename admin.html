@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control DURO</title>
+    <link rel="stylesheet" href="style.css?v=8">
+</head>
+
+<body>
+
+<main>
+    <div class="page-wrap">
+
+        <div class="playlist-header">
+            <h1 class="wordmark">DURO</h1>
+        </div>
+
+        <div class="admin-panel">
+
+            <input
+                type="password"
+                id="admin-key"
+                placeholder="Clave de administrador"
+            >
+
+            <button onclick="cambiarEstado(true)">
+                🟢 ACTIVAR LIVE
+            </button>
+
+            <button onclick="cambiarEstado(false)">
+                ⚫ PONER OFFLINE
+            </button>
+
+            <p id="admin-result"></p>
+
+        </div>
+
+    </div>
+</main>
+
+<script>
+const statusURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/set-status";
+
+async function cambiarEstado(live) {
+
+    const key = document.getElementById("admin-key").value;
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(statusURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                live: live
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent =
+            live
+            ? "🟢 LIVE ACTIVADO"
+            : "⚫ MODO OFFLINE ACTIVADO";
+
+    } catch (error) {
+
+        result.textContent = "Error de conexión";
+
+    }
+}
+</script>
+
+</body>
+</html>

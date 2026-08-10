@@ -5,6 +5,14 @@ const playlistURL = "https://playlist-api.bookingelbrayan.workers.dev/playlist";
 let ultimaPlaylist = "";
 let ultimaCancion = "";
 
+const MODO_OFFLINE = true;
+
+if (MODO_OFFLINE) {
+    document.body.classList.add("offline");
+} else {
+    document.body.classList.remove("offline");
+}
+
 function cargarPlaylist() {
 
     fetch(playlistURL)
