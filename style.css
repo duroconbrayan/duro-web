@@ -80,7 +80,7 @@ body::after{
     );
 opacity: .55;
 mix-blend-mode: screen;
-filter: blur(1px);
+filter: blur(2px);
     animation: visualizerWaves 9s linear infinite;
 }
 
