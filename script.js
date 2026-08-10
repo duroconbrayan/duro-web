@@ -1,16 +1,25 @@
 console.log("script.js NUEVO CARGADO");
 
 const playlistURL = "https://playlist-api.bookingelbrayan.workers.dev/playlist";
+const statusURL = "https://playlist-api.bookingelbrayan.workers.dev/status";
 
 let ultimaPlaylist = "";
 let ultimaCancion = "";
 
-const MODO_OFFLINE = true;
+async function comprobarEstadoLive() {
+    try {
+        const response = await fetch(statusURL);
+        const data = await response.json();
 
-if (MODO_OFFLINE) {
-    document.body.classList.add("offline");
-} else {
-    document.body.classList.remove("offline");
+        if (data.live) {
+            document.body.classList.remove("offline");
+        } else {
+            document.body.classList.add("offline");
+        }
+
+    } catch (error) {
+        console.error("Error al comprobar estado LIVE:", error);
+    }
 }
 
 function cargarPlaylist() {
