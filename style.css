@@ -62,14 +62,22 @@ body::after{
     z-index: 0;
 
     background:
-        repeating-linear-gradient(
-            115deg,
-            transparent 0px,
-            transparent 28px,
-            rgba(255,90,31,.045) 30px,
-            transparent 33px,
-            transparent 62px
-        );
+    repeating-radial-gradient(
+        circle at 50% 50%,
+        transparent 0px,
+        transparent 34px,
+        rgba(255,179,71,.055) 36px,
+        transparent 39px,
+        transparent 70px
+    ),
+    repeating-linear-gradient(
+        115deg,
+        transparent 0px,
+        transparent 28px,
+        rgba(255,90,31,.045) 30px,
+        transparent 33px,
+        transparent 62px
+    );
 
     animation: visualizerWaves 9s linear infinite;
 }
