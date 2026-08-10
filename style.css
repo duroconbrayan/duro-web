@@ -232,7 +232,7 @@ body::after{
         );
 
     filter: blur(35px);
-
+mix-blend-mode: screen;
     animation: visualizerOrbit 11s ease-in-out infinite alternate;
 }
 
