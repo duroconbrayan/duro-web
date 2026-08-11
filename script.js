@@ -1,6 +1,5 @@
 console.log("script.js NUEVO CARGADO");
 
-const playlistURL = "https://playlist-api.bookingelbrayan.workers.dev/playlist";
 const statusURL = "https://playlist-api.bookingelbrayan.workers.dev/status";
 const requestsURL = "https://playlist-api.bookingelbrayan.workers.dev/requests";
 
@@ -128,76 +127,12 @@ if (table) {
     }
 }
 
-function cargarPlaylist() {
-
-    fetch(playlistURL)
-        .then(response => response.json())
-        .then(canciones => {
-
-            const table = document.getElementById("playlist-body");
-
-            table.innerHTML = "";
-
-            canciones.slice(1).forEach((cancion, index) => {
-
-    let clase = "";
-    let badge = "";
-
-    if (index === 0) {
-        clase = "gold-song";
-        badge = "Próxima";
-    } else if (index === 1) {
-        clase = "silver-song";
-        badge = "Después";
-    } else if (index === 2) {
-        clase = "bronze-song";
-        badge = "En cola";
-    }
-
-   const card = document.createElement("div");
-card.className = `song-card ${clase}`;
-
-card.addEventListener("click", () => {
-    seleccionarCancion(cancion.cancion);
-});
-
-if (badge) {
-    const badgeEl = document.createElement("div");
-    badgeEl.className = "song-badge";
-    badgeEl.textContent = badge;
-    card.appendChild(badgeEl);
-}
-
-const number = document.createElement("span");
-number.className = "song-number";
-number.textContent = `#${cancion.puesto}`;
-
-const name = document.createElement("span");
-name.className = "song-name";
-name.textContent = cancion.cancion;
-
-card.appendChild(number);
-card.appendChild(name);
-
-table.appendChild(card);
-
-});
-
-        })
-        .catch(error => {
-            console.error("Error al cargar la playlist:", error);
-        });
-
-}
-
 comprobarEstadoLive();
 cargarHistorial();
-cargarPlaylist();
 
 setInterval(() => {
     comprobarEstadoLive();
     cargarHistorial();
-    cargarPlaylist();
 }, 10000);
 
 function seleccionarCancion(cancion) {
