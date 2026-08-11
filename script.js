@@ -234,7 +234,12 @@ function mostrarOpcionesSubir() {
 </div>
 
 
-<div class="action-card" onclick="window.open('https://www.facebook.com/duroconbrayan', '_blank')">
+<div class="action-card" onclick="mostrarPrueba(
+    'facebook_follow',
+    'Seguir en Facebook',
+    '+1',
+    'https://www.facebook.com/duroconbrayan'
+)">
     <div class="action-left">
         <span class="action-icon">👍</span>
 
@@ -250,7 +255,12 @@ function mostrarOpcionesSubir() {
 </div>
 
 
-<div class="action-card" onclick="window.open('https://www.instagram.com/p/DYXjV8YkTiA/', '_blank')">
+<div class="action-card" onclick="mostrarPrueba(
+    'instagram_like',
+    'Dar like a la última publicación',
+    '+2',
+    'https://www.instagram.com/p/DYXjV8YkTiA/'
+)">
     <div class="action-left">
         <span class="action-icon">❤️</span>
 
@@ -266,7 +276,12 @@ function mostrarOpcionesSubir() {
 </div>
 
 
-<div class="action-card" onclick="window.open('https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P', '_blank')">
+<div class="action-card" onclick="mostrarPrueba(
+    'gafas_club',
+    'Guardar playlist GAFAS CLUB',
+    '+5',
+    'https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P'
+)">
     <div class="action-left">
         <span class="action-icon">🎵</span>
 
@@ -281,7 +296,12 @@ function mostrarOpcionesSubir() {
 </div>
 </div>
 
-<div class="action-card" onclick="window.open('https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0', '_blank')">
+<div class="action-card" onclick="mostrarPrueba(
+    'uraba',
+    'Guardar playlist URABÁ',
+    '+5',
+    'https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0'
+)">
 
     <div class="action-left">
 
@@ -306,7 +326,12 @@ function mostrarOpcionesSubir() {
 </div>
 
 
-<div class="action-card" onclick="window.open('https://www.twitch.tv/duroconbrayan', '_blank')">
+<div class="action-card" onclick="mostrarPrueba(
+    'twitch_follow',
+    'Seguir en Twitch',
+    '+10',
+    'https://www.twitch.tv/duroconbrayan'
+)">
     <div class="action-left">
         <span class="action-icon">🟣</span>
 
