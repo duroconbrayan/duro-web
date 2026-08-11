@@ -247,13 +247,19 @@ function mostrarOpcionesSubir() {
 
     contenido.innerHTML = `
 
-    <div class="action-card pay-action-card" onclick="mostrarOpcionesSaltar()">
+   <div class="action-card pay-action-card" onclick="mostrarOpcionesSaltar()">
     <div class="action-left">
         <span class="action-icon">⚡</span>
 
         <div>
-            <div class="action-title">Saltar directo</div>
-            <div class="action-description">Tu canción será la próxima</div>
+            <div class="action-title">
+                Saltar directo
+                <span class="auto-badge">AUTOMÁTICO</span>
+            </div>
+
+            <div class="action-description">
+                Sube tu canción al puesto #1 de la fila
+            </div>
         </div>
     </div>
 

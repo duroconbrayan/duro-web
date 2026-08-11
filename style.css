@@ -1155,6 +1155,25 @@ a{ text-decoration: none; color: inherit; }
     box-shadow: 0 0 18px rgba(198,255,77,.18);
 }
 
+.auto-badge{
+    display: inline-block;
+    margin-left: 6px;
+    padding: 3px 6px;
+
+    border-radius: 6px;
+
+    background: rgba(198,255,77,.12);
+    border: 1px solid rgba(198,255,77,.25);
+
+    color: var(--lime);
+
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    vertical-align: middle;
+}
+
 
 /* separador de opciones gratuitas */
 .free-actions-label{
