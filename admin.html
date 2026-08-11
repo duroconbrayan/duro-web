@@ -52,6 +52,17 @@
     🗑 BORRAR LISTA
 </button>
 
+<div class="admin-proofs-section">
+    <div class="admin-proofs-header">
+        <strong>🔔 PRUEBAS PENDIENTES</strong>
+        <span id="proofs-count">0</span>
+    </div>
+
+    <div id="admin-proofs">
+        <p>No hay pruebas pendientes.</p>
+    </div>
+</div>
+
             <div id="admin-queue"></div>
 
         </div>
@@ -401,9 +412,170 @@ async function cambiarEstado(live) {
     }
 }
 
-cargarAdminQueue();
+const proofsURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/proofs";
 
-setInterval(cargarAdminQueue, 5000);
+const proofImageURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/proof-image";
+
+let proofObjectURLs = [];
+
+async function cargarPruebas() {
+
+    const contenedor = document.getElementById("admin-proofs");
+    const contador = document.getElementById("proofs-count");
+    const key = document.getElementById("admin-key").value;
+
+    if (!key) {
+        contador.textContent = "0";
+        contenedor.innerHTML =
+            "<p>Escribe tu clave para ver las pruebas.</p>";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(proofsURL, {
+            headers: {
+                "Authorization": `Bearer ${key}`
+            }
+        });
+
+        const proofs = await response.json();
+
+        if (!response.ok) {
+            contenedor.innerHTML =
+                `<p>${proofs.error || "Error cargando pruebas."}</p>`;
+            return;
+        }
+
+        contador.textContent = proofs.length;
+
+        // Liberamos imágenes anteriores del navegador
+        proofObjectURLs.forEach(url => URL.revokeObjectURL(url));
+        proofObjectURLs = [];
+
+        if (proofs.length === 0) {
+            contenedor.innerHTML =
+                "<p>✅ No hay pruebas pendientes.</p>";
+            return;
+        }
+
+        contenedor.innerHTML = "";
+
+        for (const proof of proofs) {
+
+            const card = document.createElement("div");
+            card.className = "admin-proof-card";
+
+            card.innerHTML = `
+                <div class="admin-proof-info">
+                    <strong>${nombreAccion(proof.action)}</strong>
+                    <span>${recompensaAccion(proof.action)}</span>
+                </div>
+
+                <p>
+                    🎵 ${proof.request_text}
+                </p>
+
+                <div class="proof-image-container">
+                    Cargando captura...
+                </div>
+
+                <div class="admin-proof-actions">
+                    <button disabled>
+                        ✅ APROBAR
+                    </button>
+
+                    <button disabled>
+                        ❌ RECHAZAR
+                    </button>
+                </div>
+            `;
+
+            contenedor.appendChild(card);
+
+            const imageContainer =
+                card.querySelector(".proof-image-container");
+
+            try {
+
+                const imageResponse = await fetch(
+                    `${proofImageURL}/${proof.id}`,
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${key}`
+                        }
+                    }
+                );
+
+                if (!imageResponse.ok) {
+                    imageContainer.textContent =
+                        "No se pudo cargar la captura.";
+                    continue;
+                }
+
+                const blob = await imageResponse.blob();
+                const objectURL = URL.createObjectURL(blob);
+
+                proofObjectURLs.push(objectURL);
+
+                imageContainer.innerHTML = "";
+
+                const img = document.createElement("img");
+                img.src = objectURL;
+                img.alt = "Captura de prueba";
+                img.className = "admin-proof-image";
+
+                imageContainer.appendChild(img);
+
+            } catch (error) {
+                imageContainer.textContent =
+                    "Error cargando captura.";
+            }
+        }
+
+    } catch (error) {
+        contenedor.innerHTML =
+            "<p>Error de conexión cargando pruebas.</p>";
+    }
+}
+
+function nombreAccion(action) {
+
+    const nombres = {
+        instagram_follow: "📸 Seguir en Instagram",
+        facebook_follow: "👍 Seguir en Facebook",
+        instagram_like: "❤️ Like en Instagram",
+        gafas_club: "🎵 Guardar GAFAS CLUB",
+        uraba: "🌴 Guardar URABÁ",
+        twitch_follow: "🟣 Seguir en Twitch"
+    };
+
+    return nombres[action] || action;
+}
+
+function recompensaAccion(action) {
+
+    const recompensas = {
+        instagram_follow: "+1 puesto",
+        facebook_follow: "+1 puesto",
+        instagram_like: "+2 puestos",
+        gafas_club: "+5 puestos",
+        uraba: "+5 puestos",
+        twitch_follow: "+10 puestos"
+    };
+
+    return recompensas[action] || "";
+}
+
+cargarAdminQueue();
+cargarPruebas();
+
+setInterval(() => {
+    cargarAdminQueue();
+    cargarPruebas();
+}, 5000);
 
 </script>
 

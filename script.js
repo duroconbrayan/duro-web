@@ -200,7 +200,12 @@ function mostrarOpcionesSubir() {
     </span>
 </div>
 
-<div class="action-card" onclick="window.open('https://instagram.com/brayan_trampa', '_blank')">
+<div class="action-card" onclick="mostrarPrueba(
+    'instagram_follow',
+    'Seguir en Instagram',
+    '+1',
+    'https://instagram.com/brayan_trampa'
+)">
     <div class="action-left">
         <span class="action-icon">📸</span>
 
@@ -210,9 +215,9 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+1</span>
-    <span class="action-arrow">›</span>
-</div>
+        <span class="action-reward">+1</span>
+        <span class="action-arrow">›</span>
+    </div>
 </div>
 
 
@@ -307,6 +312,121 @@ function mostrarOpcionesSubir() {
 
 `;
 
+}
+
+function mostrarPrueba(action, titulo, recompensa, urlDestino) {
+
+    const contenido = document.getElementById("menu-contenido");
+
+    contenido.innerHTML = `
+        <div class="proof-box">
+
+            <div class="proof-header">
+                <strong>${titulo}</strong>
+                <span>${recompensa}</span>
+            </div>
+
+            <p class="proof-text">
+                Haz el paso, vuelve aquí y sube una captura como prueba.
+            </p>
+
+            <button
+                type="button"
+                onclick="window.open('${urlDestino}', '_blank')"
+            >
+                ABRIR ${titulo.toUpperCase()}
+            </button>
+
+            <div class="proof-upload">
+                <label for="proof-file">
+                    📸 Seleccionar captura
+                </label>
+
+                <input
+                    type="file"
+                    id="proof-file"
+                    accept=".jpg,.jpeg,.png,.webp,.avif,.gif,.apng,.heic,.heif,.bmp,.tif,.tiff"
+                >
+            </div>
+
+            <button
+                type="button"
+                onclick="enviarPrueba('${action}')"
+            >
+                ENVIAR PRUEBA
+            </button>
+
+            <button
+                type="button"
+                onclick="mostrarOpcionesSubir()"
+            >
+                ⬅️ Volver a los pasos
+            </button>
+
+        </div>
+    `;
+}
+
+async function enviarPrueba(action) {
+
+    const input = document.getElementById("proof-file");
+    const file = input?.files?.[0];
+
+    if (!solicitudSeleccionadaId) {
+        alert("No se encontró la canción seleccionada.");
+        return;
+    }
+
+    if (!file) {
+        alert("Selecciona una captura primero.");
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("request_id", solicitudSeleccionadaId);
+    formData.append("action", action);
+    formData.append("proof", file);
+
+    try {
+
+        const response = await fetch(
+            "https://playlist-api.bookingelbrayan.workers.dev/submit-proof",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error || "No se pudo enviar la prueba.");
+            return;
+        }
+
+        const contenido = document.getElementById("menu-contenido");
+
+        contenido.innerHTML = `
+            <div class="proof-box">
+                <strong>✅ PRUEBA ENVIADA</strong>
+
+                <p class="proof-text">
+                    Tu captura quedó pendiente de revisión.
+                </p>
+
+                <button
+                    type="button"
+                    onclick="cerrarMenu()"
+                >
+                    LISTO
+                </button>
+            </div>
+        `;
+
+    } catch (error) {
+        alert("Error de conexión al enviar la prueba.");
+    }
 }
 
 function mostrarOpcionesSaltar() {
