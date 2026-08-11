@@ -483,13 +483,13 @@ async function cargarPruebas() {
                 </div>
 
                 <div class="admin-proof-actions">
-                    <button disabled>
-                        ✅ APROBAR
-                    </button>
+                    <button onclick="revisarPrueba(${proof.id}, 'approved')">
+    ✅ APROBAR
+</button>
 
-                    <button disabled>
-                        ❌ RECHAZAR
-                    </button>
+<button onclick="revisarPrueba(${proof.id}, 'rejected')">
+    ❌ RECHAZAR
+</button>
                 </div>
             `;
 
@@ -567,6 +567,67 @@ function recompensaAccion(action) {
     };
 
     return recompensas[action] || "";
+}
+
+const reviewProofURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/review-proof";
+
+async function revisarPrueba(proofId, decision) {
+
+    const key = document.getElementById("admin-key").value;
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    const textoDecision =
+        decision === "approved" ? "aprobar" : "rechazar";
+
+    const confirmar = confirm(
+        `¿Seguro que quieres ${textoDecision} esta prueba?`
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+        const response = await fetch(reviewProofURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                proof_id: proofId,
+                decision: decision
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent =
+                data.error || "Error revisando la prueba.";
+            return;
+        }
+
+        if (decision === "approved") {
+            result.textContent =
+                `✅ Prueba aprobada · subió ${data.moved_up} puesto(s)`;
+        } else {
+            result.textContent =
+                "❌ Prueba rechazada";
+        }
+
+        await cargarPruebas();
+        await cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent =
+            "Error de conexión revisando la prueba.";
+    }
 }
 
 cargarAdminQueue();
