@@ -79,38 +79,6 @@ function cargarPlaylist() {
         .then(response => response.json())
         .then(canciones => {
 
-const currentSong = document.getElementById("current-song");
-
-const playlistActual = JSON.stringify(canciones);
-
-if (playlistActual === ultimaPlaylist) {
-    return;
-}
-
-ultimaPlaylist = playlistActual;
-
-if (currentSong && canciones.length > 0) {
-
-    const nuevaCancion = canciones[0].cancion;
-
-    if (nuevaCancion !== ultimaCancion) {
-
-        ultimaCancion = nuevaCancion;
-
-        currentSong.textContent = nuevaCancion;
-
-        const nowPlaying = document.querySelector(".now-playing");
-
-        nowPlaying.classList.remove("nueva-cancion");
-
-        void nowPlaying.offsetWidth;
-
-        nowPlaying.classList.add("nueva-cancion");
-
-    }
-
-}
-
             const table = document.getElementById("playlist-body");
 
             table.innerHTML = "";
