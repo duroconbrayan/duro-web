@@ -48,6 +48,10 @@
     ⏭ SIGUIENTE
 </button>
 
+<button onclick="borrarLista()">
+    🗑 BORRAR LISTA
+</button>
+
             <div id="admin-queue"></div>
 
         </div>
@@ -167,6 +171,49 @@ async function ponerSiguiente(id) {
 
         result.textContent = "⏭ Canción puesta como próxima";
 
+        cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent = "Error de conexión";
+    }
+}
+
+const clearURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/clear";
+
+async function borrarLista() {
+
+    const key = document.getElementById("admin-key").value;
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    const confirmar = confirm(
+        "¿Seguro que quieres borrar TODA la lista?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+        const response = await fetch(clearURL, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${key}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "🗑 Lista borrada";
         cargarAdminQueue();
 
     } catch (error) {
