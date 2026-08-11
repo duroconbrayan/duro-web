@@ -224,7 +224,7 @@ const subtitulo = document.getElementById("menu-subtitle");
 titulo.textContent = cancion;
 subtitulo.textContent = "¿Qué quieres hacer?";
 
-volverMenuPrincipal();
+mostrarOpcionesSubir();
 
 overlay.style.display = "block";
 menu.style.display = "block";
@@ -247,20 +247,24 @@ function mostrarOpcionesSubir() {
 
     contenido.innerHTML = `
 
-<div class="important-box">
-    <h4>📩 ÚLTIMO PASO</h4>
+    <div class="action-card pay-action-card" onclick="mostrarOpcionesSaltar()">
+    <div class="action-left">
+        <span class="action-icon">⚡</span>
 
-    <p>
-        Haz la acción y envía la prueba a
-    </p>
-
-    <div class="important-user">
-        @duroconbrayan
+        <div>
+            <div class="action-title">Saltar directo</div>
+            <div class="action-description">Tu canción será la próxima</div>
+        </div>
     </div>
 
-    <span>
-        Tu canción se subirá cuando recibamos la prueba.
-    </span>
+    <div class="action-right">
+        <span class="action-price">$2</span>
+        <span class="action-arrow">›</span>
+    </div>
+</div>
+
+<div class="free-actions-label">
+    O SUBE GRATIS
 </div>
 
 <div class="action-card" onclick="mostrarPrueba(
@@ -534,7 +538,7 @@ function mostrarOpcionesSaltar() {
     💵 PAGAR $2 CON PAYPAL
 </button>
 
-        <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
+        <button onclick="mostrarOpcionesSubir()">⬅️ Volver</button>
     `;
 
 }
