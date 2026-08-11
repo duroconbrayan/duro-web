@@ -24,6 +24,16 @@
                 placeholder="Clave de administrador"
             >
 
+<input
+    type="text"
+    id="request-text"
+    placeholder="Pega aquí el comentario de la canción"
+>
+
+<button onclick="agregarSolicitud()">
+    ➕ AGREGAR A LA COLA
+</button>
+
             <button onclick="cambiarEstado(true)">
                 🟢 ACTIVAR LIVE
             </button>
@@ -42,6 +52,54 @@
 <script>
 const statusURL =
     "https://playlist-api.bookingelbrayan.workers.dev/set-status";
+const requestsURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/requests";
+
+async function agregarSolicitud() {
+
+    const key = document.getElementById("admin-key").value;
+    const text = document.getElementById("request-text").value.trim();
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    if (!text) {
+        result.textContent = "Pega una canción.";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(requestsURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                text: text
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "✅ Agregada a la cola";
+        document.getElementById("request-text").value = "";
+
+    } catch (error) {
+
+        result.textContent = "Error de conexión";
+
+    }
+}
 
 async function cambiarEstado(live) {
 
