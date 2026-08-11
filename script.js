@@ -40,10 +40,65 @@ async function cargarHistorial() {
 
             const playing = requests.find(item => item.status === "playing");
 
+            const queue = requests
+    .filter(item => item.status === "queue")
+    .sort((a, b) => a.sort_order - b.sort_order);
+
             const currentSong = document.getElementById("current-song");
 
 if (currentSong && playing) {
     currentSong.textContent = playing.text;
+}
+
+const table = document.getElementById("playlist-body");
+
+if (table) {
+
+    table.innerHTML = "";
+
+    queue.forEach((item, index) => {
+
+        let clase = "";
+        let badge = "";
+
+        if (index === 0) {
+            clase = "gold-song";
+            badge = "Próxima";
+        } else if (index === 1) {
+            clase = "silver-song";
+            badge = "Después";
+        } else if (index === 2) {
+            clase = "bronze-song";
+            badge = "En cola";
+        }
+
+        const card = document.createElement("div");
+        card.className = `song-card ${clase}`;
+
+        card.addEventListener("click", () => {
+            seleccionarCancion(item.text);
+        });
+
+        if (badge) {
+            const badgeEl = document.createElement("div");
+            badgeEl.className = "song-badge";
+            badgeEl.textContent = badge;
+            card.appendChild(badgeEl);
+        }
+
+        const number = document.createElement("span");
+        number.className = "song-number";
+        number.textContent = `#${index + 1}`;
+
+        const name = document.createElement("span");
+        name.className = "song-name";
+        name.textContent = item.text;
+
+        card.appendChild(number);
+        card.appendChild(name);
+
+        table.appendChild(card);
+    });
 }
 
         if (played.length === 0) {
