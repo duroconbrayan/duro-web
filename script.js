@@ -480,13 +480,79 @@ function mostrarOpcionesSaltar() {
 
         <p>Apoya el directo con <strong>$2 USD</strong> por PayPal.</p>
 
-        <button class="pay-btn" onclick="window.open('https://www.paypal.com/paypalme/duroconbrayan/2', '_blank')">
-    💵 Ir a PayPal
+        <button class="pay-btn" onclick="crearOrdenPayPal()">
+    💵 PAGAR $2 CON PAYPAL
 </button>
 
         <button onclick="volverMenuPrincipal()">⬅️ Volver</button>
     `;
 
+}
+
+async function crearOrdenPayPal() {
+
+    if (!solicitudSeleccionadaId) {
+        alert("No se encontró la canción seleccionada.");
+        return;
+    }
+
+    const boton = document.querySelector(".pay-btn");
+
+    if (boton) {
+        boton.disabled = true;
+        boton.textContent = "CREANDO PAGO...";
+    }
+
+    try {
+
+        const response = await fetch(
+            "https://playlist-api.bookingelbrayan.workers.dev/paypal/create-order",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    request_id: solicitudSeleccionadaId
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error || "No se pudo crear el pago.");
+            
+            if (boton) {
+                boton.disabled = false;
+                boton.textContent = "💵 PAGAR $2 CON PAYPAL";
+            }
+
+            return;
+        }
+
+        if (!data.approve_url) {
+            alert("PayPal no devolvió el enlace de pago.");
+
+            if (boton) {
+                boton.disabled = false;
+                boton.textContent = "💵 PAGAR $2 CON PAYPAL";
+            }
+
+            return;
+        }
+
+        window.location.href = data.approve_url;
+
+    } catch (error) {
+
+        alert("Error de conexión con PayPal.");
+
+        if (boton) {
+            boton.disabled = false;
+            boton.textContent = "💵 PAGAR $2 CON PAYPAL";
+        }
+    }
 }
 
 function volverMenuPrincipal() {
