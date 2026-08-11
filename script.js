@@ -5,6 +5,7 @@ const requestsURL = "https://playlist-api.bookingelbrayan.workers.dev/requests";
 
 let ultimaPlaylist = "";
 let ultimaCancion = "";
+let solicitudSeleccionadaId = null;
 
 async function comprobarEstadoLive() {
     try {
@@ -81,8 +82,8 @@ if (table) {
         card.className = `song-card ${clase}`;
 
         card.addEventListener("click", () => {
-            seleccionarCancion(item.text);
-        });
+    seleccionarCancion(item.id, item.text);
+});
 
         if (badge) {
             const badgeEl = document.createElement("div");
@@ -148,7 +149,9 @@ setInterval(() => {
     cargarHistorial();
 }, 10000);
 
-function seleccionarCancion(cancion) {
+function seleccionarCancion(id, cancion) {
+
+    solicitudSeleccionadaId = id;
 
     const menu = document.getElementById("song-menu");
     const overlay = document.getElementById("overlay");
