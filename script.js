@@ -2,6 +2,7 @@ console.log("script.js NUEVO CARGADO");
 
 const playlistURL = "https://playlist-api.bookingelbrayan.workers.dev/playlist";
 const statusURL = "https://playlist-api.bookingelbrayan.workers.dev/status";
+const requestsURL = "https://playlist-api.bookingelbrayan.workers.dev/requests";
 
 let ultimaPlaylist = "";
 let ultimaCancion = "";
@@ -19,6 +20,48 @@ async function comprobarEstadoLive() {
 
     } catch (error) {
         console.error("Error al comprobar estado LIVE:", error);
+    }
+}
+
+async function cargarHistorial() {
+
+    const contenedor = document.getElementById("played-history");
+
+    if (!contenedor) return;
+
+    try {
+
+        const response = await fetch(requestsURL);
+        const requests = await response.json();
+
+        const played = requests
+            .filter(item => item.status === "played")
+            .sort((a, b) => new Date(b.played_at) - new Date(a.played_at));
+
+        if (played.length === 0) {
+            contenedor.innerHTML = "";
+            return;
+        }
+
+        let html = `
+            <div class="played-history-label">
+                YA SONARON
+            </div>
+        `;
+
+        played.slice(0, 5).forEach(item => {
+            html += `
+                <div class="played-history-item">
+                    <span>✓</span>
+                    <strong>${item.text}</strong>
+                </div>
+            `;
+        });
+
+        contenedor.innerHTML = html;
+
+    } catch (error) {
+        console.error("Error al cargar historial:", error);
     }
 }
 
@@ -117,10 +160,12 @@ table.appendChild(card);
 }
 
 comprobarEstadoLive();
+cargarHistorial();
 cargarPlaylist();
 
 setInterval(() => {
     comprobarEstadoLive();
+    cargarHistorial();
     cargarPlaylist();
 }, 10000);
 
