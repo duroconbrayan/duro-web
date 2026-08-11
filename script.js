@@ -413,53 +413,111 @@ function mostrarPrueba(action, titulo, recompensa, urlDestino) {
 
     const contenido = document.getElementById("menu-contenido");
 
-    contenido.innerHTML = `
-        <div class="proof-box">
+    document.getElementById("menu-subtitle").textContent =
+        "Completa el paso y envía tu prueba.";
 
-            <div class="proof-header">
-                <strong>${titulo}</strong>
-                <span>${recompensa}</span>
+    contenido.innerHTML = `
+        <div class="proof-flow">
+
+            <div class="proof-reward">
+                <span class="proof-reward-label">RECOMPENSA</span>
+                <strong>${recompensa} PUESTOS</strong>
             </div>
 
-            <p class="proof-text">
-                Haz el paso, vuelve aquí y sube una captura como prueba.
-            </p>
+            <div class="proof-step">
+                <div class="proof-step-number">1</div>
+
+                <div class="proof-step-content">
+                    <strong>Haz el paso</strong>
+                    <span>${titulo}</span>
+                </div>
+            </div>
 
             <button
+                class="proof-action-btn"
                 type="button"
                 onclick="window.open('${urlDestino}', '_blank')"
             >
-                ABRIR ${titulo.toUpperCase()}
+                ABRIR Y HACER EL PASO ↗
             </button>
 
-            <div class="proof-upload">
-                <label for="proof-file">
-                    📸 Seleccionar captura
-                </label>
 
-                <input
-                    type="file"
-                    id="proof-file"
-                    accept=".jpg,.jpeg,.png,.webp,.avif,.gif,.apng,.heic,.heif,.bmp,.tif,.tiff"
-                >
+            <div class="proof-step proof-step-upload">
+                <div class="proof-step-number">2</div>
+
+                <div class="proof-step-content">
+                    <strong>Sube una captura</strong>
+                    <span>Necesitamos comprobar que completaste el paso.</span>
+                </div>
+            </div>
+
+            <label class="proof-dropzone" for="proof-file">
+                <div class="proof-camera">📸</div>
+
+                <strong>Seleccionar captura</strong>
+
+                <span id="proof-file-name">
+                    JPG, PNG, WEBP y otros formatos
+                </span>
+            </label>
+
+            <input
+                class="proof-file-input"
+                type="file"
+                id="proof-file"
+                accept=".jpg,.jpeg,.png,.webp,.avif,.gif,.apng,.heic,.heif,.bmp,.tif,.tiff"
+                onchange="mostrarNombrePrueba(this)"
+            >
+
+
+            <div class="proof-step proof-step-send">
+                <div class="proof-step-number">3</div>
+
+                <div class="proof-step-content">
+                    <strong>Envía la prueba</strong>
+                    <span>La revisaremos antes de aplicar la recompensa.</span>
+                </div>
             </div>
 
             <button
+                class="proof-submit-btn"
                 type="button"
                 onclick="enviarPrueba('${action}')"
             >
                 ENVIAR PRUEBA
             </button>
 
+            <div class="proof-review-note">
+                <span>✓</span>
+                Cuando sea aprobada, tu canción subirá
+                <strong>${recompensa} puestos automáticamente.</strong>
+            </div>
+
             <button
+                class="proof-back-btn"
                 type="button"
                 onclick="mostrarOpcionesSubir()"
             >
-                ⬅️ Volver a los pasos
+                ← Volver a las opciones
             </button>
 
         </div>
     `;
+}
+
+function mostrarNombrePrueba(input) {
+
+    const nombre = document.getElementById("proof-file-name");
+
+    if (!nombre) return;
+
+    if (input.files && input.files[0]) {
+        nombre.textContent = "✓ " + input.files[0].name;
+        nombre.classList.add("file-selected");
+    } else {
+        nombre.textContent = "JPG, PNG, WEBP y otros formatos";
+        nombre.classList.remove("file-selected");
+    }
 }
 
 async function enviarPrueba(action) {

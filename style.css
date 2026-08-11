@@ -1217,6 +1217,255 @@ a{ text-decoration: none; color: inherit; }
     font-weight: 700;
 }
 
+/* ============ FLUJO DE PRUEBA ============ */
+
+.proof-flow{
+    text-align: left;
+}
+
+
+/* recompensa */
+.proof-reward{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    margin-bottom: 22px;
+    padding: 15px 17px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(135deg, rgba(255,90,31,.16), rgba(255,90,31,.06));
+
+    border: 1px solid rgba(255,90,31,.35);
+}
+
+.proof-reward-label{
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.proof-reward strong{
+    color: var(--orange);
+    font-size: 17px;
+}
+
+
+/* encabezado de cada paso */
+.proof-step{
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    margin: 18px 0 11px;
+}
+
+.proof-step-number{
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: var(--orange);
+    color: #180b05;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    box-shadow: 0 0 16px rgba(255,90,31,.20);
+}
+
+.proof-step-content{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.proof-step-content strong{
+    color: var(--text);
+    font-size: 14px;
+}
+
+.proof-step-content span{
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+
+/* botón para abrir red social / playlist */
+.song-menu button.proof-action-btn{
+    margin-bottom: 5px;
+
+    background: linear-gradient(135deg, var(--orange), #ff7a3d);
+    color: #180b05;
+
+    border: none;
+
+    font-weight: 700;
+
+    box-shadow: 0 8px 22px rgba(255,90,31,.16);
+}
+
+.song-menu button.proof-action-btn:hover{
+    background: linear-gradient(135deg, #ff6a32, #ff8b50);
+    border-color: transparent;
+}
+
+
+/* zona para seleccionar captura */
+.proof-dropzone{
+    min-height: 125px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 20px;
+    margin-bottom: 5px;
+
+    border: 1px dashed rgba(255,255,255,.20);
+    border-radius: 16px;
+
+    background: rgba(255,255,255,.025);
+
+    text-align: center;
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+.proof-dropzone:hover{
+    border-color: rgba(255,90,31,.55);
+    background: rgba(255,90,31,.06);
+}
+
+.proof-camera{
+    margin-bottom: 3px;
+    font-size: 28px;
+}
+
+.proof-dropzone strong{
+    color: var(--text);
+    font-size: 14px;
+}
+
+.proof-dropzone span{
+    max-width: 100%;
+
+    color: var(--muted-2);
+    font-size: 10px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.proof-dropzone span.file-selected{
+    color: var(--lime);
+    font-weight: 600;
+}
+
+
+/* escondemos el input feo del navegador */
+.proof-file-input{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/* enviar */
+.song-menu button.proof-submit-btn{
+    margin-top: 2px;
+    margin-bottom: 10px;
+
+    background: var(--lime);
+    color: #10160a;
+
+    border: none;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    box-shadow: 0 8px 22px rgba(198,255,77,.12);
+}
+
+.song-menu button.proof-submit-btn:hover{
+    background: var(--lime);
+    border-color: transparent;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 10px 28px rgba(198,255,77,.20);
+}
+
+
+/* explicación automática */
+.proof-review-note{
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    margin: 2px 0 17px;
+    padding: 11px 12px;
+
+    border-radius: 11px;
+
+    background: rgba(198,255,77,.055);
+    border: 1px solid rgba(198,255,77,.12);
+
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.proof-review-note > span{
+    color: var(--lime);
+    font-weight: 700;
+}
+
+.proof-review-note strong{
+    color: var(--text);
+    font-weight: 600;
+}
+
+
+/* volver */
+.song-menu button.proof-back-btn{
+    margin: 0;
+
+    padding: 12px;
+
+    background: transparent;
+
+    border-color: transparent;
+
+    color: var(--muted-2);
+
+    font-size: 12px;
+}
+
+.song-menu button.proof-back-btn:hover{
+    background: rgba(255,255,255,.03);
+    border-color: var(--line);
+    color: var(--text);
+}
+
 .menu-note{
     margin-top: 16px;
     font-size: 12px;
