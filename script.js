@@ -20,6 +20,56 @@ function obtenerVisitorId() {
 
 const visitorId = obtenerVisitorId();
 
+async function procesarRegresoPayPal() {
+
+    const params = new URLSearchParams(window.location.search);
+
+    const paypalStatus = params.get("paypal");
+    const orderId = params.get("token");
+
+    if (paypalStatus !== "success" || !orderId) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "https://playlist-api.bookingelbrayan.workers.dev/paypal/capture-order",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    order_id: orderId
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error || "No se pudo confirmar el pago.");
+            return;
+        }
+
+        if (data.paid) {
+            alert("✅ Pago de $2 confirmado correctamente.");
+
+            window.history.replaceState(
+                {},
+                "",
+                window.location.pathname
+            );
+        }
+
+    } catch (error) {
+        alert("Error confirmando el pago con PayPal.");
+    }
+}
+
+procesarRegresoPayPal();
+
 async function comprobarEstadoLive() {
     try {
         const response = await fetch(statusURL);
