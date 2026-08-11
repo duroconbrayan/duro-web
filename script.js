@@ -46,7 +46,13 @@ async function cargarHistorial() {
             const currentSong = document.getElementById("current-song");
 
 if (currentSong && playing) {
-    currentSong.textContent = playing.text;
+
+    if (playing.play_number) {
+        currentSong.textContent =
+            `#${playing.play_number} — ${playing.text}`;
+    } else {
+        currentSong.textContent = playing.text;
+    }
 }
 
 const table = document.getElementById("playlist-body");
@@ -85,9 +91,11 @@ if (table) {
             card.appendChild(badgeEl);
         }
 
-        const number = document.createElement("span");
-        number.className = "song-number";
-        number.textContent = `#${index + 1}`;
+        const numeroActual = playing?.play_number || played.length;
+
+const number = document.createElement("span");
+number.className = "song-number";
+number.textContent = `#${numeroActual + index + 1}`;
 
         const name = document.createElement("span");
         name.className = "song-name";
@@ -112,13 +120,18 @@ if (table) {
         `;
 
         played.slice(0, 5).forEach(item => {
-            html += `
-                <div class="played-history-item">
-                    <span>✓</span>
-                    <strong>${item.text}</strong>
-                </div>
-            `;
-        });
+
+    const numero = item.play_number
+        ? `#${item.play_number} — `
+        : "";
+
+    html += `
+        <div class="played-history-item">
+            <span>✓</span>
+            <strong>${numero}${item.text}</strong>
+        </div>
+    `;
+});
 
         contenedor.innerHTML = html;
 
