@@ -7,6 +7,19 @@ let ultimaPlaylist = "";
 let ultimaCancion = "";
 let solicitudSeleccionadaId = null;
 
+function obtenerVisitorId() {
+    let visitorId = localStorage.getItem("duro_visitor_id");
+
+    if (!visitorId) {
+        visitorId = crypto.randomUUID();
+        localStorage.setItem("duro_visitor_id", visitorId);
+    }
+
+    return visitorId;
+}
+
+const visitorId = obtenerVisitorId();
+
 async function comprobarEstadoLive() {
     try {
         const response = await fetch(statusURL);
@@ -386,6 +399,7 @@ async function enviarPrueba(action) {
 
     formData.append("request_id", solicitudSeleccionadaId);
     formData.append("action", action);
+    formData.append("visitor_id", visitorId);
     formData.append("proof", file);
 
     try {
