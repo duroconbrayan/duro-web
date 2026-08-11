@@ -480,12 +480,13 @@ function mostrarPrueba(action, titulo, recompensa, urlDestino) {
             </div>
 
             <button
-                class="proof-submit-btn"
-                type="button"
-                onclick="enviarPrueba('${action}')"
-            >
-                ENVIAR PRUEBA
-            </button>
+    id="proof-submit-btn"
+    class="proof-submit-btn"
+    type="button"
+    onclick="enviarPrueba('${action}')"
+>
+    ENVIAR PRUEBA
+</button>
 
             <div class="proof-review-note">
                 <span>✓</span>
