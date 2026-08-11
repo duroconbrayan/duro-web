@@ -107,6 +107,8 @@ async function cargarHistorial() {
     .filter(item => item.status === "queue")
     .sort((a, b) => a.sort_order - b.sort_order);
 
+colaActual = queue;
+
             const currentSong = document.getElementById("current-song");
 
 if (currentSong && playing) {
@@ -236,6 +238,64 @@ function cerrarMenu() {
     document.getElementById("overlay").style.display = "none";
     document.getElementById("song-menu").style.display = "none";
 
+}
+
+function abrirSelectorSaltar() {
+
+    if (!colaActual.length) {
+        alert("No hay canciones en la cola.");
+        return;
+    }
+
+    const menu = document.getElementById("song-menu");
+    const overlay = document.getElementById("overlay");
+    const titulo = document.getElementById("selected-song");
+    const subtitulo = document.getElementById("menu-subtitle");
+    const contenido = document.getElementById("menu-contenido");
+
+    titulo.textContent = "Saltar fila";
+    subtitulo.textContent =
+        "Elige qué canción quieres subir al puesto #1.";
+
+    contenido.innerHTML = `
+        <div class="free-actions-label">
+            ELIGE UNA CANCIÓN
+        </div>
+
+        ${colaActual.map((item, index) => `
+            <div
+                class="action-card"
+                onclick='seleccionarParaSaltar(${item.id}, ${JSON.stringify(item.text)})'
+            >
+                <div class="action-left">
+                    <span class="action-icon">#${index + 1}</span>
+
+                    <div>
+                        <div class="action-title">${item.text}</div>
+                    </div>
+                </div>
+
+                <div class="action-right">
+                    <span class="action-price">$2</span>
+                    <span class="action-arrow">›</span>
+                </div>
+            </div>
+        `).join("")}
+
+        <button onclick="cerrarMenu()">✕ Cerrar</button>
+    `;
+
+    overlay.style.display = "block";
+    menu.style.display = "block";
+}
+
+function seleccionarParaSaltar(id, cancion) {
+
+    solicitudSeleccionadaId = id;
+
+    document.getElementById("selected-song").textContent = cancion;
+
+    mostrarOpcionesSaltar();
 }
 
 function mostrarOpcionesSubir() {
@@ -604,12 +664,12 @@ if (submitBtn) {
 function mostrarOpcionesSaltar() {
 
     document.getElementById("menu-subtitle").textContent =
-    "Apoya el directo para pasar al siguiente turno.";
+    "Pasa tu canción automáticamente al puesto #1.";
 
     const contenido = document.getElementById("menu-contenido");
 
     contenido.innerHTML = `
-        <p>🚀 Tu canción sonará a continuación.</p>
+        <p>⚡ Tu canción subirá <strong>automáticamente al puesto #1</strong>.</p>
 
         <p>Apoya el directo con <strong>$2 USD</strong> por PayPal.</p>
 
