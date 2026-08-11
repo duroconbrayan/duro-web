@@ -535,6 +535,13 @@ async function enviarPrueba(action) {
         return;
     }
 
+    const submitBtn = document.getElementById("proof-submit-btn");
+
+if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "ENVIANDO...";
+}
+
     const formData = new FormData();
 
     formData.append("request_id", solicitudSeleccionadaId);
@@ -556,6 +563,10 @@ async function enviarPrueba(action) {
 
         if (!response.ok) {
             alert(data.error || "No se pudo enviar la prueba.");
+            if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "ENVIAR PRUEBA";
+}
             return;
         }
 
@@ -579,8 +590,14 @@ async function enviarPrueba(action) {
         `;
 
     } catch (error) {
-        alert("Error de conexión al enviar la prueba.");
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "ENVIAR PRUEBA";
     }
+
+    alert("Error de conexión al enviar la prueba.");
+}
 }
 
 function mostrarOpcionesSaltar() {

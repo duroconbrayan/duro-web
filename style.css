@@ -974,15 +974,22 @@ a{ text-decoration: none; color: inherit; }
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 420px;
-    max-height: 85vh;
+
+    max-height: 92vh;
     overflow-y: auto;
+
     background: var(--bg-alt);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
-    padding: 26px;
+    padding: 22px;
+
     text-align: center;
+
     box-shadow: 0 20px 60px rgba(0,0,0,.5);
+
     z-index: 1000;
+
+    scrollbar-width: thin;
 }
 
 .song-menu h3{
@@ -1322,7 +1329,6 @@ a{ text-decoration: none; color: inherit; }
     border-color: transparent;
 }
 
-
 /* zona para seleccionar captura */
 .proof-dropzone{
     min-height: 125px;
@@ -1464,6 +1470,21 @@ a{ text-decoration: none; color: inherit; }
     background: rgba(255,255,255,.03);
     border-color: var(--line);
     color: var(--text);
+}
+
+/* ajustes compactos del flujo de prueba */
+
+.proof-reward{
+    margin-bottom: 16px;
+}
+
+.proof-step{
+    margin: 14px 0 9px;
+}
+
+.proof-dropzone{
+    min-height: 110px;
+    padding: 16px;
 }
 
 .menu-note{
@@ -1620,21 +1641,21 @@ a:focus-visible, button:focus-visible{
 
         width: 100%;
         max-width: none;
-        max-height: 90vh;
+
+        max-height: 94vh;
 
         border-radius: 24px 24px 0 0;
         border-left: none;
         border-right: none;
         border-bottom: none;
 
-        padding: 28px 20px calc(20px + env(safe-area-inset-bottom));
+        padding: 22px 18px calc(16px + env(safe-area-inset-bottom));
 
         overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
 
         animation: menuDesdeAbajo .25s ease;
     }
-
     .song-menu::before{
         content: "";
         display: block;
