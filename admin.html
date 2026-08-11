@@ -72,8 +72,29 @@ async function cargarAdminQueue() {
 
         const playing = requests.find(item => item.status === "playing");
         const queue = requests.filter(item => item.status === "queue");
+        const played = requests
+    .filter(item => item.status === "played")
+    .sort((a, b) => new Date(b.played_at) - new Date(a.played_at));
 
         let html = "";
+
+        if (played.length > 0) {
+    html += `
+        <div class="admin-history">
+            <small>YA SONARON</small>
+    `;
+
+    played.slice(0, 5).forEach(item => {
+        html += `
+            <div class="admin-history-item">
+                <span>✓</span>
+                <strong>${item.text}</strong>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+}
 
         if (playing) {
             html += `
