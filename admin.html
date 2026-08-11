@@ -52,18 +52,47 @@
     🗑 BORRAR LISTA
 </button>
 
-<div class="admin-proofs-section">
-    <div class="admin-proofs-header">
-        <strong>🔔 PRUEBAS PENDIENTES</strong>
-        <span id="proofs-count">0</span>
-    </div>
+<div class="admin-dashboard">
 
-    <div id="admin-proofs">
-        <p>No hay pruebas pendientes.</p>
-    </div>
+    <section class="admin-section admin-queue-section">
+
+        <div class="admin-section-header">
+            <div>
+                <small>CONTROL DEL DIRECTO</small>
+                <strong>📋 LISTA EN VIVO</strong>
+            </div>
+        </div>
+
+        <div id="admin-queue"></div>
+
+    </section>
+
+
+    <section class="admin-section admin-proofs-section">
+
+        <div class="admin-section-header">
+
+            <div>
+                <small>REVISIONES</small>
+                <strong>📸 PRUEBAS PENDIENTES</strong>
+            </div>
+
+            <span
+                class="admin-count-badge"
+                id="proofs-count"
+            >
+                0
+            </span>
+
+        </div>
+
+        <div id="admin-proofs">
+            <p>No hay pruebas pendientes.</p>
+        </div>
+
+    </section>
+
 </div>
-
-            <div id="admin-queue"></div>
 
         </div>
 

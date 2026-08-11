@@ -1678,3 +1678,167 @@ a:focus-visible, button:focus-visible{
         }
     }
 }
+
+/* ============ ADMIN DASHBOARD ============ */
+
+.admin-dashboard{
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(340px, .85fr);
+    gap: 20px;
+    align-items: start;
+    margin-top: 24px;
+}
+
+.admin-section{
+    min-width: 0;
+    padding: 20px;
+
+    background:
+        linear-gradient(155deg, rgba(37,27,44,.92), rgba(30,23,35,.92));
+
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+
+    box-shadow: 0 16px 40px rgba(0,0,0,.20);
+}
+
+.admin-section-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    margin-bottom: 18px;
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.admin-section-header > div{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.admin-section-header small{
+    color: var(--muted-2);
+
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+.admin-section-header strong{
+    color: var(--text);
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+
+/* contador de pruebas */
+
+.admin-count-badge{
+    min-width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 10px;
+
+    border-radius: 11px;
+
+    background: var(--orange-soft);
+    border: 1px solid rgba(255,90,31,.35);
+
+    color: var(--orange);
+
+    font-size: 15px;
+    font-weight: 700;
+
+    box-shadow: 0 0 18px rgba(255,90,31,.10);
+}
+
+
+/* diferenciamos visualmente ambas áreas */
+
+.admin-queue-section{
+    border-color: rgba(255,255,255,.10);
+}
+
+.admin-proofs-section{
+    border-color: rgba(255,90,31,.20);
+}
+
+
+/* pruebas */
+
+#admin-proofs{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#admin-proofs > p{
+    padding: 30px 15px;
+
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+
+    color: var(--muted-2);
+    text-align: center;
+    font-size: 12px;
+}
+
+
+/* cola */
+
+#admin-queue{
+    width: 100%;
+}
+
+
+/* ============ ADMIN RESPONSIVE ============ */
+
+@media (max-width: 850px){
+
+    .admin-dashboard{
+        grid-template-columns: 1fr;
+    }
+
+    .admin-proofs-section{
+        order: -1;
+    }
+}
+
+@media (max-width: 600px){
+
+    .admin-dashboard{
+        gap: 14px;
+        margin-top: 18px;
+    }
+
+    .admin-section{
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .admin-section-header{
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+    }
+
+    .admin-section-header strong{
+        font-size: 15px;
+    }
+
+    .admin-count-badge{
+        min-width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+}
