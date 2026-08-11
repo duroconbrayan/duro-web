@@ -79,6 +79,7 @@ async function cargarAdminQueue() {
         const played = requests
     .filter(item => item.status === "played")
     .sort((a, b) => new Date(b.played_at) - new Date(a.played_at));
+    const numeroActual = playing?.play_number || played.length;
 
         let html = "";
 
@@ -117,7 +118,7 @@ async function cargarAdminQueue() {
        queue.forEach((item, index) => {
     html += `
         <div class="admin-queue-item">
-            <span>#${index + 1}</span>
+            <span>#${numeroActual + index + 1}</span>
             <strong>${item.text}</strong>
 
             <button onclick="ponerSiguiente(${item.id})">
