@@ -107,6 +107,44 @@ async function cargarAdminQueue() {
     }
 }
 
+const nextURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/next";
+
+async function siguienteCancion() {
+
+    const key = document.getElementById("admin-key").value;
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(nextURL, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${key}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "⏭ Pasamos a la siguiente canción";
+
+        cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent = "Error de conexión";
+    }
+}
+
 async function agregarSolicitud() {
 
     const key = document.getElementById("admin-key").value;
