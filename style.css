@@ -1082,6 +1082,122 @@ a{ text-decoration: none; color: inherit; }
     transform: translateX(3px);
 }
 
+/* ============ NUEVO MENÚ DE ACCIONES ============ */
+
+/* opción principal: saltar directo */
+.pay-action-card{
+    position: relative;
+    overflow: hidden;
+    padding: 20px 18px;
+    margin-bottom: 20px;
+
+    background:
+        radial-gradient(circle at 0% 0%, rgba(198,255,77,.18), transparent 45%),
+        linear-gradient(135deg, rgba(198,255,77,.10), var(--surface));
+
+    border: 1px solid rgba(198,255,77,.45);
+
+    box-shadow:
+        0 0 28px rgba(198,255,77,.08),
+        inset 0 0 20px rgba(198,255,77,.03);
+}
+
+.pay-action-card:hover{
+    border-color: rgba(198,255,77,.75);
+    background:
+        radial-gradient(circle at 0% 0%, rgba(198,255,77,.24), transparent 45%),
+        linear-gradient(135deg, rgba(198,255,77,.14), var(--surface-2));
+
+    box-shadow: 0 0 32px rgba(198,255,77,.14);
+}
+
+.pay-action-card .action-icon{
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    background: rgba(198,255,77,.13);
+
+    font-size: 25px;
+}
+
+.pay-action-card .action-title{
+    color: var(--lime);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.action-description{
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: left;
+}
+
+.action-price{
+    padding: 7px 10px;
+
+    border-radius: 10px;
+
+    background: var(--lime);
+    color: #10160a;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    box-shadow: 0 0 18px rgba(198,255,77,.18);
+}
+
+
+/* separador de opciones gratuitas */
+.free-actions-label{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin: 4px 0 14px;
+
+    color: var(--muted-2);
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+
+    text-transform: uppercase;
+}
+
+.free-actions-label::before,
+.free-actions-label::after{
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: var(--line);
+}
+
+
+/* recompensa más visible */
+.action-reward{
+    min-width: 42px;
+
+    padding: 6px 9px;
+
+    border-radius: 9px;
+
+    background: var(--orange-soft);
+
+    text-align: center;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
 .menu-note{
     margin-top: 16px;
     font-size: 12px;

@@ -268,6 +268,95 @@ function mostrarOpcionesSubir() {
 </div>
 
 <div class="action-card" onclick="mostrarPrueba(
+    'twitch_follow',
+    'Seguir en Twitch',
+    '+10',
+    'https://www.twitch.tv/duroconbrayan'
+)">
+    <div class="action-left">
+        <span class="action-icon">🟣</span>
+
+        <div>
+            <div class="action-title">Seguir en Twitch</div>
+        </div>
+    </div>
+
+    <div class="action-right">
+    <span class="action-reward">+10</span>
+    <span class="action-arrow">›</span>
+</div>
+</div>
+
+<div class="action-card" onclick="mostrarPrueba(
+    'uraba',
+    'Guardar playlist URABÁ',
+    '+5',
+    'https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0'
+)">
+
+    <div class="action-left">
+
+        <span class="action-icon">🌴</span>
+
+        <div>
+
+            <div class="action-title">Guardar playlist URABÁ</div>
+
+        </div>
+
+    </div>
+
+    <div class="action-right">
+
+    <span class="action-reward">+5</span>
+
+    <span class="action-arrow">›</span>
+
+</div>
+
+</div>
+
+<div class="action-card" onclick="mostrarPrueba(
+    'gafas_club',
+    'Guardar playlist GAFAS CLUB',
+    '+5',
+    'https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P'
+)">
+    <div class="action-left">
+        <span class="action-icon">🎵</span>
+
+        <div>
+            <div class="action-title">Guardar playlist GAFAS CLUB</div>
+        </div>
+    </div>
+
+    <div class="action-right">
+    <span class="action-reward">+5</span>
+    <span class="action-arrow">›</span>
+</div>
+</div>
+
+<div class="action-card" onclick="mostrarPrueba(
+    'instagram_like',
+    'Dar like a la última publicación',
+    '+2',
+    'https://www.instagram.com/p/DYXjV8YkTiA/'
+)">
+    <div class="action-left">
+        <span class="action-icon">❤️</span>
+
+        <div>
+            <div class="action-title">Dar like a la última publicación</div>
+        </div>
+    </div>
+
+    <div class="action-right">
+    <span class="action-reward">+2</span>
+    <span class="action-arrow">›</span>
+</div>
+</div>
+
+<div class="action-card" onclick="mostrarPrueba(
     'instagram_follow',
     'Seguir en Instagram',
     '+1',
@@ -308,99 +397,7 @@ function mostrarOpcionesSubir() {
 </div>
 </div>
 
-
-<div class="action-card" onclick="mostrarPrueba(
-    'instagram_like',
-    'Dar like a la última publicación',
-    '+2',
-    'https://www.instagram.com/p/DYXjV8YkTiA/'
-)">
-    <div class="action-left">
-        <span class="action-icon">❤️</span>
-
-        <div>
-            <div class="action-title">Dar like a la última publicación</div>
-        </div>
-    </div>
-
-    <div class="action-right">
-    <span class="action-reward">+2</span>
-    <span class="action-arrow">›</span>
-</div>
-</div>
-
-
-<div class="action-card" onclick="mostrarPrueba(
-    'gafas_club',
-    'Guardar playlist GAFAS CLUB',
-    '+5',
-    'https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P'
-)">
-    <div class="action-left">
-        <span class="action-icon">🎵</span>
-
-        <div>
-            <div class="action-title">Guardar playlist GAFAS CLUB</div>
-        </div>
-    </div>
-
-    <div class="action-right">
-    <span class="action-reward">+5</span>
-    <span class="action-arrow">›</span>
-</div>
-</div>
-
-<div class="action-card" onclick="mostrarPrueba(
-    'uraba',
-    'Guardar playlist URABÁ',
-    '+5',
-    'https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0'
-)">
-
-    <div class="action-left">
-
-        <span class="action-icon">🌴</span>
-
-        <div>
-
-            <div class="action-title">Guardar playlist URABÁ</div>
-
-        </div>
-
-    </div>
-
-    <div class="action-right">
-
-    <span class="action-reward">+5</span>
-
-    <span class="action-arrow">›</span>
-
-</div>
-
-</div>
-
-
-<div class="action-card" onclick="mostrarPrueba(
-    'twitch_follow',
-    'Seguir en Twitch',
-    '+10',
-    'https://www.twitch.tv/duroconbrayan'
-)">
-    <div class="action-left">
-        <span class="action-icon">🟣</span>
-
-        <div>
-            <div class="action-title">Seguir en Twitch</div>
-        </div>
-    </div>
-
-    <div class="action-right">
-    <span class="action-reward">+10</span>
-    <span class="action-arrow">›</span>
-</div>
-</div>
-
-<button onclick="volverMenuPrincipal()">⬅️ Volver</button>
+<button onclick="cerrarMenu()">✕ Cerrar</button>
 
 `;
 
@@ -607,21 +604,4 @@ async function crearOrdenPayPal() {
             boton.textContent = "💵 PAGAR $2 CON PAYPAL";
         }
     }
-}
-
-function volverMenuPrincipal() {
-
-    document.getElementById("menu-subtitle").textContent =
-    "¿Qué quieres hacer?";
-
-    const contenido = document.getElementById("menu-contenido");
-
-    contenido.innerHTML = `
-        <button id="btn-subir" onclick="mostrarOpcionesSubir()">⬆️ Subir canción</button>
-
-        <button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Saltar directo</button>
-
-        <button onclick="cerrarMenu()">❌ Cancelar</button>
-    `;
-
 }
