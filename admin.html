@@ -44,6 +44,10 @@
 
             <p id="admin-result"></p>
 
+            <button onclick="siguienteCancion()">
+    ⏭ SIGUIENTE
+</button>
+
             <div id="admin-queue"></div>
 
         </div>
@@ -192,6 +196,8 @@ async function cambiarEstado(live) {
 }
 
 cargarAdminQueue();
+
+setInterval(cargarAdminQueue, 5000);
 
 </script>
 
