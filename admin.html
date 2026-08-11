@@ -124,6 +124,11 @@ async function cargarAdminQueue() {
             <button onclick="ponerSiguiente(${item.id})">
                 ⏭ PONER SIGUIENTE
             </button>
+
+            <button onclick="eliminarSolicitud(${item.id})">
+    🗑 ELIMINAR
+</button>
+
         </div>
     `;
 });
@@ -215,6 +220,54 @@ async function borrarLista() {
         }
 
         result.textContent = "🗑 Lista borrada";
+        cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent = "Error de conexión";
+    }
+}
+
+const deleteRequestURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/delete-request";
+
+async function eliminarSolicitud(id) {
+
+    const key = document.getElementById("admin-key").value;
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    const confirmar = confirm(
+        "¿Seguro que quieres eliminar esta canción?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+        const response = await fetch(deleteRequestURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                id: id
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "🗑 Canción eliminada";
+
         cargarAdminQueue();
 
     } catch (error) {
