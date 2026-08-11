@@ -38,6 +38,14 @@ async function cargarHistorial() {
             .filter(item => item.status === "played")
             .sort((a, b) => new Date(b.played_at) - new Date(a.played_at));
 
+            const playing = requests.find(item => item.status === "playing");
+
+            const currentSong = document.getElementById("current-song");
+
+if (currentSong && playing) {
+    currentSong.textContent = playing.text;
+}
+
         if (played.length === 0) {
             contenedor.innerHTML = "";
             return;
