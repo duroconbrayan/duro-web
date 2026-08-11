@@ -110,14 +110,18 @@ async function cargarAdminQueue() {
                 <small>COLA</small>
         `;
 
-        queue.forEach((item, index) => {
-            html += `
-                <div class="admin-queue-item">
-                    <span>#${index + 1}</span>
-                    <strong>${item.text}</strong>
-                </div>
-            `;
-        });
+       queue.forEach((item, index) => {
+    html += `
+        <div class="admin-queue-item">
+            <span>#${index + 1}</span>
+            <strong>${item.text}</strong>
+
+            <button onclick="ponerSiguiente(${item.id})">
+                ⏭ PONER SIGUIENTE
+            </button>
+        </div>
+    `;
+});
 
         html += `</div>`;
 
@@ -125,6 +129,48 @@ async function cargarAdminQueue() {
 
     } catch (error) {
         contenedor.innerHTML = "Error cargando la cola.";
+    }
+}
+
+const moveNextURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/move-next";
+
+async function ponerSiguiente(id) {
+
+    const key = document.getElementById("admin-key").value;
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(moveNextURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                id: id
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "⏭ Canción puesta como próxima";
+
+        cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent = "Error de conexión";
     }
 }
 
