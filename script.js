@@ -20,6 +20,28 @@ function obtenerVisitorId() {
 
 const visitorId = obtenerVisitorId();
 
+async function registrarVisitaSesion() {
+
+    try {
+        await fetch(
+            "https://playlist-api.bookingelbrayan.workers.dev/session-visit",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    visitor_id: visitorId
+                })
+            }
+        );
+    } catch (error) {
+        console.error("Error registrando visita:", error);
+    }
+}
+
+registrarVisitaSesion();
+
 async function procesarRegresoPayPal() {
 
     const params = new URLSearchParams(window.location.search);

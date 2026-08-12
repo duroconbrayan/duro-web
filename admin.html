@@ -121,6 +121,25 @@
 
 </section>
 
+<section class="admin-section admin-sessions-section">
+
+    <div class="admin-section-header">
+        <div>
+            <small>MÉTRICAS</small>
+            <strong>📊 DIRECTOS</strong>
+        </div>
+
+        <span class="admin-count-badge" id="sessions-count">
+            0
+        </span>
+    </div>
+
+    <div id="admin-sessions">
+        <p>No hay directos registrados.</p>
+    </div>
+
+</section>
+
 </div>
 
         </div>
@@ -983,14 +1002,120 @@ async function cargarPagos() {
     }
 }
 
+const sessionsURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/admin/sessions";
+
+async function cargarSesiones() {
+
+    const contenedor =
+        document.getElementById("admin-sessions");
+
+    const contador =
+        document.getElementById("sessions-count");
+
+    const key =
+        document.getElementById("admin-key").value;
+
+    if (!key) {
+        contador.textContent = "0";
+        contenedor.innerHTML =
+            "<p>Escribe tu clave para ver las métricas.</p>";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(sessionsURL, {
+            headers: {
+                "Authorization": `Bearer ${key}`
+            }
+        });
+
+        const sessions = await response.json();
+
+        if (!response.ok) {
+            contenedor.innerHTML =
+                `<p>${sessions.error || "Error cargando métricas."}</p>`;
+            return;
+        }
+
+        contador.textContent = sessions.length;
+
+        if (sessions.length === 0) {
+            contenedor.innerHTML =
+                "<p>No hay directos registrados.</p>";
+            return;
+        }
+
+        let html = "";
+
+        sessions.forEach(session => {
+
+            const estado =
+                session.status === "active"
+                    ? "🟢 EN VIVO"
+                    : "⚫ FINALIZADO";
+
+            html += `
+                <div class="admin-payment-item">
+
+                    <div>
+                        <strong>
+                            DIRECTO #${session.id}
+                        </strong>
+
+                        <span>${estado}</span>
+
+                        <small>
+                            ${session.started_at || ""}
+                            ${session.ended_at
+                                ? ` → ${session.ended_at}`
+                                : ""}
+                        </small>
+                    </div>
+
+                    <div>
+                        <strong>
+                            👥 ${session.visitors} visitantes
+                        </strong>
+
+                        <span>
+                            🎵 ${session.songs_processed} canciones
+                        </span>
+
+                        <span>
+                            📸 ${session.proofs_approved} pruebas
+                        </span>
+
+                        <span>
+                            💰 ${session.paypal_payments} pagos ·
+                            $${Number(session.paypal_revenue).toFixed(2)}
+                        </span>
+                    </div>
+
+                </div>
+            `;
+        });
+
+        contenedor.innerHTML = html;
+
+    } catch (error) {
+
+        contenedor.innerHTML =
+            "<p>Error de conexión cargando métricas.</p>";
+    }
+}
+
 cargarAdminQueue();
 cargarPruebas();
 cargarPagos();
+cargarSesiones();
 
 setInterval(() => {
     cargarAdminQueue();
     cargarPruebas();
     cargarPagos();
+    cargarSesiones();
 }, 5000);
 
 </script>
