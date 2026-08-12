@@ -34,6 +34,14 @@
     ➕ AGREGAR A LA COLA
 </button>
 
+<button onclick="agregarGafasSiguiente()">
+    👓 GAFAS · SIGUIENTE
+</button>
+
+<button onclick="agregarGafasAhora()">
+    👓 GAFAS · SONAR AHORA
+</button>
+
             <button onclick="cambiarEstado(true)">
                 🟢 ACTIVAR LIVE
             </button>
@@ -91,6 +99,27 @@
         </div>
 
     </section>
+
+<section class="admin-section admin-payments-section">
+
+    <div class="admin-section-header">
+
+        <div>
+            <small>MONETIZACIÓN</small>
+            <strong>💰 PAGOS PAYPAL</strong>
+        </div>
+
+        <span class="admin-count-badge" id="payments-count">
+            0
+        </span>
+
+    </div>
+
+    <div id="admin-payments">
+        <p>No hay pagos registrados.</p>
+    </div>
+
+</section>
 
 </div>
 
@@ -162,8 +191,16 @@ async function cargarAdminQueue() {
             <strong>${item.text}</strong>
 
             <button onclick="ponerSiguiente(${item.id})">
-                ⏭ PONER SIGUIENTE
+                ⬆ SUBIR 1 PUESTO
             </button>
+
+<button onclick="ponerGafasSiguiente(${item.id})">
+    👓 GAFAS · SIGUIENTE
+</button>
+
+<button onclick="ponerGafasAhora(${item.id})">
+    👓 GAFAS · SONAR AHORA
+</button>
 
             <button onclick="eliminarSolicitud(${item.id})">
     🗑 ELIMINAR
@@ -184,6 +221,118 @@ async function cargarAdminQueue() {
 
 const moveNextURL =
     "https://playlist-api.bookingelbrayan.workers.dev/move-next";
+
+const giftNextURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/gift-next";
+
+    const giftAddNextURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/gift-add-next";
+
+    const giftAddNowURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/gift-add-now";
+
+    const giftNowURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/gift-now";
+
+async function agregarGafasSiguiente() {
+
+    const key = document.getElementById("admin-key").value;
+    const text = document.getElementById("request-text").value.trim();
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    if (!text) {
+        result.textContent = "Pega una canción.";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(giftAddNextURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                text: text
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "👓 Gafas: agregada como siguiente";
+
+        document.getElementById("request-text").value = "";
+
+        cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent = "Error de conexión";
+    }
+}
+
+async function agregarGafasAhora() {
+
+    const key = document.getElementById("admin-key").value;
+    const text = document.getElementById("request-text").value.trim();
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    if (!text) {
+        result.textContent = "Pega una canción.";
+        return;
+    }
+
+    const confirmar = confirm(
+        "¿Poner esta canción a sonar AHORA y devolver la actual al primer puesto?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+        const response = await fetch(giftAddNowURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                text: text
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "👓 Gafas: agregada y puesta a sonar ahora";
+
+        document.getElementById("request-text").value = "";
+
+        cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent = "Error de conexión";
+    }
+}
 
 async function ponerSiguiente(id) {
 
@@ -216,6 +365,90 @@ async function ponerSiguiente(id) {
         }
 
         result.textContent = "⏭ Canción puesta como próxima";
+
+        cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent = "Error de conexión";
+    }
+}
+
+async function ponerGafasSiguiente(id) {
+
+    const key = document.getElementById("admin-key").value;
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(giftNextURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                id: id
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "👓 Gafas: canción puesta como siguiente";
+
+        cargarAdminQueue();
+
+    } catch (error) {
+        result.textContent = "Error de conexión";
+    }
+}
+
+async function ponerGafasAhora(id) {
+
+    const key = document.getElementById("admin-key").value;
+    const result = document.getElementById("admin-result");
+
+    if (!key) {
+        result.textContent = "Escribe tu clave.";
+        return;
+    }
+
+    const confirmar = confirm(
+        "¿Poner esta canción a sonar AHORA y devolver la actual al primer puesto?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+        const response = await fetch(giftNowURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                id: id
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            result.textContent = data.error || "Error";
+            return;
+        }
+
+        result.textContent = "👓 Gafas: canción puesta a sonar ahora";
 
         cargarAdminQueue();
 
@@ -659,12 +892,111 @@ async function revisarPrueba(proofId, decision) {
     }
 }
 
+const paymentsURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/admin/payments";
+
+async function cargarPagos() {
+
+    const contenedor =
+        document.getElementById("admin-payments");
+
+    const contador =
+        document.getElementById("payments-count");
+
+    const key =
+        document.getElementById("admin-key").value;
+
+    if (!key) {
+        contador.textContent = "0";
+        contenedor.innerHTML =
+            "<p>Escribe tu clave para ver los pagos.</p>";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(paymentsURL, {
+            headers: {
+                "Authorization": `Bearer ${key}`
+            }
+        });
+
+        const payments = await response.json();
+
+        if (!response.ok) {
+            contenedor.innerHTML =
+                `<p>${payments.error || "Error cargando pagos."}</p>`;
+            return;
+        }
+
+        contador.textContent = payments.length;
+
+        if (payments.length === 0) {
+            contenedor.innerHTML =
+                "<p>No hay pagos registrados.</p>";
+            return;
+        }
+
+        const total = payments.reduce(
+            (suma, payment) =>
+                suma + Number(payment.amount || 0),
+            0
+        );
+
+        let html = `
+            <div class="admin-payment-total">
+                <small>TOTAL REGISTRADO</small>
+                <strong>$${total.toFixed(2)} USD</strong>
+            </div>
+        `;
+
+        payments.forEach(payment => {
+
+            html += `
+                <div class="admin-payment-item">
+
+                    <div>
+                        <strong>
+                            ${payment.request_text || "Canción eliminada"}
+                        </strong>
+
+                        <span>
+                            ${payment.status}
+                        </span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            $${Number(payment.amount).toFixed(2)}
+                            ${payment.currency}
+                        </strong>
+
+                        <small>
+                            ${payment.created_at || ""}
+                        </small>
+                    </div>
+
+                </div>
+            `;
+        });
+
+        contenedor.innerHTML = html;
+
+    } catch (error) {
+
+        contenedor.innerHTML =
+            "<p>Error de conexión cargando pagos.</p>";
+    }
+}
+
 cargarAdminQueue();
 cargarPruebas();
+cargarPagos();
 
 setInterval(() => {
     cargarAdminQueue();
     cargarPruebas();
+    cargarPagos();
 }, 5000);
 
 </script>
