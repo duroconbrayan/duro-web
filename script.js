@@ -1,11 +1,8 @@
-console.log("script.js NUEVO CARGADO");
-
 const statusURL = "https://playlist-api.bookingelbrayan.workers.dev/status";
 const requestsURL = "https://playlist-api.bookingelbrayan.workers.dev/requests";
 
-let ultimaPlaylist = "";
-let ultimaCancion = "";
 let solicitudSeleccionadaId = null;
+let colaActual = [];
 
 function obtenerVisitorId() {
     let visitorId = localStorage.getItem("duro_visitor_id");
@@ -49,6 +46,18 @@ async function procesarRegresoPayPal() {
     const paypalStatus = params.get("paypal");
     const orderId = params.get("token");
 
+if (paypalStatus === "cancel") {
+    alert("Pago cancelado. Tu canción mantiene su posición actual.");
+
+    window.history.replaceState(
+        {},
+        "",
+        window.location.pathname
+    );
+
+    return;
+}
+
     if (paypalStatus !== "success" || !orderId) {
         return;
     }
@@ -76,7 +85,7 @@ async function procesarRegresoPayPal() {
         }
 
         if (data.paid) {
-            alert("✅ Pago de $2 confirmado correctamente.");
+            alert("✅ Pago confirmado. Tu canción pasó automáticamente al puesto #1.");
 
             window.history.replaceState(
                 {},
@@ -660,8 +669,9 @@ if (submitBtn) {
                 <strong>✅ PRUEBA ENVIADA</strong>
 
                 <p class="proof-text">
-                    Tu captura quedó pendiente de revisión.
-                </p>
+    Tu captura quedó pendiente de revisión.
+    Cuando sea aprobada, tu canción subirá automáticamente.
+</p>
 
                 <button
                     type="button"

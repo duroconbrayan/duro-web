@@ -644,6 +644,8 @@ async function agregarSolicitud() {
         result.textContent = "✅ Agregada a la cola";
         document.getElementById("request-text").value = "";
 
+cargarAdminQueue();
+
     } catch (error) {
 
         result.textContent = "Error de conexión";
