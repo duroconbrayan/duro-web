@@ -921,36 +921,30 @@ async function cargarPagos() {
             }
         });
 
-        const payments = await response.json();
+        const data = await response.json();
 
         if (!response.ok) {
             contenedor.innerHTML =
-                `<p>${payments.error || "Error cargando pagos."}</p>`;
+                `<p>${data.error || "Error cargando pagos."}</p>`;
             return;
         }
 
-        contador.textContent = payments.length;
+        contador.textContent = data.total_payments;
 
-        if (payments.length === 0) {
+        if (data.payments.length === 0) {
             contenedor.innerHTML =
                 "<p>No hay pagos registrados.</p>";
             return;
         }
 
-        const total = payments.reduce(
-            (suma, payment) =>
-                suma + Number(payment.amount || 0),
-            0
-        );
-
         let html = `
             <div class="admin-payment-total">
                 <small>TOTAL REGISTRADO</small>
-                <strong>$${total.toFixed(2)} USD</strong>
+                <strong>$${Number(data.total).toFixed(2)} USD</strong>
             </div>
         `;
 
-        payments.forEach(payment => {
+        data.payments.forEach(payment => {
 
             html += `
                 <div class="admin-payment-item">
