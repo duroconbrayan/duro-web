@@ -1876,3 +1876,119 @@ a:focus-visible, button:focus-visible{
     min-width: 0;
     overflow: hidden;
 }
+
+/* ============ ADMIN PAYPAL + MÉTRICAS ============ */
+
+.admin-payments-section{
+    border-color: rgba(198,255,77,.20);
+}
+
+.admin-sessions-section{
+    border-color: rgba(139,92,246,.25);
+}
+
+#admin-payments,
+#admin-sessions{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#admin-payments > p,
+#admin-sessions > p{
+    padding: 26px 15px;
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+    color: var(--muted-2);
+    text-align: center;
+    font-size: 12px;
+}
+
+/* tarjetas de pagos y directos */
+
+.admin-payment-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+
+    padding: 15px 16px;
+
+    background: rgba(255,255,255,.025);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+}
+
+.admin-payment-item > div{
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.admin-payment-item > div:last-child{
+    align-items: flex-end;
+    text-align: right;
+}
+
+.admin-payment-item strong{
+    color: var(--text);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.admin-payment-item span{
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.admin-payment-item small{
+    color: var(--muted-2);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+/* DIRECTOS ocupa todo el ancho */
+
+.admin-sessions-section{
+    grid-column: 1 / -1;
+}
+
+/* historial de directos más cómodo */
+
+#admin-sessions .admin-payment-item{
+    padding: 17px 18px;
+}
+
+#admin-sessions .admin-payment-item > div:last-child{
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 6px 18px;
+}
+
+#admin-sessions .admin-payment-item > div:last-child strong,
+#admin-sessions .admin-payment-item > div:last-child span{
+    padding: 6px 9px;
+
+    background: rgba(255,255,255,.035);
+    border-radius: 8px;
+}
+
+@media (max-width: 600px){
+
+    .admin-payment-item{
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .admin-payment-item > div:last-child{
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    #admin-sessions .admin-payment-item > div:last-child{
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+    }
+}
