@@ -925,6 +925,122 @@ a{ text-decoration: none; color: inherit; }
     font-weight: 600;
     overflow-wrap: anywhere;
 }
+
+/* movimiento reciente de una canción */
+.song-movement{
+    margin-left: auto;
+    flex-shrink: 0;
+
+    padding: 6px 10px;
+    border-radius: 999px;
+
+    background: var(--lime-soft);
+    border: 1px solid rgba(198,255,77,.35);
+
+    color: var(--lime);
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .5px;
+
+    box-shadow: 0 0 18px rgba(198,255,77,.12);
+
+    animation: movementBadge .55s ease both;
+}
+
+.song-moved-up{
+    animation: songMovedUp .8s ease both;
+}
+
+@keyframes songMovedUp{
+    0%{
+        transform: translateY(14px) scale(.98);
+        border-color: rgba(198,255,77,.75);
+        box-shadow: 0 0 0 rgba(198,255,77,0);
+    }
+
+    45%{
+        transform: translateY(-3px) scale(1.015);
+        border-color: rgba(198,255,77,.70);
+        box-shadow: 0 0 28px rgba(198,255,77,.18);
+    }
+
+    100%{
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes movementBadge{
+    0%{
+        opacity: 0;
+        transform: translateX(10px) scale(.8);
+    }
+
+    60%{
+        opacity: 1;
+        transform: translateX(-2px) scale(1.08);
+    }
+
+    100%{
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* celebración especial al llegar al #1 */
+.song-movement-first{
+    background: rgba(246,196,83,.16);
+    border-color: rgba(246,196,83,.65);
+    color: #f6c453;
+
+    box-shadow:
+        0 0 18px rgba(246,196,83,.22),
+        0 0 34px rgba(246,196,83,.10);
+
+    animation: firstPlaceBadge .7s ease both;
+}
+
+.song-reached-first{
+    animation: reachedFirst .95s ease both;
+}
+
+@keyframes reachedFirst{
+    0%{
+        transform: translateY(18px) scale(.97);
+        box-shadow: 0 0 0 rgba(246,196,83,0);
+    }
+
+    45%{
+        transform: translateY(-4px) scale(1.025);
+        border-color: rgba(246,196,83,.95);
+        box-shadow:
+            0 0 30px rgba(246,196,83,.30),
+            0 0 55px rgba(246,196,83,.15);
+    }
+
+    100%{
+        transform: translateY(0) scale(1);
+        border-color: rgba(246,196,83,.5);
+    }
+}
+
+@keyframes firstPlaceBadge{
+    0%{
+        opacity: 0;
+        transform: scale(.65) rotate(-4deg);
+    }
+
+    55%{
+        opacity: 1;
+        transform: scale(1.12) rotate(2deg);
+    }
+
+    100%{
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
 .song-badge{
     position: absolute;
     top: -9px;

@@ -3,6 +3,18 @@ const requestsURL = "https://playlist-api.bookingelbrayan.workers.dev/requests";
 
 let solicitudSeleccionadaId = null;
 let colaActual = [];
+let posicionesAnteriores = new Map();
+let primeraCargaCola = true;
+let playingAnteriorId = null;
+
+function escaparHTML(valor) {
+    return String(valor ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
 function obtenerVisitorId() {
     let visitorId = localStorage.getItem("duro_visitor_id");
@@ -138,6 +150,31 @@ async function cargarHistorial() {
     .filter(item => item.status === "queue")
     .sort((a, b) => a.sort_order - b.sort_order);
 
+const playingActualId = playing?.id ?? null;
+
+const cambioCancionActual =
+    playingAnteriorId !== null &&
+    playingActualId !== playingAnteriorId;
+
+const movimientos = new Map();
+
+if (!primeraCargaCola && !cambioCancionActual) {
+    queue.forEach((item, index) => {
+        const posicionAnterior = posicionesAnteriores.get(item.id);
+
+        if (posicionAnterior !== undefined && index < posicionAnterior) {
+            movimientos.set(item.id, posicionAnterior - index);
+        }
+    });
+}
+
+posicionesAnteriores = new Map(
+    queue.map((item, index) => [item.id, index])
+);
+
+primeraCargaCola = false;
+playingAnteriorId = playingActualId;
+    
 colaActual = queue;
 
             const currentSong = document.getElementById("current-song");
@@ -195,13 +232,31 @@ number.className = "song-number";
 number.textContent = `#${numeroActual + index + 1}`;
 
         const name = document.createElement("span");
-        name.className = "song-name";
-        name.textContent = item.text;
+name.className = "song-name";
+name.textContent = item.text;
 
-        card.appendChild(number);
-        card.appendChild(name);
+card.appendChild(number);
+card.appendChild(name);
 
-        table.appendChild(card);
+const puestosSubidos = movimientos.get(item.id);
+
+if (puestosSubidos) {
+    const movimiento = document.createElement("span");
+    movimiento.className = "song-movement";
+
+    if (index === 0) {
+        movimiento.textContent = `⚡ #1 · ↑ +${puestosSubidos}`;
+        movimiento.classList.add("song-movement-first");
+        card.classList.add("song-reached-first");
+    } else {
+        movimiento.textContent = `↑ +${puestosSubidos}`;
+    }
+
+    card.appendChild(movimiento);
+    card.classList.add("song-moved-up");
+}
+
+table.appendChild(card);
     });
 }
 
@@ -225,7 +280,7 @@ number.textContent = `#${numeroActual + index + 1}`;
     html += `
         <div class="played-history-item">
             <span>✓</span>
-            <strong>${numero}${item.text}</strong>
+            <strong>${numero}${escaparHTML(item.text)}</strong>
         </div>
     `;
 });
@@ -288,33 +343,66 @@ function abrirSelectorSaltar() {
     subtitulo.textContent =
         "Elige qué canción quieres subir al puesto #1.";
 
-    contenido.innerHTML = `
-        <div class="free-actions-label">
-            ELIGE UNA CANCIÓN
-        </div>
+    contenido.innerHTML = "";
 
-        ${colaActual.map((item, index) => `
-            <div
-                class="action-card"
-                onclick='seleccionarParaSaltar(${item.id}, ${JSON.stringify(item.text)})'
-            >
-                <div class="action-left">
-                    <span class="action-icon">#${index + 1}</span>
+    const label = document.createElement("div");
+    label.className = "free-actions-label";
+    label.textContent = "ELIGE UNA CANCIÓN";
 
-                    <div>
-                        <div class="action-title">${item.text}</div>
-                    </div>
-                </div>
+    contenido.appendChild(label);
 
-                <div class="action-right">
-                    <span class="action-price">$2</span>
-                    <span class="action-arrow">›</span>
-                </div>
-            </div>
-        `).join("")}
+    colaActual.forEach((item, index) => {
 
-        <button onclick="cerrarMenu()">✕ Cerrar</button>
-    `;
+        const card = document.createElement("div");
+        card.className = "action-card";
+
+        card.addEventListener("click", () => {
+            seleccionarParaSaltar(item.id, item.text);
+        });
+
+        const left = document.createElement("div");
+        left.className = "action-left";
+
+        const icon = document.createElement("span");
+        icon.className = "action-icon";
+        icon.textContent = `#${index + 1}`;
+
+        const textWrap = document.createElement("div");
+
+        const title = document.createElement("div");
+        title.className = "action-title";
+        title.textContent = item.text;
+
+        textWrap.appendChild(title);
+
+        left.appendChild(icon);
+        left.appendChild(textWrap);
+
+        const right = document.createElement("div");
+        right.className = "action-right";
+
+        const price = document.createElement("span");
+        price.className = "action-price";
+        price.textContent = "$2";
+
+        const arrow = document.createElement("span");
+        arrow.className = "action-arrow";
+        arrow.textContent = "›";
+
+        right.appendChild(price);
+        right.appendChild(arrow);
+
+        card.appendChild(left);
+        card.appendChild(right);
+
+        contenido.appendChild(card);
+    });
+
+    const cerrar = document.createElement("button");
+    cerrar.textContent = "✕ Cerrar";
+    cerrar.addEventListener("click", cerrarMenu);
+
+    contenido.appendChild(cerrar);
 
     overlay.style.display = "block";
     menu.style.display = "block";

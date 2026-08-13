@@ -153,6 +153,15 @@ const statusURL =
 const requestsURL =
     "https://playlist-api.bookingelbrayan.workers.dev/requests";
 
+function escaparHTML(valor) {
+    return String(valor ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
 async function cargarAdminQueue() {
 
     const contenedor = document.getElementById("admin-queue");
@@ -181,7 +190,7 @@ async function cargarAdminQueue() {
         html += `
             <div class="admin-history-item">
                 <span>✓</span>
-                <strong>${item.text}</strong>
+                <strong>${escaparHTML(item.text)}</strong>
             </div>
         `;
     });
@@ -193,7 +202,7 @@ async function cargarAdminQueue() {
             html += `
                 <div class="admin-now-playing">
                     <small>AHORA SONANDO</small>
-                    <strong>${playing.text}</strong>
+                    <strong>${escaparHTML(playing.text)}</strong>
                 </div>
             `;
         }
@@ -207,7 +216,7 @@ async function cargarAdminQueue() {
     html += `
         <div class="admin-queue-item">
             <span>#${numeroActual + index + 1}</span>
-            <strong>${item.text}</strong>
+            <strong>${escaparHTML(item.text)}</strong>
 
             <button onclick="ponerSiguiente(${item.id})">
                 ⬆ SUBIR 1 PUESTO
@@ -728,7 +737,7 @@ async function cargarPruebas() {
 
         if (!response.ok) {
             contenedor.innerHTML =
-                `<p>${proofs.error || "Error cargando pruebas."}</p>`;
+    `<p>${escaparHTML(proofs.error || "Error cargando pruebas.")}</p>`;
             return;
         }
 
@@ -753,12 +762,12 @@ async function cargarPruebas() {
 
             card.innerHTML = `
                 <div class="admin-proof-info">
-                    <strong>${nombreAccion(proof.action)}</strong>
-                    <span>${recompensaAccion(proof.action)}</span>
+                    <strong>${escaparHTML(nombreAccion(proof.action))}</strong>
+<span>${escaparHTML(recompensaAccion(proof.action))}</span>
                 </div>
 
                 <p>
-                    🎵 ${proof.request_text}
+                    🎵 ${escaparHTML(proof.request_text)}
                 </p>
 
                 <div class="proof-image-container">
@@ -946,7 +955,7 @@ async function cargarPagos() {
 
         if (!response.ok) {
             contenedor.innerHTML =
-                `<p>${data.error || "Error cargando pagos."}</p>`;
+    `<p>${escaparHTML(data.error || "Error cargando pagos.")}</p>`;
             return;
         }
 
@@ -972,7 +981,7 @@ async function cargarPagos() {
 
                     <div>
                         <strong>
-                            ${payment.request_text || "Canción eliminada"}
+                            ${escaparHTML(payment.request_text || "Canción eliminada")}
                         </strong>
 
                         <span>
@@ -1037,7 +1046,7 @@ async function cargarSesiones() {
 
         if (!response.ok) {
             contenedor.innerHTML =
-                `<p>${sessions.error || "Error cargando métricas."}</p>`;
+    `<p>${escaparHTML(sessions.error || "Error cargando métricas.")}</p>`;
             return;
         }
 
