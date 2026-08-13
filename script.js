@@ -1,5 +1,7 @@
 const statusURL = "https://playlist-api.bookingelbrayan.workers.dev/status";
 const requestsURL = "https://playlist-api.bookingelbrayan.workers.dev/requests";
+const liveLikesURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/live-likes";
 
 let solicitudSeleccionadaId = null;
 let colaActual = [];
@@ -292,13 +294,67 @@ table.appendChild(card);
     }
 }
 
+async function cargarLiveLikes() {
+
+    try {
+        const response = await fetch(liveLikesURL);
+        const data = await response.json();
+
+        if (!response.ok) return;
+
+        const contenedor = document.getElementById("live-likes");
+        const contador = document.getElementById("live-likes-count");
+        const barra = document.getElementById("live-likes-progress");
+        const mensaje = document.getElementById("live-likes-message");
+
+        if (!contenedor || !contador || !barra || !mensaje) return;
+
+        const goal = Number(data.goal) || 5000;
+        const progress = Number(data.progress) || 0;
+
+        const porcentaje = Math.min(
+            100,
+            (progress / goal) * 100
+        );
+
+        contador.textContent =
+            `${progress.toLocaleString("es-CO")} / ${goal.toLocaleString("es-CO")}`;
+
+        barra.style.width = `${porcentaje}%`;
+
+        if (Number(data.completed_goals) > 0 && progress === 0) {
+
+            contenedor.classList.add("goal-complete");
+            barra.style.width = "100%";
+            contador.textContent =
+                `${goal.toLocaleString("es-CO")} / ${goal.toLocaleString("es-CO")}`;
+
+            mensaje.textContent = "🔥 META COMPLETADA · CAMBIAMOS DE CANCIÓN";
+
+        } else {
+
+            contenedor.classList.remove("goal-complete");
+            mensaje.textContent =
+                "CADA 5.000 LIKES CAMBIAMOS DE CANCIÓN";
+        }
+
+    } catch (error) {
+        console.error("Error cargando likes del LIVE:", error);
+    }
+}
+
 comprobarEstadoLive();
 cargarHistorial();
+cargarLiveLikes();
 
 setInterval(() => {
     comprobarEstadoLive();
     cargarHistorial();
 }, 10000);
+
+setInterval(() => {
+    cargarLiveLikes();
+}, 2000);
 
 function seleccionarCancion(id, cancion) {
 

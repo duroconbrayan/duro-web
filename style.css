@@ -2252,3 +2252,75 @@ a:focus-visible, button:focus-visible{
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* ============ LIVE LIKES ============ */
+
+.live-likes{
+    margin: 0 0 20px;
+    padding: 15px 17px;
+
+    background: rgba(27,20,32,.88);
+    border: 1px solid rgba(255,90,31,.30);
+    border-radius: 16px;
+}
+
+.live-likes-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 10px;
+}
+
+.live-likes-top span{
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.live-likes-top strong{
+    color: var(--orange);
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+.live-likes-track{
+    width: 100%;
+    height: 10px;
+
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+}
+
+.live-likes-progress{
+    width: 0%;
+    height: 100%;
+
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--orange), #ffb347);
+
+    transition: width .45s ease;
+}
+
+.live-likes-message{
+    margin-top: 9px;
+
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-align: center;
+}
+
+.live-likes.goal-complete{
+    border-color: rgba(255,179,71,.75);
+    box-shadow: 0 0 25px rgba(255,90,31,.18);
+}
+
+.live-likes.goal-complete .live-likes-message{
+    color: var(--orange);
+    font-weight: 900;
+}
