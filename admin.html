@@ -1016,6 +1016,9 @@ async function cargarPagos() {
 const sessionsURL =
     "https://playlist-api.bookingelbrayan.workers.dev/admin/sessions";
 
+const sessionSongsURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/admin/session-songs";
+
 async function cargarSesiones() {
 
     const contenedor =
@@ -1102,6 +1105,10 @@ async function cargarSesiones() {
                             💰 ${session.paypal_payments} pagos ·
                             $${Number(session.paypal_revenue).toFixed(2)}
                         </span>
+<button onclick="copiarListaSesion(${session.id}, this)">
+    📋 COPIAR LISTA
+</button>
+
                     </div>
 
                 </div>
@@ -1114,6 +1121,57 @@ async function cargarSesiones() {
 
         contenedor.innerHTML =
             "<p>Error de conexión cargando métricas.</p>";
+    }
+}
+
+async function copiarListaSesion(sessionId, boton) {
+
+    const key = document.getElementById("admin-key").value;
+
+    if (!key) {
+        alert("Escribe tu clave.");
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${sessionSongsURL}?session_id=${sessionId}`,
+            {
+                headers: {
+                    "Authorization": `Bearer ${key}`
+                }
+            }
+        );
+
+        const songs = await response.json();
+
+        if (!response.ok) {
+            alert(songs.error || "Error cargando la lista.");
+            return;
+        }
+
+        if (songs.length === 0) {
+            alert("Este directo no tiene lista guardada.");
+            return;
+        }
+
+        const texto = songs
+            .map(song => song.text)
+            .join("\n");
+
+        await navigator.clipboard.writeText(texto);
+
+        const textoAnterior = boton.textContent;
+
+        boton.textContent = `✅ ${songs.length} CANCIONES COPIADAS`;
+
+        setTimeout(() => {
+            boton.textContent = textoAnterior;
+        }, 2000);
+
+    } catch (error) {
+        alert("Error copiando la lista.");
     }
 }
 
