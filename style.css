@@ -3898,3 +3898,191 @@ main{
         font-size: 16px;
     }
 }
+
+/* =========================================================
+   DURO 2.0 — LAYOUT DESKTOP TIPO MOCKUP
+   ========================================================= */
+
+@media (min-width: 901px){
+
+    /* AHORA SUENA + LIKES */
+    .duro-live-grid{
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(360px, .85fr);
+        gap: 18px;
+
+        width: 100%;
+        margin-bottom: 18px;
+
+        align-items: stretch;
+    }
+
+    .duro-live-grid .now-playing,
+    .duro-live-grid .live-likes{
+        margin: 0;
+        height: 100%;
+    }
+
+    /* AHORA SUENA */
+    .duro-live-grid .now-playing{
+        min-height: 300px;
+        padding: 38px 42px;
+    }
+
+    .duro-live-grid #current-song{
+        font-size: clamp(48px, 4vw, 72px);
+    }
+
+    /* LIKES */
+    .duro-live-grid .live-likes{
+        min-height: 300px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        padding: 32px;
+    }
+
+    .duro-live-grid .live-likes-top{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .duro-live-grid .live-likes-top span{
+        font-size: 27px;
+    }
+
+    .duro-live-grid .live-likes-top strong{
+        font-size: clamp(58px, 5vw, 82px);
+    }
+
+    .duro-live-grid .live-likes-track{
+        width: 100%;
+        height: 16px;
+        margin-top: 25px;
+    }
+
+    .duro-live-grid .live-likes-message{
+        margin-top: 18px;
+        font-size: 17px;
+        line-height: 1.25;
+    }
+
+    .duro-live-grid .live-likes-hint{
+        margin-top: 15px;
+        font-size: 15px;
+    }
+
+
+    /* SALTAR — BARRA GRANDE */
+    .skip-banner{
+        min-height: 112px;
+
+        padding: 24px 32px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        border-radius: 22px;
+    }
+
+    .skip-info strong{
+        font-size: 40px;
+    }
+
+    .skip-info span{
+        font-size: 16px;
+    }
+
+    .skip-banner button{
+        min-width: 260px;
+        min-height: 66px;
+
+        font-size: 31px;
+    }
+
+
+    /* COLA */
+    .playlist-container{
+        width: 100%;
+    }
+
+    .playlist-container-label{
+        margin-top: 30px;
+        margin-bottom: 16px;
+
+        font-size: 42px;
+    }
+
+
+    /* GUÍA GRANDE */
+    .queue-guide{
+        width: 100%;
+        height: 230px;
+
+        margin-bottom: 24px;
+    }
+
+    .queue-guide-slide{
+        padding: 28px 38px 40px;
+    }
+
+    .queue-guide-step{
+        font-size: 17px;
+    }
+
+    .queue-guide-slide strong{
+        font-size: clamp(48px, 5vw, 72px);
+    }
+
+    .queue-guide-slide small{
+        font-size: 18px;
+    }
+
+
+    /* CANCIONES */
+    .song-card{
+        min-height: 94px;
+
+        padding: 20px 24px;
+        margin-bottom: 15px;
+    }
+
+    .song-number{
+        min-width: 70px;
+
+        font-size: 31px;
+    }
+
+    .song-name{
+        font-size: 25px;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL — CONSERVAR ORDEN VERTICAL
+   ========================================================= */
+
+@media (max-width: 900px){
+
+    .duro-live-grid{
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        gap: 16px;
+
+        margin-bottom: 18px;
+    }
+
+    .duro-live-grid .now-playing,
+    .duro-live-grid .live-likes{
+        width: 100%;
+        margin: 0;
+    }
+}

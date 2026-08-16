@@ -26,28 +26,76 @@
     <div id="played-history" class="played-history"></div>
 </div>
 
+<div class="duro-live-grid">
+
     <div class="now-playing">
 
-    <div class="playing-animation">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+        <div class="playing-animation">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
 
-    <div class="playing-info">
+        <div class="playing-info">
             <small>AHORA SONANDO</small>
             <div id="current-song">Esperando playlist...</div>
-            <p class="reaction-status">🎧 Escuchando y reaccionando en vivo</p>
 
-<div class="player-progress">
-    <div class="player-progress-bar"></div>
-</div>
+            <p class="reaction-status">
+                🎧 Escuchando y reaccionando en vivo
+            </p>
 
-</div>
+            <div class="player-progress">
+                <div class="player-progress-bar"></div>
+            </div>
+        </div>
 
     </div>
+
+    <div
+        class="live-likes"
+        id="live-likes"
+        onclick="toggleTopLikes()"
+    >
+        <div class="live-likes-top">
+            <span>❤️ META DEL LIVE</span>
+            <strong id="live-likes-count">0 ❤️</strong>
+        </div>
+
+        <div class="live-likes-track">
+            <div
+                class="live-likes-progress"
+                id="live-likes-progress"
+            ></div>
+        </div>
+
+        <div
+            class="live-likes-message"
+            id="live-likes-message"
+        >
+            CADA 5.000 LIKES CAMBIAMOS DE CANCIÓN
+        </div>
+
+        <div class="live-likes-hint">
+            TOCA PARA VER QUIÉNES MÁS APOYAN ↓
+        </div>
+
+        <div
+            class="live-likes-ranking"
+            id="live-likes-ranking"
+        >
+            <div class="live-likes-ranking-title">
+                ❤️ TOP DEL LIVE
+            </div>
+
+            <div id="live-likes-ranking-list">
+                Esperando corazones...
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <div id="offline-mode" class="offline-mode">
 
@@ -154,39 +202,6 @@
         <span></span>
     </div>
 
-</div>
-
-<div
-    class="live-likes"
-    id="live-likes"
-    onclick="toggleTopLikes()"
->
-    <div class="live-likes-top">
-        <span>❤️ META DEL LIVE</span>
-        <strong id="live-likes-count">0 ❤️</strong>
-    </div>
-
-    <div class="live-likes-track">
-        <div class="live-likes-progress" id="live-likes-progress"></div>
-    </div>
-
-    <div class="live-likes-message" id="live-likes-message">
-        CADA 5.000 LIKES CAMBIAMOS DE CANCIÓN
-    </div>
-
-    <div class="live-likes-hint">
-        TOCA PARA VER QUIÉNES MÁS APOYAN ↓
-    </div>
-
-    <div class="live-likes-ranking" id="live-likes-ranking">
-        <div class="live-likes-ranking-title">
-            ❤️ TOP DEL LIVE
-        </div>
-
-        <div id="live-likes-ranking-list">
-            Esperando corazones...
-        </div>
-    </div>
 </div>
 
         <div id="playlist-body"></div>
