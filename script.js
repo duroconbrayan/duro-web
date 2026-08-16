@@ -310,7 +310,10 @@ async function cargarLiveLikes() {
         if (!contenedor || !contador || !barra || !mensaje) return;
 
         const goal = Number(data.goal) || 5000;
-        const progress = Number(data.progress) || 0;
+const progress = Number(data.progress) || 0;
+const total = Number(data.total) || 0;
+const base = Number(data.base) || 0;
+const likesDelLive = Math.max(0, total - base);
 
         const porcentaje = Math.min(
             100,
@@ -318,7 +321,7 @@ async function cargarLiveLikes() {
         );
 
         contador.textContent =
-            `${progress.toLocaleString("es-CO")} / ${goal.toLocaleString("es-CO")}`;
+    `${likesDelLive.toLocaleString("es-CO")} ❤️`;
 
         barra.style.width = `${porcentaje}%`;
 
@@ -326,8 +329,6 @@ async function cargarLiveLikes() {
 
             contenedor.classList.add("goal-complete");
             barra.style.width = "100%";
-            contador.textContent =
-                `${goal.toLocaleString("es-CO")} / ${goal.toLocaleString("es-CO")}`;
 
             mensaje.textContent = "🔥 META COMPLETADA · CAMBIAMOS DE CANCIÓN";
 
