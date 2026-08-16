@@ -2407,3 +2407,1494 @@ a:focus-visible, button:focus-visible{
     color: var(--muted);
     font-size: 11px;
 }
+
+/* =========================================================
+   DURO 2.0 — REDISEÑO PRINCIPAL
+   ========================================================= */
+
+/* ---------- BASE ---------- */
+
+body{
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(255,90,31,.20),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 15% 35%,
+            rgba(255,179,71,.08),
+            transparent 30%
+        ),
+        #070708;
+
+    color: #fff;
+}
+
+/* menos ruido visual del fondo viejo */
+body::before{
+    opacity: .12;
+}
+
+body::after{
+    opacity: .22;
+}
+
+.stage-glow{
+    opacity: .65;
+}
+
+
+/* ---------- CONTENEDOR ---------- */
+
+main{
+    padding: 28px 20px 70px;
+}
+
+.page-wrap{
+    width: 100%;
+    max-width: 1120px;
+}
+
+
+/* ---------- HEADER DURO ---------- */
+
+.playlist-header{
+    margin-bottom: 22px;
+}
+
+.playlist-header .wordmark{
+    margin: 0;
+
+    font-size: clamp(64px, 8vw, 104px);
+    line-height: .9;
+    letter-spacing: 3px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff 0%,
+            #fff4e1 45%,
+            #ff9b48 100%
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    text-shadow:
+        0 0 30px rgba(255,90,31,.22),
+        0 0 80px rgba(255,90,31,.10);
+}
+
+.live-status{
+    margin-top: 16px;
+    padding: 10px 20px;
+
+    border: 1px solid rgba(255,90,31,.55);
+    background: rgba(255,90,31,.11);
+
+    color: #ff9b64;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 2px;
+
+    box-shadow:
+        0 0 22px rgba(255,90,31,.12);
+}
+
+.live-dot{
+    width: 10px;
+    height: 10px;
+
+    box-shadow:
+        0 0 12px rgba(255,90,31,1),
+        0 0 24px rgba(255,90,31,.55);
+}
+
+
+/* ---------- AHORA SONANDO ---------- */
+
+.now-playing{
+    position: relative;
+    overflow: hidden;
+
+    min-height: 220px;
+
+    padding: 34px 38px;
+    margin-bottom: 18px;
+
+    border-radius: 28px;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(255,123,36,.26),
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(25,19,16,.98),
+            rgba(10,10,11,.98)
+        );
+
+    border: 1px solid rgba(255,130,55,.48);
+
+    box-shadow:
+        0 22px 60px rgba(0,0,0,.42),
+        0 0 45px rgba(255,90,31,.10),
+        inset 0 0 35px rgba(255,90,31,.035);
+}
+
+.now-playing::after{
+    content: "";
+
+    position: absolute;
+    width: 320px;
+    height: 320px;
+
+    right: -160px;
+    top: -160px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,179,71,.18),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+.playing-animation{
+    height: 76px;
+    gap: 6px;
+}
+
+.playing-animation span{
+    width: 7px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffe3a0,
+            #ff8c32,
+            #ff4d1f
+        );
+
+    box-shadow:
+        0 0 12px rgba(255,90,31,.40);
+}
+
+.playing-info small{
+    color: #ff9b50;
+
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+#current-song{
+    margin-top: 10px;
+
+    font-family: var(--font-display);
+
+    font-size: clamp(42px, 7vw, 74px);
+    font-weight: 400;
+    line-height: .98;
+    letter-spacing: .5px;
+
+    color: #fff;
+
+    text-shadow:
+        0 4px 25px rgba(0,0,0,.35);
+}
+
+.reaction-status{
+    margin-top: 12px;
+
+    color: #bdb7af;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.player-progress{
+    height: 8px;
+    margin-top: 22px;
+
+    background: rgba(255,255,255,.10);
+}
+
+.player-progress-bar{
+    background:
+        linear-gradient(
+            90deg,
+            #ff5a1f,
+            #ffb347,
+            #ffe09a
+        );
+
+    box-shadow:
+        0 0 18px rgba(255,120,40,.55);
+}
+
+
+/* ---------- MÓVIL ---------- */
+
+@media (max-width: 700px){
+
+    main{
+        padding:
+            22px 14px
+            calc(55px + env(safe-area-inset-bottom));
+    }
+
+    .page-wrap{
+        max-width: 520px;
+    }
+
+    .playlist-header{
+        margin-bottom: 18px;
+    }
+
+    .playlist-header .wordmark{
+        font-size: clamp(62px, 20vw, 88px);
+    }
+
+    .live-status{
+        margin-top: 12px;
+
+        padding: 9px 17px;
+
+        font-size: 14px;
+    }
+
+    .now-playing{
+        min-height: 0;
+
+        gap: 18px;
+
+        padding: 27px 22px;
+
+        border-radius: 24px;
+    }
+
+    .playing-animation{
+        height: 60px;
+        gap: 4px;
+    }
+
+    .playing-animation span{
+        width: 6px;
+    }
+
+    .playing-info small{
+        font-size: 15px;
+    }
+
+    #current-song{
+        font-size: clamp(38px, 11vw, 58px);
+    }
+
+    .reaction-status{
+        font-size: 15px;
+    }
+
+    .player-progress{
+        height: 8px;
+        margin-top: 18px;
+    }
+}
+
+/* =========================================================
+   DURO 2.0 — INTERACCIÓN PRINCIPAL
+   LIKES + $2 + GUÍA TIKTOK
+   ========================================================= */
+
+
+/* ---------- SALTAR AL #1 ---------- */
+
+.skip-banner{
+    position: relative;
+    overflow: hidden;
+
+    width: 100%;
+
+    margin-bottom: 10px;
+    padding: 24px 26px;
+
+    border-radius: 24px;
+
+    background:
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(255,179,71,.18),
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(24,17,12,.98),
+            rgba(12,12,13,.98)
+        );
+
+    border: 1px solid rgba(255,157,66,.38);
+
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.30),
+        0 0 28px rgba(255,90,31,.08);
+}
+
+.skip-info{
+    gap: 2px;
+}
+
+.skip-info strong{
+    font-family: var(--font-display);
+
+    color: #fff;
+
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 400;
+    line-height: 1;
+
+    letter-spacing: .5px;
+}
+
+.skip-info span{
+    margin-top: 7px;
+
+    color: #aaa39a;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.skip-banner button{
+    min-width: 210px;
+
+    padding: 17px 24px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff6a24,
+            #ffad3f
+        );
+
+    color: #160b04;
+
+    font-family: var(--font-display);
+
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: .6px;
+
+    box-shadow:
+        0 0 26px rgba(255,110,35,.30),
+        0 10px 28px rgba(0,0,0,.28);
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+.skip-banner button:hover{
+    transform: translateY(-2px) scale(1.025);
+
+    box-shadow:
+        0 0 38px rgba(255,110,35,.42),
+        0 14px 34px rgba(0,0,0,.32);
+}
+
+.payment-note{
+    margin: 0 0 22px;
+
+    color: #7f786f;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* ---------- GUÍA TIKTOK ---------- */
+
+.playlist-container-label{
+    margin-bottom: 12px;
+    padding-left: 2px;
+
+    color: #fff;
+
+    font-family: var(--font-display);
+
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 400;
+    letter-spacing: .8px;
+
+    text-transform: uppercase;
+}
+
+.queue-guide{
+    height: 190px;
+
+    margin: 0 0 18px;
+
+    border-radius: 24px;
+
+    background:
+        radial-gradient(
+            circle at 12% 20%,
+            rgba(255,179,71,.20),
+            transparent 34%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(255,90,31,.16),
+            rgba(14,12,13,.98)
+        );
+
+    border: 1px solid rgba(255,120,50,.42);
+
+    box-shadow:
+        0 18px 42px rgba(0,0,0,.26),
+        inset 0 0 32px rgba(255,90,31,.035);
+}
+
+.queue-guide-slide{
+    padding: 20px 28px 34px;
+
+    animation: queueGuideSlideDuro 12s infinite;
+}
+
+.queue-guide-slide:nth-child(1){
+    animation-delay: 0s;
+}
+
+.queue-guide-slide:nth-child(2){
+    animation-delay: 4s;
+}
+
+.queue-guide-slide:nth-child(3){
+    animation-delay: 8s;
+}
+
+.queue-guide-step{
+    margin-bottom: 10px;
+
+    color: #ff9a50;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+}
+
+.queue-guide-slide strong{
+    font-size: clamp(40px, 6vw, 66px);
+    line-height: .92;
+    letter-spacing: .5px;
+
+    color: #fff;
+
+    text-shadow:
+        0 5px 25px rgba(0,0,0,.40),
+        0 0 20px rgba(255,90,31,.12);
+}
+
+.queue-guide-slide small{
+    margin-top: 12px;
+
+    color: #c0b9b1;
+
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .6px;
+}
+
+.queue-guide-arrow{
+    bottom: 22px;
+
+    font-size: 34px;
+
+    color: #ff8e40;
+
+    text-shadow:
+        0 0 18px rgba(255,90,31,.60);
+}
+
+.queue-guide-dots{
+    bottom: 13px;
+}
+
+.queue-guide-dots span{
+    width: 8px;
+    height: 8px;
+
+    animation: queueGuideDotDuro 12s infinite;
+}
+
+.queue-guide-dots span:nth-child(1){
+    animation-delay: 0s;
+}
+
+.queue-guide-dots span:nth-child(2){
+    animation-delay: 4s;
+}
+
+.queue-guide-dots span:nth-child(3){
+    animation-delay: 8s;
+}
+
+@keyframes queueGuideSlideDuro{
+
+    0%{
+        opacity: 0;
+        transform: translateY(16px) scale(.98);
+    }
+
+    7%, 27%{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    33%, 100%{
+        opacity: 0;
+        transform: translateY(-14px) scale(.98);
+    }
+}
+
+@keyframes queueGuideDotDuro{
+
+    0%, 32%{
+        width: 28px;
+
+        background: #ff7a2f;
+
+        box-shadow:
+            0 0 12px rgba(255,90,31,.55);
+    }
+
+    33%, 100%{
+        width: 8px;
+
+        background: rgba(255,255,255,.18);
+
+        box-shadow: none;
+    }
+}
+
+
+/* ---------- LIKES ---------- */
+
+.live-likes{
+    width: 100%;
+
+    margin: 0 0 24px;
+    padding: 26px 28px;
+
+    border-radius: 24px;
+
+    background:
+        radial-gradient(
+            circle at 90% 0%,
+            rgba(255,71,71,.13),
+            transparent 34%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(24,13,14,.98),
+            rgba(11,11,12,.98)
+        );
+
+    border: 1px solid rgba(255,105,74,.38);
+
+    box-shadow:
+        0 18px 42px rgba(0,0,0,.28),
+        0 0 28px rgba(255,68,68,.06);
+
+    transition:
+        transform .18s ease,
+        border-color .18s ease;
+}
+
+.live-likes:hover{
+    transform: translateY(-2px);
+
+    border-color: rgba(255,120,78,.60);
+}
+
+.live-likes-top{
+    align-items: flex-end;
+}
+
+.live-likes-top span{
+    color: #fff;
+
+    font-family: var(--font-display);
+
+    font-size: clamp(25px, 3vw, 36px);
+    font-weight: 400;
+    letter-spacing: .5px;
+}
+
+.live-likes-top strong{
+    color: #ff6b57;
+
+    font-family: var(--font-display);
+
+    font-size: clamp(38px, 5vw, 60px);
+    font-weight: 400;
+    line-height: .9;
+
+    text-shadow:
+        0 0 20px rgba(255,75,65,.22);
+}
+
+.live-likes-track{
+    height: 14px;
+
+    margin-top: 18px;
+
+    background: rgba(255,255,255,.09);
+}
+
+.live-likes-progress{
+    background:
+        linear-gradient(
+            90deg,
+            #ff493d,
+            #ff7a3e,
+            #ffb347
+        );
+
+    box-shadow:
+        0 0 18px rgba(255,79,63,.45);
+}
+
+.live-likes-message{
+    margin-top: 12px;
+
+    color: #d6cfc8;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: .4px;
+}
+
+.live-likes-hint{
+    margin-top: 12px;
+
+    color: #8f8880;
+
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: .5px;
+}
+
+.live-likes-ranking{
+    margin-top: 18px;
+    padding-top: 18px;
+}
+
+.live-likes-ranking-title{
+    margin-bottom: 14px;
+
+    color: #ff735d;
+
+    font-family: var(--font-display);
+
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: .7px;
+}
+
+.live-likes-ranking-item{
+    grid-template-columns: 42px 1fr auto;
+
+    gap: 12px;
+
+    padding: 13px 14px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.035);
+
+    border: 1px solid rgba(255,255,255,.065);
+}
+
+.live-likes-ranking-position{
+    font-size: 22px;
+}
+
+.live-likes-ranking-user{
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.live-likes-ranking-count{
+    color: #ff7c67;
+
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.live-likes-ranking-empty{
+    padding: 16px;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+/* ---------- MÓVIL ---------- */
+
+@media (max-width: 700px){
+
+    .skip-banner{
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 18px;
+
+        padding: 22px 20px;
+    }
+
+    .skip-info{
+        text-align: center;
+    }
+
+    .skip-info strong{
+        font-size: 34px;
+    }
+
+    .skip-info span{
+        font-size: 15px;
+    }
+
+    .skip-banner > div:last-child{
+        width: 100%;
+    }
+
+    .skip-banner button{
+        width: 100%;
+        min-width: 0;
+
+        padding: 18px 16px;
+
+        font-size: 29px;
+    }
+
+    .payment-note{
+        font-size: 13px;
+    }
+
+    .playlist-container-label{
+        text-align: center;
+
+        font-size: 34px;
+    }
+
+    .queue-guide{
+        height: 200px;
+
+        border-radius: 22px;
+    }
+
+    .queue-guide-slide{
+        padding: 20px 18px 36px;
+    }
+
+    .queue-guide-step{
+        font-size: 14px;
+    }
+
+    .queue-guide-slide strong{
+        font-size: clamp(38px, 11vw, 54px);
+    }
+
+    .queue-guide-slide small{
+        font-size: 15px;
+    }
+
+    .live-likes{
+        padding: 22px 20px;
+    }
+
+    .live-likes-top{
+        align-items: center;
+    }
+
+    .live-likes-top span{
+        font-size: 24px;
+    }
+
+    .live-likes-top strong{
+        font-size: clamp(38px, 12vw, 52px);
+    }
+
+    .live-likes-message{
+        font-size: 14px;
+    }
+
+    .live-likes-hint{
+        font-size: 13px;
+    }
+
+    .live-likes-ranking-title{
+        font-size: 26px;
+    }
+
+    .live-likes-ranking-user{
+        font-size: 16px;
+    }
+
+    .live-likes-ranking-count{
+        font-size: 16px;
+    }
+}
+
+/* =========================================================
+   DURO 2.0 — COLA COMPETITIVA
+   ========================================================= */
+
+#playlist-body{
+    width: 100%;
+}
+
+.song-card{
+    position: relative;
+    overflow: visible;
+
+    min-height: 82px;
+
+    margin-bottom: 14px;
+    padding: 18px 20px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(22,22,24,.98),
+            rgba(11,11,12,.98)
+        );
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.20);
+
+    transition:
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
+}
+
+.song-card:hover{
+    transform: translateX(5px) scale(1.01);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(28,25,24,.98),
+            rgba(12,12,13,.98)
+        );
+
+    border-color: rgba(255,125,55,.34);
+
+    box-shadow:
+        0 16px 34px rgba(0,0,0,.26),
+        0 0 22px rgba(255,90,31,.06);
+}
+
+.song-card:active{
+    transform: scale(.985);
+}
+
+
+/* ---------- NÚMERO ---------- */
+
+.song-number{
+    min-width: 64px;
+
+    padding: 10px 12px;
+
+    border-radius: 13px;
+
+    background: #171719;
+
+    color: #fff;
+
+    font-family: var(--font-display);
+
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
+
+    text-align: center;
+
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+
+/* ---------- NOMBRE ---------- */
+
+.song-name{
+    color: #fff;
+
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+
+/* ---------- BADGES ---------- */
+
+.song-badge{
+    top: -10px;
+    left: 18px;
+
+    padding: 5px 12px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+
+/* ---------- TOP 1 ---------- */
+
+.gold-song{
+    border-color: rgba(255,186,73,.70);
+
+    background:
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(255,190,70,.16),
+            transparent 36%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(30,24,14,.98),
+            rgba(11,11,12,.98)
+        );
+
+    box-shadow:
+        0 16px 38px rgba(0,0,0,.28),
+        0 0 30px rgba(255,176,55,.10);
+}
+
+.gold-song .song-number{
+    background:
+        linear-gradient(
+            135deg,
+            #ffd66f,
+            #f1a82f
+        );
+
+    color: #1a1000;
+
+    border: none;
+
+    box-shadow:
+        0 0 22px rgba(255,183,61,.24);
+}
+
+.gold-song .song-badge{
+    background:
+        linear-gradient(
+            135deg,
+            #ffd66f,
+            #f0a62e
+        );
+
+    color: #1a1000;
+
+    box-shadow:
+        0 0 16px rgba(255,181,55,.24);
+}
+
+
+/* ---------- TOP 2 ---------- */
+
+.silver-song{
+    border-color: rgba(207,215,225,.42);
+}
+
+.silver-song .song-number{
+    background:
+        linear-gradient(
+            135deg,
+            #e5e8ee,
+            #aeb5c0
+        );
+
+    color: #111318;
+
+    border: none;
+}
+
+.silver-song .song-badge{
+    background:
+        linear-gradient(
+            135deg,
+            #e5e8ee,
+            #afb6c0
+        );
+
+    color: #111318;
+}
+
+
+/* ---------- TOP 3 ---------- */
+
+.bronze-song{
+    border-color: rgba(216,137,75,.45);
+}
+
+.bronze-song .song-number{
+    background:
+        linear-gradient(
+            135deg,
+            #e19a5f,
+            #b76432
+        );
+
+    color: #170c06;
+
+    border: none;
+}
+
+.bronze-song .song-badge{
+    background:
+        linear-gradient(
+            135deg,
+            #e19a5f,
+            #b76432
+        );
+
+    color: #170c06;
+}
+
+
+/* ---------- MOVIMIENTO ---------- */
+
+.song-movement{
+    margin-left: auto;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    background: rgba(255,120,45,.10);
+
+    border: 1px solid rgba(255,120,45,.28);
+
+    color: #ff9a57;
+
+    font-size: 15px;
+    font-weight: 900;
+
+    box-shadow:
+        0 0 18px rgba(255,90,31,.08);
+}
+
+.song-movement-first{
+    background: rgba(255,191,73,.13);
+
+    border-color: rgba(255,191,73,.48);
+
+    color: #ffd06a;
+
+    box-shadow:
+        0 0 22px rgba(255,183,60,.16);
+}
+
+
+/* ---------- MÓVIL ---------- */
+
+@media (max-width: 700px){
+
+    .song-card{
+        min-height: 74px;
+
+        gap: 14px;
+
+        padding: 17px 15px;
+
+        border-radius: 17px;
+    }
+
+    .song-number{
+        min-width: 58px;
+
+        padding: 10px 8px;
+
+        font-size: 26px;
+    }
+
+    .song-name{
+        font-size: 19px;
+    }
+
+    .song-badge{
+        left: 14px;
+
+        font-size: 11px;
+    }
+
+    .song-movement{
+        padding: 7px 9px;
+
+        font-size: 13px;
+    }
+}
+
+/* =========================================================
+   DURO 2.0 — ACABADOS FINALES
+   HISTORIAL + MODAL + RESPONSIVE
+   ========================================================= */
+
+/* ---------- HISTORIAL ---------- */
+
+.played-card{
+    width: 100%;
+
+    margin-bottom: 16px;
+    padding: 16px 18px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(18,18,20,.92),
+            rgba(10,10,11,.92)
+        );
+
+    border: 1px solid rgba(255,255,255,.07);
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.18);
+}
+
+.played-history-label{
+    margin-bottom: 10px;
+
+    color: #8f8880;
+
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+}
+
+.played-history-item{
+    gap: 12px;
+
+    padding: 11px 12px;
+    margin-bottom: 7px;
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,.025);
+
+    border: 1px solid rgba(255,255,255,.045);
+
+    opacity: .78;
+}
+
+.played-history-item span{
+    color: #ff9a50;
+
+    font-size: 14px;
+}
+
+.played-history-item strong{
+    color: #b8b2aa;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+/* ---------- MODAL ---------- */
+
+.overlay{
+    background: rgba(0,0,0,.78);
+
+    backdrop-filter: blur(8px);
+}
+
+.song-menu{
+    width: min(92vw, 520px);
+
+    max-width: 520px;
+
+    padding: 26px;
+
+    border-radius: 24px;
+
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(255,90,31,.12),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(20,20,22,.99),
+            rgba(10,10,11,.99)
+        );
+
+    border: 1px solid rgba(255,125,55,.28);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.58),
+        0 0 35px rgba(255,90,31,.07);
+}
+
+.song-menu h3{
+    color: #ff9a50;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 1.6px;
+}
+
+#selected-song{
+    margin: 14px 0 8px;
+
+    color: #fff;
+
+    font-family: var(--font-display);
+
+    font-size: clamp(30px, 5vw, 42px);
+    font-weight: 400;
+    line-height: 1;
+}
+
+#menu-subtitle{
+    margin-bottom: 22px;
+
+    color: #aaa39a;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+/* ---------- BOTONES / OPCIONES ---------- */
+
+.song-menu button{
+    min-height: 56px;
+
+    padding: 16px 18px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.04);
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    color: #fff;
+
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.song-menu button:hover{
+    background: rgba(255,255,255,.065);
+
+    border-color: rgba(255,125,55,.35);
+}
+
+#btn-saltar,
+.song-menu button.pay-btn{
+    background:
+        linear-gradient(
+            135deg,
+            #ff6726,
+            #ffab3f
+        );
+
+    color: #160b04;
+
+    border: none;
+
+    font-size: 18px;
+    font-weight: 900;
+
+    box-shadow:
+        0 0 24px rgba(255,110,35,.20);
+}
+
+
+/* ---------- TARJETAS DE ACCIÓN ---------- */
+
+.action-card{
+    min-height: 68px;
+
+    padding: 17px 18px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(24,24,26,.98),
+            rgba(13,13,14,.98)
+        );
+
+    border: 1px solid rgba(255,255,255,.075);
+}
+
+.action-card:hover{
+    transform: translateY(-1px);
+
+    border-color: rgba(255,126,57,.35);
+}
+
+.action-title{
+    color: #fff;
+
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.action-description{
+    margin-top: 4px;
+
+    color: #9f9992;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.action-icon{
+    font-size: 26px;
+}
+
+.action-reward,
+.action-price{
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.pay-action-card .action-title{
+    color: #ffb05b;
+
+    font-size: 18px;
+}
+
+
+/* ---------- BACK ---------- */
+
+.back-link{
+    margin-top: 16px;
+}
+
+.btn-ghost{
+    padding: 17px;
+
+    border-radius: 15px;
+
+    color: #8d8780;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+
+/* ---------- DESKTOP ---------- */
+
+@media (min-width: 900px){
+
+    .now-playing{
+        min-height: 250px;
+    }
+
+    .skip-banner{
+        padding: 26px 30px;
+    }
+
+    .queue-guide{
+        height: 210px;
+    }
+
+    .live-likes{
+        padding: 30px 32px;
+    }
+
+    .song-card{
+        min-height: 88px;
+    }
+}
+
+
+/* ---------- MÓVIL FINAL ---------- */
+
+@media (max-width: 700px){
+
+    body::after{
+        opacity: .14;
+    }
+
+    .played-card{
+        padding: 14px;
+    }
+
+    .played-history-item strong{
+        font-size: 14px;
+    }
+
+    .song-menu{
+        width: calc(100vw - 24px);
+
+        padding: 22px 18px;
+
+        border-radius: 22px;
+    }
+
+    .song-menu h3{
+        font-size: 14px;
+    }
+
+    #selected-song{
+        font-size: clamp(30px, 9vw, 40px);
+    }
+
+    #menu-subtitle{
+        font-size: 14px;
+    }
+
+    .song-menu button{
+        min-height: 58px;
+
+        font-size: 16px;
+    }
+
+    .action-card{
+        min-height: 66px;
+
+        padding: 15px 14px;
+    }
+
+    .action-title{
+        font-size: 15px;
+    }
+
+    .action-description{
+        font-size: 13px;
+    }
+
+    .action-reward,
+    .action-price{
+        font-size: 16px;
+    }
+}
