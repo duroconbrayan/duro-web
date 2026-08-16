@@ -8,6 +8,7 @@ let colaActual = [];
 let posicionesAnteriores = new Map();
 let primeraCargaCola = true;
 let playingAnteriorId = null;
+let topLikesAbierto = false;
 
 function escaparHTML(valor) {
     return String(valor ?? "")
@@ -306,14 +307,25 @@ async function cargarLiveLikes() {
         const contador = document.getElementById("live-likes-count");
         const barra = document.getElementById("live-likes-progress");
         const mensaje = document.getElementById("live-likes-message");
+const rankingList =
+    document.getElementById("live-likes-ranking-list");
 
-        if (!contenedor || !contador || !barra || !mensaje) return;
+       if (
+    !contenedor ||
+    !contador ||
+    !barra ||
+    !mensaje ||
+    !rankingList
+) return;
 
         const goal = Number(data.goal) || 5000;
 const progress = Number(data.progress) || 0;
 const total = Number(data.total) || 0;
 const base = Number(data.base) || 0;
 const likesDelLive = Math.max(0, total - base);
+const topUsers = Array.isArray(data.top_users)
+    ? data.top_users
+    : [];
 
         const porcentaje = Math.min(
             100,
@@ -324,6 +336,45 @@ const likesDelLive = Math.max(0, total - base);
     `${likesDelLive.toLocaleString("es-CO")} ❤️`;
 
         barra.style.width = `${porcentaje}%`;
+
+if (topUsers.length === 0) {
+
+    rankingList.innerHTML = `
+        <div class="live-likes-ranking-empty">
+            Todavía no hay ranking.
+        </div>
+    `;
+
+} else {
+
+    rankingList.innerHTML = topUsers
+        .slice(0, 5)
+        .map((user, index) => {
+
+            const medallas = ["🥇", "🥈", "🥉"];
+            const posicion =
+                medallas[index] || `${index + 1}.`;
+
+            return `
+                <div class="live-likes-ranking-item">
+
+                    <span class="live-likes-ranking-position">
+                        ${posicion}
+                    </span>
+
+                    <strong class="live-likes-ranking-user">
+                        @${escaparHTML(user.username)}
+                    </strong>
+
+                    <span class="live-likes-ranking-count">
+                        ${Number(user.likes || 0).toLocaleString("es-CO")} ❤️
+                    </span>
+
+                </div>
+            `;
+        })
+        .join("");
+}
 
         if (Number(data.completed_goals) > 0 && progress === 0) {
 
@@ -342,6 +393,21 @@ const likesDelLive = Math.max(0, total - base);
     } catch (error) {
         console.error("Error cargando likes del LIVE:", error);
     }
+}
+
+function toggleTopLikes() {
+
+    const ranking =
+        document.getElementById("live-likes-ranking");
+
+    if (!ranking) return;
+
+    topLikesAbierto = !topLikesAbierto;
+
+    ranking.classList.toggle(
+        "abierto",
+        topLikesAbierto
+    );
 }
 
 comprobarEstadoLive();

@@ -2324,3 +2324,86 @@ a:focus-visible, button:focus-visible{
     color: var(--orange);
     font-weight: 900;
 }
+
+/* ============ LIVE LIKES TOP 5 ============ */
+
+.live-likes{
+    cursor: pointer;
+}
+
+.live-likes-hint{
+    margin-top: 10px;
+    text-align: center;
+    color: var(--muted-2);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    transition: color .2s ease;
+}
+
+.live-likes:hover .live-likes-hint{
+    color: var(--orange);
+}
+
+.live-likes-ranking{
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.live-likes-ranking.abierto{
+    display: block;
+}
+
+.live-likes-ranking-title{
+    margin-bottom: 10px;
+    color: var(--orange);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+}
+
+.live-likes-ranking-list{
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.live-likes-ranking-item{
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 10px;
+}
+
+.live-likes-ranking-position{
+    font-size: 14px;
+}
+
+.live-likes-ranking-user{
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    font-size: 12px;
+}
+
+.live-likes-ranking-count{
+    color: var(--orange);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.live-likes-ranking-empty{
+    padding: 10px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+}
