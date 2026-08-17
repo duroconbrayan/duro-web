@@ -4002,15 +4002,15 @@ main{
 
     /* AHORA SUENA + LIKES */
     .duro-live-grid{
-        display: grid;
-        grid-template-columns: minmax(0, 1.55fr) minmax(360px, .85fr);
-        gap: 18px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+    gap: 10px;
 
-        width: 100%;
-        margin-bottom: 18px;
+    width: 100%;
+    margin-bottom: 10px;
 
-        align-items: stretch;
-    }
+    align-items: stretch;
+}
 
     .duro-live-grid .now-playing,
     .duro-live-grid .live-likes{
@@ -4020,24 +4020,28 @@ main{
 
     /* AHORA SUENA */
     .duro-live-grid .now-playing{
-        min-height: 300px;
-        padding: 38px 42px;
-    }
+    min-height: 0;
+    height: 170px;
+    padding: 18px 26px;
+}
 
     .duro-live-grid #current-song{
-        font-size: clamp(48px, 4vw, 72px);
-    }
+    margin-top: 0;
+    font-size: clamp(34px, 3.2vw, 48px);
+    line-height: .92;
+}
 
     /* LIKES */
-    .duro-live-grid .live-likes{
-        min-height: 300px;
+   .duro-live-grid .live-likes{
+    min-height: 0;
+    height: 170px;
 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-        padding: 32px;
-    }
+    padding: 16px 24px;
+}
 
     .duro-live-grid .live-likes-title{
     font-family: var(--font-display);
