@@ -4395,7 +4395,7 @@ main{
     opacity: 0;
     transform: translateY(12px) scale(.985);
 
-    animation: queueGuideSlide 16s infinite;
+    animation: queueGuideSlide 12s infinite;
 
     z-index: 2;
 }
@@ -4403,7 +4403,6 @@ main{
 .queue-guide-slide:nth-child(1){ animation-delay: 0s; }
 .queue-guide-slide:nth-child(2){ animation-delay: 4s; }
 .queue-guide-slide:nth-child(3){ animation-delay: 8s; }
-.queue-guide-slide:nth-child(4){ animation-delay: 12s; }
 
 
 /* TEXTO SUPERIOR */
@@ -4625,42 +4624,50 @@ main{
 
     background: rgba(255,255,255,.20);
 
-    animation: queueGuideDot 16s infinite;
+    animation: queueGuideDot 12s infinite;
 }
 
 .queue-guide-dots span:nth-child(1){ animation-delay: 0s; }
 .queue-guide-dots span:nth-child(2){ animation-delay: 4s; }
 .queue-guide-dots span:nth-child(3){ animation-delay: 8s; }
-.queue-guide-dots span:nth-child(4){ animation-delay: 12s; }
-
 
 /* ANIMACIÓN SLIDES */
 
 @keyframes queueGuideSlide{
     0%{
         opacity: 0;
-        transform: translateY(12px) scale(.985);
+        transform: translateY(8px) scale(.99);
     }
 
-    6%, 20%{
+    4%{
         opacity: 1;
         transform: translateY(0) scale(1);
     }
 
-    25%, 100%{
+    29%{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    33.333%{
         opacity: 0;
-        transform: translateY(-12px) scale(.985);
+        transform: translateY(-8px) scale(.99);
+    }
+
+    100%{
+        opacity: 0;
+        transform: translateY(-8px) scale(.99);
     }
 }
 
 @keyframes queueGuideDot{
-    0%, 24%{
+    0%, 29%{
         width: 20px;
         background: var(--orange);
         box-shadow: 0 0 10px rgba(255,90,31,.5);
     }
 
-    25%, 100%{
+    33.333%, 100%{
         width: 6px;
         background: rgba(255,255,255,.20);
         box-shadow: none;
