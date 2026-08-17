@@ -4651,3 +4651,274 @@ main{
         bottom: 12px;
     }
 }
+
+/* =========================================================
+   DURO 2.3 — CTA FINAL
+   ========================================================= */
+
+.queue-guide{
+    height: 220px;
+}
+
+/* todas las slides llenan mejor el espacio */
+.queue-guide-slide{
+    padding:
+        24px
+        170px
+        36px
+        270px;
+}
+
+/* titular un poco más compacto */
+.queue-guide-slide strong{
+    font-size: clamp(58px, 5.8vw, 88px);
+    line-height: .90;
+}
+
+/* subtítulo más visible */
+.queue-guide-slide small{
+    margin-top: 8px;
+    font-size: 18px;
+}
+
+/* flecha horizontal tipo mockup */
+.queue-guide-arrow{
+    right: 42px;
+    bottom: 50%;
+
+    font-size: 0;
+
+    transform: translateY(50%);
+}
+
+.queue-guide-arrow::before{
+    content: "›››";
+
+    display: block;
+
+    color: #ff7a26;
+
+    font-family: var(--font-display);
+    font-size: 72px;
+    line-height: 1;
+
+    letter-spacing: -8px;
+
+    text-shadow:
+        0 0 10px rgba(255,90,31,.95),
+        0 0 28px rgba(255,90,31,.55);
+
+    animation: duroCtaArrow .7s ease-in-out infinite alternate;
+}
+
+@keyframes duroCtaArrow{
+    from{
+        transform: translateX(-6px);
+        opacity: .6;
+    }
+
+    to{
+        transform: translateX(5px);
+        opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   ICONOS POR SLIDE
+   ========================================================= */
+
+/* escondemos la nota musical que solo servía de prueba */
+.queue-guide-tiktok::before{
+    content: "♪";
+
+    left: 96px;
+
+    font-size: 88px;
+
+    color: #fff;
+
+    text-shadow:
+        -7px -3px 0 #25f4ee,
+        7px 4px 0 #fe2c55,
+        0 0 20px rgba(255,255,255,.18);
+}
+
+
+/* SLIDE 2 — buscar canción */
+.queue-guide-slide:nth-child(2)::before{
+    content: "⌕";
+
+    position: absolute;
+
+    left: 92px;
+    top: 50%;
+
+    transform: translateY(-55%);
+
+    color: #ff8a2d;
+
+    font-family: Arial, sans-serif;
+    font-size: 96px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    text-shadow:
+        0 0 18px rgba(255,90,31,.5),
+        0 0 35px rgba(255,90,31,.20);
+}
+
+
+/* SLIDE 3 — subir puestos */
+.queue-guide-slide:nth-child(3)::before{
+    content: "↑";
+
+    position: absolute;
+
+    left: 105px;
+    top: 50%;
+
+    transform: translateY(-55%);
+
+    color: #ff8a2d;
+
+    font-family: var(--font-display);
+    font-size: 102px;
+    font-weight: 400;
+
+    line-height: 1;
+
+    text-shadow:
+        0 0 18px rgba(255,90,31,.55),
+        0 0 35px rgba(255,90,31,.20);
+}
+
+
+/* puntos más integrados */
+.queue-guide-dots{
+    left: 270px;
+    bottom: 14px;
+}
+
+
+/* =========================================================
+   PRIMERA SLIDE MÁS AGRESIVA
+   ========================================================= */
+
+.queue-guide-tiktok .queue-guide-step{
+    color: #ff9e31;
+}
+
+.queue-guide-tiktok strong{
+    font-size: clamp(62px, 6.2vw, 94px);
+}
+
+.queue-guide-tiktok small{
+    color: #fff;
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width: 900px){
+
+    .queue-guide{
+        height: 190px;
+    }
+
+    .queue-guide-slide{
+        padding:
+            21px
+            38px
+            32px
+            126px;
+    }
+
+    .queue-guide-slide strong,
+    .queue-guide-tiktok strong{
+        font-size: clamp(32px, 8.8vw, 46px);
+        line-height: .92;
+    }
+
+    .queue-guide-slide small,
+    .queue-guide-tiktok small{
+        font-size: 11px;
+    }
+
+    .queue-guide-arrow{
+        right: 13px;
+    }
+
+    .queue-guide-arrow::before{
+        font-size: 34px;
+        letter-spacing: -4px;
+    }
+
+    .queue-guide-tiktok::before{
+        left: 44px;
+        font-size: 48px;
+    }
+
+    .queue-guide-slide:nth-child(2)::before{
+        left: 43px;
+        font-size: 50px;
+    }
+
+    .queue-guide-slide:nth-child(3)::before{
+        left: 49px;
+        font-size: 55px;
+    }
+
+    .queue-guide-dots{
+        left: 126px;
+        bottom: 11px;
+    }
+}
+
+
+@media (max-width: 520px){
+
+    .queue-guide{
+        height: 175px;
+    }
+
+    .queue-guide-slide{
+        padding:
+            19px
+            30px
+            30px
+            102px;
+    }
+
+    .queue-guide-slide strong,
+    .queue-guide-tiktok strong{
+        font-size: clamp(27px, 8.5vw, 38px);
+    }
+
+    .queue-guide-tiktok::before{
+        left: 35px;
+        font-size: 40px;
+    }
+
+    .queue-guide-slide:nth-child(2)::before{
+        left: 35px;
+        font-size: 42px;
+    }
+
+    .queue-guide-slide:nth-child(3)::before{
+        left: 40px;
+        font-size: 46px;
+    }
+
+    .queue-guide-arrow::before{
+        font-size: 28px;
+    }
+
+    .queue-guide-dots{
+        left: 102px;
+    }
+}
