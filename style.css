@@ -5097,31 +5097,31 @@ transform: translate(-50%, -50%);
         border-color: rgba(255,105,25,.70);
     }
 
-    .song-number{
-        min-width: 0;
-
-        color: #ff7a26;
-
-        font-family: var(--font-display);
-        font-size: 43px;
-        line-height: .9;
-    }
+   .song-number{
+    font-family: var(--font-display);
+    font-size: 42px;
+    line-height: .95;
+    padding: 7px 11px;
+    border-radius: 8px;
+    min-width: 0;
+    text-align: left;
+}
 
     .song-name{
-        width: 100%;
+    width: 100%;
 
-        color: #fff;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1;
 
-        font-family: var(--font-display);
-        font-size: 17px;
-        line-height: 1;
+    color: #fff;
+    text-transform: uppercase;
 
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        text-transform: uppercase;
-    }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
     .song-badge{
         display: none;
