@@ -705,10 +705,11 @@ a{ text-decoration: none; color: inherit; }
 
 .playing-main{
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+    justify-content: flex-start;
 
     width: 100%;
-    gap: 14px;
+    gap: 18px;
 
     margin-top: 10px;
 }
@@ -728,17 +729,17 @@ a{ text-decoration: none; color: inherit; }
 }
 
 .playing-animation{
-    flex: 0 1 360px;
-
+    flex: 1;
+    max-width: 430px;
     height: 58px;
 
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: space-between;
 
-    gap: 7px;
+    gap: 6px;
 
-    padding-bottom: 0;
+    padding-bottom: 5px;
 }
 
 .playing-animation span{
