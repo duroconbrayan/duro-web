@@ -730,7 +730,7 @@ a{ text-decoration: none; color: inherit; }
 
 .playing-animation{
     flex: 1;
-    max-width: 520px;
+    max-width: 400px;
     height: 58px;
 
     display: flex;
