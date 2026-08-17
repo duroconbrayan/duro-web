@@ -4032,15 +4032,19 @@ main{
 }
 
     /* LIKES */
-   .duro-live-grid .live-likes{
-    min-height: 0;
-    height: 170px;
+.duro-live-grid .live-likes{
+    min-height: 170px;
+    height: auto;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
 
     padding: 16px 24px;
+
+    transition:
+        min-height .28s ease,
+        padding .28s ease;
 }
 
 .duro-live-grid .live-likes-title{
@@ -4079,11 +4083,11 @@ margin-top: 9px;
     overflow: hidden;
 
     background:
-        repeating-linear-gradient(
-            90deg,
-            rgba(255,255,255,.10) 0 18px,
-            transparent 18px 23px
-        );
+    repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,.24) 0 18px,
+        transparent 18px 23px
+    );
 }
 
 .duro-live-grid .live-likes-progress{
