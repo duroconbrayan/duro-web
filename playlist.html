@@ -199,10 +199,26 @@
     </div>
 
     <div class="playlist-container">
-        <p class="playlist-container-label">Cola de canciones</p>
+    <p class="playlist-container-label">Cola de canciones</p>
+
+    <div class="playlist-carousel">
+        <button
+            class="playlist-arrow playlist-arrow-left"
+            type="button"
+            onclick="moverCola(-1)"
+            aria-label="Ver canciones anteriores"
+        >‹</button>
 
         <div id="playlist-body"></div>
+
+        <button
+            class="playlist-arrow playlist-arrow-right"
+            type="button"
+            onclick="moverCola(1)"
+            aria-label="Ver más canciones"
+        >›</button>
     </div>
+</div>
 
     <div class="played-card">
     <div id="played-history" class="played-history"></div>

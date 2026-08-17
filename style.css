@@ -5052,6 +5052,57 @@ transform: translate(-50%, -50%);
         text-transform: uppercase;
     }
 
+.playlist-carousel{
+    position: relative;
+    width: 100%;
+}
+
+.playlist-arrow{
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+
+    width: 42px;
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    border: 1px solid rgba(255,105,25,.55);
+    border-radius: 10px;
+
+    background: rgba(7,7,8,.92);
+    color: #ff7a1f;
+
+    font-family: Arial, sans-serif;
+    font-size: 44px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 18px rgba(255,90,31,.16),
+        inset 0 0 12px rgba(255,90,31,.05);
+}
+
+.playlist-arrow-left{
+    left: -52px;
+}
+
+.playlist-arrow-right{
+    right: -52px;
+}
+
+.playlist-arrow:hover{
+    border-color: #ff7a1f;
+    box-shadow:
+        0 0 24px rgba(255,90,31,.30),
+        inset 0 0 14px rgba(255,90,31,.08);
+}
+
     #playlist-body{
     display: flex;
     gap: 10px;
