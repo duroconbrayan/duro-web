@@ -5341,3 +5341,214 @@ scroll-snap-align: start;
         color: #fff;
     }
 }
+
+/* =========================================================
+   DURO 3.1 — MÓVIL COMPACTO FINAL
+   ========================================================= */
+
+@media (max-width: 520px){
+
+    /* CONTENIDO GENERAL */
+    main{
+        padding: 14px 12px 40px;
+    }
+
+    /* HEADER */
+    .playlist-header{
+        margin-bottom: 10px;
+        padding: 0 2px;
+    }
+
+    .playlist-header .wordmark{
+        font-size: 38px;
+        letter-spacing: 2px;
+    }
+
+    .playlist-header .live-status{
+        padding: 7px 10px;
+        font-size: 9px;
+        letter-spacing: 1px;
+    }
+
+    .live-dot{
+        width: 6px;
+        height: 6px;
+    }
+
+
+    /* BANNER SUPERIOR */
+    .queue-guide{
+        height: 132px;
+        margin-bottom: 10px;
+        border-radius: 14px;
+    }
+
+    .queue-guide::before{
+        width: 64px;
+        height: 64px;
+        left: 8px;
+    }
+
+    .queue-guide::after{
+        width: 44px;
+        height: 44px;
+        left: 18px;
+    }
+
+    .queue-guide-slide{
+        padding: 14px 26px 23px 82px;
+    }
+
+    .queue-guide-step{
+        font-size: 7px;
+        margin-bottom: 4px;
+    }
+
+    .queue-guide-slide strong{
+        font-size: clamp(23px, 7.5vw, 31px);
+        line-height: .92;
+    }
+
+    .queue-guide-slide small{
+        margin-top: 5px;
+        font-size: 8px;
+    }
+
+    .queue-guide-tiktok::before{
+        left: 29px;
+        font-size: 32px;
+    }
+
+    .queue-guide-slide:nth-child(2)::before{
+        left: 28px;
+        font-size: 34px;
+    }
+
+    .queue-guide-slide:nth-child(3)::before{
+        left: 31px;
+        font-size: 37px;
+    }
+
+    .queue-guide-arrow{
+        right: 7px;
+    }
+
+    .queue-guide-arrow::before{
+        font-size: 21px;
+        letter-spacing: -3px;
+    }
+
+    .queue-guide-dots{
+        left: 82px;
+        bottom: 7px;
+    }
+
+
+    /* AHORA SUENA + META */
+    .duro-live-grid{
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .duro-live-grid .now-playing{
+        min-height: 0;
+        height: 175px;
+        padding: 16px 18px;
+        border-radius: 15px;
+    }
+
+    .duro-live-grid .playing-info small{
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .duro-live-grid .playing-main{
+        margin-top: 6px;
+        gap: 9px;
+    }
+
+    .duro-live-grid #current-number{
+        font-size: 50px;
+        line-height: .85;
+    }
+
+    .duro-live-grid .playing-animation{
+        height: 38px;
+        gap: 3px;
+    }
+
+    .duro-live-grid .playing-animation span{
+        width: 3px;
+    }
+
+    .duro-live-grid #current-song{
+        margin-top: 8px;
+        font-size: clamp(31px, 9.5vw, 40px);
+        line-height: .9;
+    }
+
+
+    /* META DEL LIVE */
+    .duro-live-grid .live-likes{
+        min-height: 0;
+        padding: 15px 18px;
+        border-radius: 15px;
+    }
+
+    .duro-live-grid .live-likes-title{
+        font-size: 16px;
+    }
+
+    .duro-live-grid .live-likes-number{
+        margin-top: 3px;
+        gap: 8px;
+    }
+
+    .duro-live-grid .live-heart{
+        font-size: 35px;
+    }
+
+    .duro-live-grid #live-likes-count{
+        font-size: 46px;
+    }
+
+    .duro-live-grid .live-likes-track{
+        height: 10px;
+        margin-top: 7px;
+    }
+
+    .duro-live-grid .live-likes-message{
+        margin-top: 7px;
+        font-size: 10px;
+    }
+
+    .duro-live-grid .live-likes-hint{
+        margin-top: 5px;
+        font-size: 8px;
+    }
+
+
+    /* SALTAR AL #1 */
+    .skip-banner{
+        min-height: 0;
+        margin-bottom: 16px;
+        padding: 10px;
+        gap: 8px;
+        border-radius: 12px;
+    }
+
+    .skip-info strong{
+        font-size: 25px;
+    }
+
+    .skip-info span{
+        font-size: 9px;
+    }
+
+    .skip-banner button{
+        min-width: 0;
+        min-height: 44px;
+        padding: 9px 13px;
+        font-size: 19px;
+    }
+}
