@@ -5053,21 +5053,32 @@ transform: translate(-50%, -50%);
     }
 
     #playlist-body{
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 10px;
+    display: flex;
+    gap: 10px;
 
-        width: 100%;
-    }
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+#playlist-body::-webkit-scrollbar{
+    display: none;
+}
 
         .song-card{
         position: relative;
 
-        min-width: 0;
+        flex: 0 0 calc((100% - 40px) / 5);
+min-width: calc((100% - 40px) / 5);
+scroll-snap-align: start;
         min-height: 132px;
 
         margin: 0;
-        padding: 15px 14px 13px;
+            padding: 14px 14px 28px;
 
         display: flex;
         flex-direction: column;
@@ -5097,12 +5108,12 @@ transform: translate(-50%, -50%);
         border-color: rgba(255,105,25,.70);
     }
 
-   .song-number{
+.song-number{
     font-family: var(--font-display);
-    font-size: 42px;
+        font-size: 46px;
     line-height: .95;
-    padding: 7px 11px;
-    border-radius: 8px;
+        padding: 2px 6px;
+        border-radius: 5px;
     min-width: 0;
     text-align: left;
 }
@@ -5111,7 +5122,7 @@ transform: translate(-50%, -50%);
     width: 100%;
 
     font-family: var(--font-display);
-    font-size: 17px;
+        font-size: 16px;
     font-weight: 400;
     line-height: 1;
 
@@ -5121,6 +5132,36 @@ transform: translate(-50%, -50%);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.song-card::after{
+    content: "";
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 7px;
+    height: 12px;
+
+    opacity: .9;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #ff6a1f 0 2px,
+            transparent 2px 5px
+        );
+
+    mask-image:
+        linear-gradient(
+            90deg,
+            transparent,
+            #000 8%,
+            #000 92%,
+            transparent
+        );
+
+        transform: scaleY(.55);
+    transform-origin: bottom;
 }
 
     .song-badge{
