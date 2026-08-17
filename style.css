@@ -4086,3 +4086,220 @@ main{
         margin: 0;
     }
 }
+
+/* =========================================================
+   DURO 2.1 — HERO SUPERIOR DEL MOCKUP
+   ========================================================= */
+
+/* CONTENEDOR GENERAL */
+.page-wrap{
+    max-width: 1180px;
+}
+
+
+/* HEADER DURO */
+.playlist-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 22px;
+    padding: 0 6px;
+
+    text-align: left;
+}
+
+.playlist-header .wordmark{
+    margin: 0;
+
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: 3px;
+}
+
+.playlist-header .live-status{
+    margin: 0;
+
+    padding: 11px 18px;
+
+    font-size: 14px;
+    letter-spacing: 1.5px;
+
+    background: rgba(255,90,31,.13);
+    border: 1px solid rgba(255,90,31,.45);
+
+    box-shadow: 0 0 24px rgba(255,90,31,.10);
+}
+
+
+/* =========================================================
+   CTA TIKTOK — PROTAGONISTA
+   ========================================================= */
+
+.queue-guide{
+    height: 245px;
+
+    margin: 0 0 22px;
+
+    border-radius: 25px;
+
+    background:
+        radial-gradient(
+            circle at 82% 20%,
+            rgba(255,179,71,.18),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 15% 100%,
+            rgba(255,90,31,.22),
+            transparent 38%
+        ),
+        linear-gradient(
+            120deg,
+            #211419,
+            #311713 55%,
+            #211419
+        );
+
+    border: 1px solid rgba(255,90,31,.72);
+
+    box-shadow:
+        0 0 35px rgba(255,90,31,.16),
+        inset 0 0 40px rgba(255,90,31,.06);
+}
+
+
+/* TEXTO PRINCIPAL */
+
+.queue-guide-slide{
+    align-items: flex-start;
+
+    padding: 36px 54px 48px;
+
+    text-align: left;
+}
+
+.queue-guide-step{
+    margin-bottom: 12px;
+
+    font-size: 17px;
+    letter-spacing: 2px;
+}
+
+.queue-guide-slide strong{
+    max-width: 850px;
+
+    font-size: clamp(55px, 5.4vw, 82px);
+    line-height: .96;
+    letter-spacing: .5px;
+}
+
+.queue-guide-slide small{
+    margin-top: 15px;
+
+    font-size: 19px;
+    letter-spacing: .5px;
+}
+
+
+/* FLECHA DEL CTA */
+
+.queue-guide-arrow{
+    right: 50px;
+    bottom: 50%;
+
+    font-size: 58px;
+
+    transform: translateY(50%);
+}
+
+
+/* PUNTOS */
+
+.queue-guide-dots{
+    left: 54px;
+    bottom: 22px;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   SEPARACIÓN HERO → LIVE
+   ========================================================= */
+
+.duro-live-grid{
+    margin-top: 0;
+}
+
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width: 900px){
+
+    main{
+        padding: 24px 14px 50px;
+    }
+
+    .playlist-header{
+        margin-bottom: 16px;
+        padding: 0 2px;
+    }
+
+    .playlist-header .wordmark{
+        font-size: 50px;
+    }
+
+    .playlist-header .live-status{
+        padding: 9px 13px;
+
+        font-size: 11px;
+    }
+
+    .queue-guide{
+        height: 210px;
+
+        margin-bottom: 16px;
+
+        border-radius: 20px;
+    }
+
+    .queue-guide-slide{
+        align-items: center;
+
+        padding: 28px 20px 40px;
+
+        text-align: center;
+    }
+
+    .queue-guide-step{
+        font-size: 13px;
+    }
+
+    .queue-guide-slide strong{
+        font-size: clamp(38px, 11vw, 56px);
+        line-height: .98;
+    }
+
+    .queue-guide-slide small{
+        font-size: 14px;
+    }
+
+    .queue-guide-arrow{
+        right: 20px;
+        bottom: 24px;
+
+        font-size: 30px;
+
+        transform: none;
+    }
+
+    .queue-guide-dots{
+        left: 50%;
+        bottom: 15px;
+
+        transform: translateX(-50%);
+    }
+}
