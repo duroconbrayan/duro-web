@@ -5227,3 +5227,90 @@ scroll-snap-align: start;
         font-size: 11px;
     }
 }
+
+/* =========================================================
+   DURO 3.0 — COLA MÓVIL TIPO MOCKUP
+   ========================================================= */
+
+@media (max-width: 900px){
+
+    .playlist-arrow{
+        display: none;
+    }
+
+    .playlist-carousel{
+        width: 100%;
+    }
+
+    #playlist-body{
+        display: block;
+        width: 100%;
+        overflow: visible;
+    }
+
+    #playlist-body .song-card{
+        width: 100%;
+        min-width: 0;
+        min-height: 46px;
+
+        margin: 0 0 5px;
+        padding: 7px 10px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 9px;
+
+        border-radius: 6px;
+
+        background: rgba(10,10,11,.94);
+        border: 1px solid rgba(255,255,255,.07);
+
+        box-shadow: none;
+    }
+
+    #playlist-body .song-number{
+        min-width: 38px;
+        padding: 0;
+
+        background: transparent;
+        border: none;
+        border-radius: 0;
+
+        color: #ff7a1f;
+
+        font-family: var(--font-display);
+        font-size: 22px;
+        line-height: 1;
+
+        text-align: left;
+    }
+
+    #playlist-body .song-name{
+        flex: 1;
+        min-width: 0;
+
+        color: #fff;
+
+        font-family: var(--font-display);
+        font-size: 15px;
+        line-height: 1;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #playlist-body .song-badge{
+        display: none;
+    }
+
+    #playlist-body .song-movement{
+        position: static;
+        margin-left: auto;
+
+        padding: 3px 5px;
+
+        font-size: 9px;
+    }
+}
