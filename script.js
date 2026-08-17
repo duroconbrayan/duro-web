@@ -562,7 +562,7 @@ function seleccionarParaSaltar(id, cancion) {
 function mostrarOpcionesSubir() {
 
     document.getElementById("menu-subtitle").textContent =
-    "Elige una forma de subir tu canción.";
+    "Elige cómo adelantar tu canción.";
 
     const contenido = document.getElementById("menu-contenido");
 
@@ -579,7 +579,7 @@ function mostrarOpcionesSubir() {
             </div>
 
             <div class="action-description">
-                Sube tu canción al puesto #1 de la fila
+                Pasa tu canción directamente al #1
             </div>
         </div>
     </div>
@@ -591,7 +591,7 @@ function mostrarOpcionesSubir() {
 </div>
 
 <div class="free-actions-label">
-    O SUBE GRATIS
+    O ADELANTA GRATIS
 </div>
 
 <div class="action-card" onclick="mostrarPrueba(

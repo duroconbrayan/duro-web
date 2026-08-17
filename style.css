@@ -5314,3 +5314,30 @@ scroll-snap-align: start;
         font-size: 9px;
     }
 }
+
+@media (max-width: 900px){
+
+    .playlist-container-label{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+        margin: 0 0 12px;
+    }
+
+    .playlist-container-label span{
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #ff7a1f;
+    }
+
+    .playlist-container-label strong{
+        font-family: var(--font-display);
+        font-size: 22px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: .5px;
+        color: #fff;
+    }
+}
