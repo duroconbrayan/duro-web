@@ -705,10 +705,10 @@ a{ text-decoration: none; color: inherit; }
 
 .playing-main{
     display: flex;
-    align-items: flex-end;
+    align-items: center;
 
     width: 100%;
-    gap: 20px;
+    gap: 14px;
 
     margin-top: 10px;
 }
@@ -719,7 +719,7 @@ a{ text-decoration: none; color: inherit; }
     color: #ff5a1f;
 
     font-family: var(--font-display);
-    font-size: clamp(64px, 6vw, 92px);
+    font-size: clamp(58px, 5vw, 78px);
 
     line-height: .9;
 
@@ -728,26 +728,24 @@ a{ text-decoration: none; color: inherit; }
 }
 
 .playing-animation{
-    flex: 1;
+    flex: 0 1 360px;
 
     height: 58px;
 
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
 
-    gap: 5px;
+    gap: 7px;
 
-    padding-bottom: 7px;
+    padding-bottom: 0;
 }
 
 .playing-animation span{
-    flex: 1;
+    width: 6px;
+    flex: none;
 
-    min-width: 3px;
-    max-width: 9px;
-
-    border-radius: 8px 8px 2px 2px;
+    border-radius: 8px;
 
     background:
         linear-gradient(
@@ -783,7 +781,7 @@ a{ text-decoration: none; color: inherit; }
     color: #fff;
 
     font-family: var(--font-display);
-    font-size: clamp(46px, 5vw, 68px);
+    font-size: clamp(42px, 4.4vw, 60px);
 
     font-weight: 400;
     line-height: .95;
