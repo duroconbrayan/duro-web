@@ -730,7 +730,7 @@ a{ text-decoration: none; color: inherit; }
 
 .playing-animation{
     flex: 1;
-    max-width: 430px;
+    max-width: 520px;
     height: 58px;
 
     display: flex;
@@ -777,7 +777,7 @@ a{ text-decoration: none; color: inherit; }
 }
 
 #current-song{
-    margin-top: 8px;
+    margin-top: 2px;
 
     color: #fff;
 
