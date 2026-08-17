@@ -5825,3 +5825,1068 @@ scroll-snap-align: start;
         font-size: 9px;
     }
 }
+
+/* =========================================================
+   DURO — SOCIAL ICONS FINAL
+   ========================================================= */
+
+.playlist-socials{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+
+.playlist-socials-label{
+    font-family: var(--font-display);
+    color: #ff982d;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+}
+
+.playlist-socials-links{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.playlist-socials-links a{
+    width: 25px;
+    height: 25px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(255,255,255,.85);
+
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+
+    border-radius: 50%;
+
+    transition:
+        color .2s ease,
+        transform .2s ease,
+        background .2s ease;
+}
+
+.playlist-socials-links a:hover{
+    color: #ff982d;
+    background: rgba(255,122,31,.08);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 520px){
+
+    .playlist-socials{
+        flex-direction: row;
+        gap: 12px;
+        padding: 14px 0;
+    }
+
+    .playlist-socials-links{
+        width: auto;
+        gap: 9px;
+    }
+
+    .playlist-socials-links a{
+        width: 28px;
+        height: 28px;
+        font-size: 17px;
+    }
+}
+
+/* =========================================================
+   DURO — LIVE ENERGY · NIVEL 1 · 50K LIKES
+   ========================================================= */
+
+body.likes-50k{
+    --live-energy: #ff7a1f;
+}
+
+body.likes-50k .stage-glow{
+    filter: brightness(1.18) saturate(1.12);
+}
+
+body.likes-50k .stage-glow::before{
+    filter: blur(38px) brightness(1.25);
+}
+
+body.likes-50k .live-likes{
+    border-color: rgba(255,122,31,.55);
+
+    box-shadow:
+        0 0 26px rgba(255,90,31,.16),
+        inset 0 0 24px rgba(255,90,31,.05);
+}
+
+body.likes-50k #live-likes-count{
+    text-shadow:
+        0 0 12px rgba(255,122,31,.30),
+        0 0 30px rgba(255,90,31,.18);
+}
+
+body.likes-50k .now-playing{
+    border-color: rgba(255,122,31,.62);
+
+    box-shadow:
+        0 0 32px rgba(255,90,31,.13),
+        inset 0 0 35px rgba(255,90,31,.035);
+}
+
+/* =========================================================
+   DURO — LIVE ENERGY · NIVEL 2 · 100K LIKES
+   ========================================================= */
+
+body.likes-100k .stage-glow{
+    filter: brightness(1.32) saturate(1.22);
+}
+
+body.likes-100k .stage-glow::before{
+    filter: blur(34px) brightness(1.45);
+}
+
+body.likes-100k .live-likes{
+    border-color: rgba(255,145,45,.72);
+
+    box-shadow:
+        0 0 34px rgba(255,90,31,.24),
+        0 0 60px rgba(255,179,71,.08),
+        inset 0 0 28px rgba(255,90,31,.07);
+}
+
+body.likes-100k #live-likes-count{
+    animation: liveEnergy100k 1.8s ease-in-out infinite;
+
+    text-shadow:
+        0 0 14px rgba(255,179,71,.45),
+        0 0 36px rgba(255,90,31,.30);
+}
+
+body.likes-100k .now-playing{
+    border-color: rgba(255,145,45,.78);
+
+    box-shadow:
+        0 0 38px rgba(255,90,31,.20),
+        0 0 70px rgba(255,179,71,.06),
+        inset 0 0 38px rgba(255,90,31,.05);
+}
+
+body.likes-100k .playing-animation span{
+    box-shadow:
+        0 0 16px rgba(255,90,31,.72),
+        0 0 26px rgba(255,179,71,.18);
+}
+
+@keyframes liveEnergy100k{
+    0%, 100%{
+        transform: scale(1);
+    }
+
+    50%{
+        transform: scale(1.04);
+    }
+}
+
+/* =========================================================
+   DURO — LIVE ENERGY · NIVEL 3 · 150K LIKES
+   ========================================================= */
+
+body.likes-150k .stage-glow{
+    filter: brightness(1.48) saturate(1.35);
+}
+
+body.likes-150k .stage-glow::before{
+    filter: blur(30px) brightness(1.7);
+}
+
+body.likes-150k .live-likes{
+    border-color: rgba(255,183,71,.88);
+
+    box-shadow:
+        0 0 42px rgba(255,90,31,.30),
+        0 0 90px rgba(255,179,71,.14),
+        inset 0 0 32px rgba(255,120,40,.10);
+
+    animation: liveEnergy150kCard 1.6s ease-in-out infinite;
+}
+
+body.likes-150k #live-likes-count{
+    animation: liveEnergy150kCount 1.2s ease-in-out infinite;
+
+    text-shadow:
+        0 0 18px rgba(255,210,120,.65),
+        0 0 42px rgba(255,120,30,.42),
+        0 0 70px rgba(255,90,31,.18);
+}
+
+body.likes-150k .now-playing{
+    border-color: rgba(255,183,71,.92);
+
+    box-shadow:
+        0 0 44px rgba(255,90,31,.28),
+        0 0 85px rgba(255,179,71,.12),
+        inset 0 0 42px rgba(255,120,40,.08);
+}
+
+body.likes-150k .playing-animation span{
+    animation-duration: .72s;
+
+    box-shadow:
+        0 0 18px rgba(255,120,30,.85),
+        0 0 34px rgba(255,195,90,.30);
+}
+
+body.likes-150k .live-status{
+    box-shadow:
+        0 0 22px rgba(255,90,31,.22);
+}
+
+@keyframes liveEnergy150kCard{
+    0%, 100%{
+        transform: scale(1);
+    }
+
+    50%{
+        transform: scale(1.01);
+    }
+}
+
+@keyframes liveEnergy150kCount{
+    0%, 100%{
+        transform: scale(1);
+    }
+
+    50%{
+        transform: scale(1.07);
+    }
+}
+
+/* =========================================================
+   DURO — LIVE ENERGY · NIVEL FINAL · 200K LIKES
+   ========================================================= */
+
+body.likes-200k .stage-glow{
+    filter: brightness(1.72) saturate(1.5);
+}
+
+body.likes-200k .stage-glow::before{
+    filter: blur(25px) brightness(2);
+    animation-duration: 8s;
+}
+
+body.likes-200k .stage-glow::after{
+    filter: blur(28px) brightness(1.65);
+    animation-duration: 6s;
+}
+
+body.likes-200k .live-likes{
+    border-color: rgba(255,210,100,.98);
+
+    background:
+        radial-gradient(circle at 50% 0%, rgba(255,190,70,.16), transparent 55%),
+        rgba(12,10,13,.96);
+
+    box-shadow:
+        0 0 25px rgba(255,220,120,.32),
+        0 0 60px rgba(255,120,30,.35),
+        0 0 120px rgba(255,90,31,.18),
+        inset 0 0 38px rgba(255,200,80,.12);
+
+    animation: liveEnergy200kCard 1s ease-in-out infinite;
+}
+
+body.likes-200k #live-likes-count{
+    animation: liveEnergy200kCount .8s ease-in-out infinite;
+
+    text-shadow:
+        0 0 10px rgba(255,255,220,.9),
+        0 0 25px rgba(255,210,100,.8),
+        0 0 55px rgba(255,120,30,.65),
+        0 0 90px rgba(255,90,31,.35);
+}
+
+body.likes-200k .now-playing{
+    border-color: rgba(255,210,100,.98);
+
+    box-shadow:
+        0 0 25px rgba(255,220,120,.25),
+        0 0 60px rgba(255,120,30,.30),
+        0 0 110px rgba(255,90,31,.15),
+        inset 0 0 45px rgba(255,190,70,.10);
+}
+
+body.likes-200k .playing-animation span{
+    animation-duration: .48s;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff3b0,
+            #ffb347,
+            #ff5a1f
+        );
+
+    box-shadow:
+        0 0 20px rgba(255,220,120,.9),
+        0 0 38px rgba(255,100,25,.48);
+}
+
+body.likes-200k .live-status{
+    border-color: rgba(255,210,100,.75);
+
+    box-shadow:
+        0 0 28px rgba(255,160,50,.38);
+}
+
+@keyframes liveEnergy200kCard{
+    0%, 100%{
+        transform: scale(1);
+    }
+
+    50%{
+        transform: scale(1.015);
+    }
+}
+
+@keyframes liveEnergy200kCount{
+    0%, 100%{
+        transform: scale(1);
+    }
+
+    50%{
+        transform: scale(1.10);
+    }
+}
+
+/* =========================================================
+   DURO — SWITCH DE SKINS
+   ========================================================= */
+
+.playlist-header{
+    position: relative;
+}
+
+.playlist-header-controls{
+    width: 100%;
+    margin-top: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.skin-switch{
+    display: inline-flex;
+    align-items: center;
+
+    padding: 3px;
+
+    background: rgba(8,8,10,.70);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 999px;
+
+    box-shadow:
+        0 8px 24px rgba(0,0,0,.20);
+}
+
+.skin-option{
+    border: 0;
+    margin: 0;
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: transparent;
+    color: rgba(255,255,255,.42);
+
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .6px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.skin-option:hover{
+    color: rgba(255,255,255,.88);
+}
+
+body.skin-duro #skin-duro-btn,
+body.skin-ice #skin-ice-btn{
+    color: #fff;
+    background: rgba(255,255,255,.09);
+}
+
+body.skin-duro #skin-duro-btn{
+    box-shadow:
+        inset 0 0 0 1px rgba(255,122,31,.30),
+        0 0 16px rgba(255,90,31,.12);
+}
+
+body.skin-ice #skin-ice-btn{
+    color: #dff8ff;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(79,195,247,.20),
+            rgba(125,211,252,.08)
+        );
+
+    box-shadow:
+        inset 0 0 0 1px rgba(125,211,252,.35),
+        0 0 18px rgba(56,189,248,.16);
+}
+
+.playlist-header-controls .live-status{
+    margin-top: 0;
+}
+
+
+/* MÓVIL */
+
+@media (max-width: 520px){
+
+    .playlist-header-controls{
+        margin-top: 6px;
+    }
+
+    .skin-option{
+        padding: 6px 8px;
+
+        font-size: 8px;
+        letter-spacing: .3px;
+    }
+
+    .skin-switch{
+        padding: 2px;
+    }
+}
+
+/* =========================================================
+   DURO — SKIN ICE · BASE
+   ========================================================= */
+
+body.skin-ice{
+    --bg: #06111c;
+    --bg-alt: #0b1b2a;
+    --surface: rgba(10,28,43,.82);
+    --surface-2: rgba(15,39,58,.88);
+
+    --text: #f4fbff;
+    --muted: #9fc6d9;
+    --muted-2: #628da4;
+
+    --orange: #69d7ff;
+    --orange-soft: rgba(105,215,255,.16);
+
+    --amber: #d9f7ff;
+    --amber-soft: rgba(217,247,255,.18);
+
+    --lime: #a7f3ff;
+    --lime-soft: rgba(167,243,255,.16);
+}
+
+body.skin-ice{
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(120,220,255,.16),
+            transparent 38%
+        ),
+        linear-gradient(
+            180deg,
+            #07131f 0%,
+            #04101a 46%,
+            #06131d 100%
+        );
+}
+
+body.skin-ice .stage-glow{
+    background:
+        radial-gradient(
+            60% 45% at 20% 0%,
+            rgba(65,190,255,.30),
+            transparent 62%
+        ),
+        radial-gradient(
+            45% 40% at 85% 5%,
+            rgba(180,240,255,.18),
+            transparent 62%
+        ),
+        radial-gradient(
+            70% 50% at 50% 110%,
+            rgba(55,160,225,.18),
+            transparent 65%
+        );
+}
+
+body.skin-ice .stage-glow::before{
+    background:
+        conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            rgba(80,210,255,.22) 65deg,
+            transparent 125deg,
+            rgba(220,250,255,.14) 205deg,
+            transparent 275deg,
+            rgba(85,170,255,.18) 335deg,
+            transparent 360deg
+        );
+
+    filter: blur(42px);
+}
+
+body.skin-ice .stage-glow::after{
+    background:
+        radial-gradient(
+            circle at 30% 30%,
+            rgba(220,250,255,.20),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 72% 58%,
+            rgba(80,200,255,.18),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 50% 82%,
+            rgba(120,215,255,.15),
+            transparent 28%
+        );
+}
+
+body.skin-ice .playlist-header .wordmark{
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #dff8ff 46%,
+            #83dfff 100%
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    text-shadow:
+        0 0 28px rgba(100,215,255,.22);
+}
+
+/* =========================================================
+   DURO — SKIN ICE · COMPONENTES
+   ========================================================= */
+
+/* AHORA SUENA */
+
+body.skin-ice .now-playing{
+    background:
+        radial-gradient(
+            circle at 18% 35%,
+            rgba(105,215,255,.16),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(5,18,29,.96),
+            rgba(9,30,45,.94)
+        );
+
+    border-color: rgba(125,220,255,.52);
+
+    box-shadow:
+        0 0 30px rgba(80,200,255,.12),
+        inset 0 0 34px rgba(170,235,255,.04);
+
+    backdrop-filter: blur(12px);
+}
+
+body.skin-ice .playing-info small{
+    color: #9ee8ff;
+
+    text-shadow:
+        0 0 14px rgba(105,215,255,.35);
+}
+
+body.skin-ice #current-number{
+    color: #8de5ff;
+
+    text-shadow:
+        0 0 20px rgba(80,205,255,.40);
+}
+
+body.skin-ice .playing-animation span{
+    background:
+        linear-gradient(
+            180deg,
+            #f4fdff,
+            #9eeaff 45%,
+            #42c8ff
+        );
+
+    box-shadow:
+        0 0 14px rgba(105,215,255,.62);
+}
+
+
+/* META DEL LIVE */
+
+body.skin-ice .live-likes{
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(140,225,255,.12),
+            transparent 52%
+        ),
+        rgba(6,21,32,.78);
+
+    border-color: rgba(125,220,255,.38);
+
+    box-shadow:
+        0 0 28px rgba(80,200,255,.10),
+        inset 0 0 28px rgba(180,240,255,.035);
+
+    backdrop-filter: blur(12px);
+}
+
+body.skin-ice #live-likes-count{
+    color: #f1fcff;
+
+    text-shadow:
+        0 0 12px rgba(220,250,255,.50),
+        0 0 30px rgba(70,200,255,.24);
+}
+
+body.skin-ice .live-likes-progress{
+    background:
+        linear-gradient(
+            90deg,
+            #4bcaff,
+            #9eeaff,
+            #ecfcff
+        );
+
+    box-shadow:
+        0 0 16px rgba(105,215,255,.48);
+}
+
+
+/* GUÍA */
+
+body.skin-ice .queue-guide{
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(190,245,255,.16),
+            transparent 36%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(45,170,225,.18),
+            rgba(5,20,32,.94)
+        );
+
+    border-color: rgba(105,215,255,.46);
+
+    box-shadow:
+        0 0 30px rgba(70,190,245,.12),
+        inset 0 0 28px rgba(180,240,255,.035);
+}
+
+body.skin-ice .queue-guide-step,
+body.skin-ice .queue-guide-arrow{
+    color: #8de5ff;
+}
+
+body.skin-ice .queue-guide-arrow{
+    text-shadow:
+        0 0 15px rgba(105,215,255,.65);
+}
+
+
+/* COLA */
+
+body.skin-ice .song-card{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11,31,45,.88),
+            rgba(7,22,34,.88)
+        );
+
+    border-color: rgba(150,225,255,.12);
+
+    backdrop-filter: blur(10px);
+}
+
+body.skin-ice .song-card:hover{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17,43,59,.94),
+            rgba(9,29,43,.94)
+        );
+
+    border-color: rgba(105,215,255,.42);
+
+    box-shadow:
+        0 0 24px rgba(70,190,245,.08);
+}
+
+body.skin-ice .song-number{
+    background: rgba(125,220,255,.09);
+
+    border: 1px solid rgba(150,230,255,.12);
+
+    color: #dff8ff;
+}
+
+
+/* EN VIVO */
+
+body.skin-ice .live-status{
+    background: rgba(70,190,245,.09);
+    border-color: rgba(105,215,255,.28);
+    color: #9eeaff;
+}
+
+body.skin-ice .live-dot{
+    background: #73dcff;
+
+    box-shadow:
+        0 0 14px rgba(105,215,255,.95);
+}
+
+/* =========================================================
+   DURO — SKIN ICE · NIEVE + CRISTAL
+   ========================================================= */
+
+/* capa de nieve ambiental */
+
+body.skin-ice::before{
+    opacity: .72;
+
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,.85) 0 1px, transparent 1.6px),
+        radial-gradient(circle, rgba(170,235,255,.65) 0 1px, transparent 1.8px),
+        radial-gradient(circle, rgba(255,255,255,.45) 0 1.5px, transparent 2px);
+
+    background-size:
+        47px 47px,
+        73px 73px,
+        103px 103px;
+
+    background-position:
+        0 0,
+        18px 24px,
+        37px 11px;
+
+    mix-blend-mode: screen;
+
+    animation: iceSnow 16s linear infinite;
+}
+
+
+/* ondas ambientales ICE */
+
+body.skin-ice::after{
+    background:
+        repeating-radial-gradient(
+            circle at 50% 50%,
+            transparent 0,
+            transparent 40px,
+            rgba(125,220,255,.055) 43px,
+            transparent 47px,
+            transparent 82px
+        );
+
+    opacity: .55;
+    mix-blend-mode: screen;
+
+    animation: iceAtmosphere 12s ease-in-out infinite alternate;
+}
+
+
+/* sensación de cristal */
+
+body.skin-ice .now-playing,
+body.skin-ice .live-likes,
+body.skin-ice .queue-guide,
+body.skin-ice .song-card{
+    position: relative;
+}
+
+
+/* reflejo helado sobre las zonas principales */
+
+body.skin-ice .now-playing::after,
+body.skin-ice .live-likes::after{
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            115deg,
+            rgba(255,255,255,.08),
+            transparent 22%,
+            transparent 70%,
+            rgba(150,230,255,.045)
+        );
+
+    opacity: .75;
+}
+
+
+/* animaciones */
+
+@keyframes iceSnow{
+    from{
+        background-position:
+            0 0,
+            18px 24px,
+            37px 11px;
+    }
+
+    to{
+        background-position:
+            20px 160px,
+            -12px 230px,
+            60px 310px;
+    }
+}
+
+@keyframes iceAtmosphere{
+    from{
+        transform:
+            translate3d(-2%, -2%, 0)
+            scale(1);
+    }
+
+    to{
+        transform:
+            translate3d(2%, 3%, 0)
+            scale(1.10);
+
+        filter: brightness(1.25);
+    }
+}
+
+/* =========================================================
+   DURO — SKIN ICE · METAS DEL LIVE
+   ========================================================= */
+
+
+/* ============ 50K · EMPIEZA A CONGELARSE ============ */
+
+body.skin-ice.likes-50k::before{
+    opacity: .82;
+    animation-duration: 13s;
+}
+
+body.skin-ice.likes-50k .stage-glow{
+    filter: brightness(1.20) saturate(1.12);
+}
+
+body.skin-ice.likes-50k .live-likes,
+body.skin-ice.likes-50k .now-playing{
+    border-color: rgba(125,220,255,.62);
+
+    box-shadow:
+        0 0 34px rgba(70,195,255,.16),
+        inset 0 0 32px rgba(190,245,255,.05);
+}
+
+
+/* ============ 100K · HIELO ACTIVO ============ */
+
+body.skin-ice.likes-100k::before{
+    opacity: .92;
+    animation-duration: 10s;
+}
+
+body.skin-ice.likes-100k .stage-glow{
+    filter: brightness(1.38) saturate(1.22);
+}
+
+body.skin-ice.likes-100k .live-likes{
+    border-color: rgba(150,235,255,.76);
+
+    box-shadow:
+        0 0 38px rgba(80,205,255,.24),
+        0 0 70px rgba(150,235,255,.08),
+        inset 0 0 32px rgba(210,250,255,.07);
+}
+
+body.skin-ice.likes-100k #live-likes-count{
+    animation: ice100kPulse 1.8s ease-in-out infinite;
+
+    text-shadow:
+        0 0 12px rgba(255,255,255,.70),
+        0 0 30px rgba(120,225,255,.48),
+        0 0 55px rgba(60,190,255,.20);
+}
+
+body.skin-ice.likes-100k .playing-animation span{
+    box-shadow:
+        0 0 18px rgba(180,245,255,.78),
+        0 0 32px rgba(65,195,255,.30);
+}
+
+
+/* ============ 150K · TORMENTA ============ */
+
+body.skin-ice.likes-150k::before{
+    opacity: 1;
+    animation-duration: 7s;
+
+    filter:
+        brightness(1.18)
+        drop-shadow(0 0 4px rgba(180,240,255,.28));
+}
+
+body.skin-ice.likes-150k::after{
+    opacity: .75;
+    animation-duration: 8s;
+}
+
+body.skin-ice.likes-150k .stage-glow{
+    filter: brightness(1.58) saturate(1.32);
+}
+
+body.skin-ice.likes-150k .live-likes,
+body.skin-ice.likes-150k .now-playing{
+    border-color: rgba(190,245,255,.90);
+
+    box-shadow:
+        0 0 28px rgba(200,250,255,.20),
+        0 0 60px rgba(70,200,255,.30),
+        0 0 100px rgba(50,160,230,.12),
+        inset 0 0 38px rgba(210,250,255,.08);
+}
+
+body.skin-ice.likes-150k #live-likes-count{
+    animation: ice150kPulse 1.15s ease-in-out infinite;
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,.92),
+        0 0 28px rgba(190,245,255,.72),
+        0 0 58px rgba(70,200,255,.42);
+}
+
+body.skin-ice.likes-150k .playing-animation span{
+    animation-duration: .65s;
+}
+
+
+/* ============ 200K · ICE MÁXIMO ============ */
+
+body.skin-ice.likes-200k::before{
+    opacity: 1;
+    animation-duration: 4.8s;
+
+    filter:
+        brightness(1.35)
+        drop-shadow(0 0 6px rgba(210,250,255,.40));
+}
+
+body.skin-ice.likes-200k::after{
+    opacity: .90;
+    animation-duration: 5.5s;
+}
+
+body.skin-ice.likes-200k .stage-glow{
+    filter:
+        brightness(1.85)
+        saturate(1.42);
+
+    animation-duration: 7s, 3.5s;
+}
+
+body.skin-ice.likes-200k .live-likes,
+body.skin-ice.likes-200k .now-playing{
+    border-color: rgba(225,252,255,.98);
+
+    box-shadow:
+        0 0 20px rgba(255,255,255,.30),
+        0 0 50px rgba(160,235,255,.40),
+        0 0 100px rgba(60,195,255,.30),
+        0 0 150px rgba(40,145,225,.14),
+        inset 0 0 45px rgba(220,250,255,.12);
+}
+
+body.skin-ice.likes-200k #live-likes-count{
+    animation: ice200kPulse .8s ease-in-out infinite;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,1),
+        0 0 24px rgba(210,250,255,.95),
+        0 0 50px rgba(100,220,255,.70),
+        0 0 90px rgba(50,180,255,.38);
+}
+
+body.skin-ice.likes-200k .playing-animation span{
+    animation-duration: .42s;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #dffaff 35%,
+            #81e4ff 70%,
+            #32bfff
+        );
+
+    box-shadow:
+        0 0 16px rgba(255,255,255,.90),
+        0 0 34px rgba(100,220,255,.70);
+}
+
+
+/* ============ PULSOS ICE ============ */
+
+@keyframes ice100kPulse{
+    0%, 100%{
+        transform: scale(1);
+    }
+
+    50%{
+        transform: scale(1.04);
+    }
+}
+
+@keyframes ice150kPulse{
+    0%, 100%{
+        transform: scale(1);
+    }
+
+    50%{
+        transform: scale(1.07);
+    }
+}
+
+@keyframes ice200kPulse{
+    0%, 100%{
+        transform: scale(1);
+    }
+
+    50%{
+        transform: scale(1.10);
+    }
+}

@@ -10,6 +10,39 @@ let primeraCargaCola = true;
 let playingAnteriorId = null;
 let topLikesAbierto = false;
 let historialCompletoAbierto = false;
+let anuncioHistorialMostrado = false;
+
+// ============ SKINS DURO ============
+
+function aplicarSkin(skin) {
+
+    document.body.classList.remove(
+        "skin-duro",
+        "skin-ice"
+    );
+
+    document.body.classList.add(`skin-${skin}`);
+
+    localStorage.setItem("duro_skin", skin);
+
+    const btnDuro = document.getElementById("skin-duro-btn");
+    const btnIce = document.getElementById("skin-ice-btn");
+
+    if (btnDuro && btnIce) {
+        btnDuro.classList.toggle("active", skin === "duro");
+        btnIce.classList.toggle("active", skin === "ice");
+    }
+}
+
+function cargarSkinGuardada() {
+
+    const skinGuardada =
+        localStorage.getItem("duro_skin") || "duro";
+
+    aplicarSkin(skinGuardada);
+}
+
+cargarSkinGuardada();
 
 function escaparHTML(valor) {
     return String(valor ?? "")
@@ -311,8 +344,21 @@ contenedor.innerHTML = html;
 }
 
 function toggleHistorialCompleto() {
+
+    const estabaCerrado = !historialCompletoAbierto;
+
     historialCompletoAbierto = !historialCompletoAbierto;
     cargarHistorial();
+
+    if (estabaCerrado && !anuncioHistorialMostrado) {
+        anuncioHistorialMostrado = true;
+
+        window.open(
+            "https://omg10.com/4/11599214",
+            "_blank",
+            "noopener,noreferrer"
+        );
+    }
 }
 
 function moverCola(direccion) {
@@ -361,6 +407,26 @@ const progress = Number(data.progress) || 0;
 const total = Number(data.total) || 0;
 const base = Number(data.base) || 0;
 const likesDelLive = Math.max(0, total - base);
+
+// ============ NIVELES VISUALES DEL LIVE ============
+
+document.body.classList.remove(
+    "likes-50k",
+    "likes-100k",
+    "likes-150k",
+    "likes-200k"
+);
+
+if (likesDelLive >= 200000) {
+    document.body.classList.add("likes-200k");
+} else if (likesDelLive >= 150000) {
+    document.body.classList.add("likes-150k");
+} else if (likesDelLive >= 100000) {
+    document.body.classList.add("likes-100k");
+} else if (likesDelLive >= 50000) {
+    document.body.classList.add("likes-50k");
+}
+
 const topUsers = Array.isArray(data.top_users)
     ? data.top_users
     : [];
