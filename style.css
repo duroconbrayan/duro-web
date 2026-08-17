@@ -2815,7 +2815,7 @@ main{
 
 .skip-banner{
     width: 100%;
-    min-height: 86px;
+    min-height: 82px;
     margin-bottom: 22px;
     padding: 8px;
 
@@ -2837,7 +2837,7 @@ main{
     min-width: 0;
     min-height: 68px;
 
-    padding: 8px 18px;
+        padding: 6px 18px;
 
     display: flex;
     align-items: center;
@@ -2869,7 +2869,7 @@ main{
 
 .skip-cta{
     font-family: var(--font-display);
-    font-size: clamp(32px, 4vw, 48px);
+    font-size: clamp(30px, 3.6vw, 44px);
     font-weight: 400;
     line-height: 1;
     letter-spacing: .5px;
@@ -2879,7 +2879,7 @@ main{
 .skip-price{
     flex-shrink: 0;
 
-    padding: 7px 15px;
+        padding: 6px 14px;
 
     border-radius: 8px;
 
@@ -2887,7 +2887,7 @@ main{
     color: #ffad29;
 
     font-family: var(--font-display);
-    font-size: clamp(30px, 3.5vw, 44px);
+    font-size: clamp(28px, 3.2vw, 40px);
     line-height: 1;
 
     box-shadow:
@@ -2904,17 +2904,17 @@ main{
 }
 
 .skip-paypal{
-    min-width: 145px;
+        min-width: 155px;
     padding: 0 14px;
 
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 14px;
 
     color: #fff;
 
-    font-size: 11px;
+        font-size: 10px;
     font-weight: 800;
     line-height: 1.15;
 }
@@ -2923,7 +2923,7 @@ main{
     color: #1684ff;
 
     font-family: Arial, sans-serif;
-    font-size: 34px;
+        font-size: 38px;
     font-style: italic;
     font-weight: 900;
 
@@ -3929,7 +3929,7 @@ main{
     }
 
     .skip-banner{
-        padding: 26px 30px;
+    padding: 10px 8px;
     }
 
     .queue-guide{
