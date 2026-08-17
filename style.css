@@ -4946,3 +4946,111 @@ transform: translate(-50%, -50%);
         bottom: 9px;
     }
 }
+
+/* =========================================================
+   DURO 3.0 — COLA COMPACTA DESKTOP
+   ========================================================= */
+
+@media (min-width: 901px){
+
+    .playlist-container{
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .playlist-container-label{
+        margin: 0 0 12px;
+
+        color: #ff8a2d;
+
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 900;
+
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    #playlist-body{
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+
+        width: 100%;
+    }
+
+    .song-card{
+        position: relative;
+
+        min-width: 0;
+        min-height: 118px;
+
+        margin: 0;
+        padding: 16px 14px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 7px;
+
+        overflow: hidden;
+
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(17,16,17,.98),
+                rgba(8,8,9,.99)
+            );
+
+        border: 1px solid rgba(255,105,25,.30);
+
+        box-shadow:
+            inset 0 0 24px rgba(255,90,31,.025);
+    }
+
+    .song-card:hover{
+        transform: translateY(-2px);
+        border-color: rgba(255,105,25,.70);
+    }
+
+    .song-number{
+        min-width: 0;
+
+        color: #ff7a26;
+
+        font-family: var(--font-display);
+        font-size: 43px;
+        line-height: .9;
+    }
+
+    .song-name{
+        width: 100%;
+
+        color: #fff;
+
+        font-family: var(--font-display);
+        font-size: 17px;
+        line-height: 1;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        text-transform: uppercase;
+    }
+
+    .song-badge{
+        display: none;
+    }
+
+    .song-movement{
+        position: absolute;
+        top: 10px;
+        right: 10px;
+
+        font-size: 11px;
+    }
+}
