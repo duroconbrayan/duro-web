@@ -634,6 +634,33 @@ a{ text-decoration: none; color: inherit; }
     text-transform: uppercase;
 }
 
+.played-history-label{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition:
+        color .2s ease,
+        opacity .2s ease;
+}
+
+.played-history-label:hover{
+    color: #ff8a2d;
+}
+
+.played-history-toggle{
+    color: #ff8a2d;
+
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+
+    white-space: nowrap;
+}
+
 .played-history-item{
     display: flex;
     align-items: center;
@@ -3675,10 +3702,10 @@ main{
 .played-card{
     width: 100%;
 
-    margin-bottom: 16px;
-    padding: 16px 18px;
+       margin-bottom: 12px;
+       padding: 12px 14px;
 
-    border-radius: 18px;
+        border-radius: 12px;
 
     background:
         linear-gradient(
@@ -3687,48 +3714,48 @@ main{
             rgba(10,10,11,.92)
         );
 
-    border: 1px solid rgba(255,255,255,.07);
+        border: 1px solid rgba(255,105,25,.18);
 
     box-shadow:
         0 12px 28px rgba(0,0,0,.18);
 }
 
 .played-history-label{
-    margin-bottom: 10px;
+       margin-bottom: 8px;
 
-    color: #8f8880;
+       color: #ff8a2d;
 
-    font-size: 13px;
+        font-size: 11px;
     font-weight: 900;
-    letter-spacing: 1.4px;
+        letter-spacing: 1.8px;
 }
 
 .played-history-item{
-    gap: 12px;
+        gap: 9px;
 
-    padding: 11px 12px;
-    margin-bottom: 7px;
+        padding: 8px 10px;
+        margin-bottom: 5px;
 
-    border-radius: 12px;
+        border-radius: 7px;
 
     background: rgba(255,255,255,.025);
 
     border: 1px solid rgba(255,255,255,.045);
 
-    opacity: .78;
+        opacity: .72;
 }
 
 .played-history-item span{
     color: #ff9a50;
 
-    font-size: 14px;
+       font-size: 12px;
 }
 
 .played-history-item strong{
     color: #b8b2aa;
 
-    font-size: 15px;
-    font-weight: 700;
+        font-size: 13px;
+        font-weight: 600;
 }
 
 
@@ -3955,11 +3982,11 @@ main{
     }
 
     .played-card{
-        padding: 14px;
+            padding: 10px;
     }
 
     .played-history-item strong{
-        font-size: 14px;
+            font-size: 12px;
     }
 
     .song-menu{
@@ -5550,5 +5577,244 @@ scroll-snap-align: start;
         min-height: 44px;
         padding: 9px 13px;
         font-size: 19px;
+    }
+}
+@media (max-width: 520px){
+
+    /* Solo título de la slide TikTok */
+    .queue-guide-tiktok strong{
+        font-size: clamp(20px, 6vw, 27px);
+        white-space: nowrap;
+        max-width: calc(100% - 18px);
+    }
+
+}
+
+/* ============ PLAYLIST SOCIALS ============ */
+
+.playlist-socials{
+    width: 100%;
+    margin: 18px 0 10px;
+    padding: 14px 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+
+    border-top: 1px solid rgba(255,90,31,.18);
+}
+
+.playlist-socials-label{
+    color: #ff982d;
+
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 1.5px;
+
+    white-space: nowrap;
+}
+
+.playlist-socials-links{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.playlist-socials-links a{
+    color: rgba(255,255,255,.72);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    transition:
+        color .2s ease,
+        transform .2s ease;
+}
+
+.playlist-socials-links a:hover{
+    color: #ff982d;
+    transform: translateY(-2px);
+}
+
+
+/* MÓVIL */
+
+@media (max-width: 520px){
+
+    .playlist-socials{
+        margin-top: 14px;
+        padding: 14px 6px 8px;
+
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .playlist-socials-label{
+        font-size: 11px;
+    }
+
+    .playlist-socials-links{
+        width: 100%;
+        gap: 8px 14px;
+    }
+
+    .playlist-socials-links a{
+        font-size: 10px;
+    }
+}
+
+/* =========================================================
+   DURO 3.2 — RESPONSIVE FINAL
+   ========================================================= */
+
+@media (max-width: 520px){
+
+    html,
+    body{
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    main{
+        width: 100%;
+        padding: 14px 10px 40px;
+    }
+
+    .page-wrap{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .playlist-header,
+    .queue-guide,
+    .duro-live-grid,
+    .skip-banner,
+    .playlist-container,
+    .played-card,
+    .playlist-socials,
+    .back-link{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .duro-live-grid{
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .now-playing,
+    .live-likes{
+        width: 100%;
+        min-width: 0;
+    }
+
+    .playing-info,
+    .playing-main{
+        min-width: 0;
+    }
+
+    #current-song{
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .playlist-carousel,
+    #playlist-body{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    #playlist-body .song-card{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    #playlist-body .song-name{
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .played-history-item{
+        min-width: 0;
+    }
+
+    .played-history-item strong{
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .playlist-socials-links{
+        max-width: 100%;
+    }
+
+    .song-menu{
+        max-width: 100vw;
+    }
+}
+
+@media (max-width: 420px){
+
+    .queue-guide{
+        height: 124px;
+    }
+
+    .queue-guide-slide{
+        padding: 12px 22px 21px 76px;
+    }
+
+    .queue-guide-slide strong{
+        font-size: clamp(20px, 6.8vw, 27px);
+    }
+
+    .queue-guide-slide small{
+        font-size: 7px;
+    }
+
+    .duro-live-grid .now-playing{
+        height: 165px;
+        padding: 14px 16px;
+    }
+
+    .duro-live-grid #current-number{
+        font-size: 46px;
+    }
+
+    .duro-live-grid #current-song{
+        font-size: clamp(28px, 9vw, 36px);
+    }
+
+    .duro-live-grid .live-likes{
+        padding: 13px 15px;
+    }
+
+    .duro-live-grid #live-likes-count{
+        font-size: 42px;
+    }
+
+    .skip-banner{
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .skip-banner button{
+        font-size: 17px;
+    }
+
+    .playlist-socials-links{
+        gap: 7px 11px;
+    }
+
+    .playlist-socials-links a{
+        font-size: 9px;
     }
 }

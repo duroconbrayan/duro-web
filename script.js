@@ -9,6 +9,7 @@ let posicionesAnteriores = new Map();
 let primeraCargaCola = true;
 let playingAnteriorId = null;
 let topLikesAbierto = false;
+let historialCompletoAbierto = false;
 
 function escaparHTML(valor) {
     return String(valor ?? "")
@@ -269,13 +270,26 @@ table.appendChild(card);
             return;
         }
 
-        let html = `
-            <div class="played-history-label">
-                YA SONARON
-            </div>
-        `;
+       let html = `
+    <div
+        class="played-history-label"
+        onclick="toggleHistorialCompleto()"
+        role="button"
+        tabindex="0"
+    >
+        YA SONARON
+        <span class="played-history-toggle">
+            ${historialCompletoAbierto ? "VER MENOS ↑" : "VER TODAS ↓"}
+        </span>
+    </div>
+`;
 
-        played.slice(0, 5).forEach(item => {
+const historialVisible =
+    historialCompletoAbierto
+        ? played
+        : played.slice(0, 5);
+
+historialVisible.forEach(item => {
 
     const numero = item.play_number
         ? `#${item.play_number} — `
@@ -289,11 +303,16 @@ table.appendChild(card);
     `;
 });
 
-        contenedor.innerHTML = html;
+contenedor.innerHTML = html;
 
     } catch (error) {
         console.error("Error al cargar historial:", error);
     }
+}
+
+function toggleHistorialCompleto() {
+    historialCompletoAbierto = !historialCompletoAbierto;
+    cargarHistorial();
 }
 
 function moverCola(direccion) {
@@ -574,7 +593,7 @@ function mostrarOpcionesSubir() {
 
         <div>
             <div class="action-title">
-                Saltar directo
+                Adelantar al #1
                 <span class="auto-badge">AUTOMÁTICO</span>
             </div>
 
@@ -742,7 +761,7 @@ function mostrarPrueba(action, titulo, recompensa, urlDestino) {
 
             <div class="proof-reward">
                 <span class="proof-reward-label">RECOMPENSA</span>
-                <strong>${recompensa} PUESTOS</strong>
+                <strong>${recompensa} PUESTOS ADELANTE</strong>
             </div>
 
             <div class="proof-step">
@@ -811,7 +830,7 @@ function mostrarPrueba(action, titulo, recompensa, urlDestino) {
 
             <div class="proof-review-note">
                 <span>✓</span>
-                Cuando sea aprobada, tu canción subirá
+              Cuando sea aprobada, tu canción se adelantará
                 <strong>${recompensa} puestos automáticamente.</strong>
             </div>
 
@@ -900,7 +919,7 @@ if (submitBtn) {
 
                 <p class="proof-text">
     Tu captura quedó pendiente de revisión.
-    Cuando sea aprobada, tu canción subirá automáticamente.
+   Cuando sea aprobada, tu canción se adelantará automáticamente.
 </p>
 
                 <button
