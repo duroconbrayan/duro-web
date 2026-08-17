@@ -264,24 +264,6 @@ table.appendChild(card);
     });
 }
 
-function moverCola(direccion) {
-    const contenedor = document.getElementById("playlist-body");
-
-    if (!contenedor) return;
-
-    const tarjeta = contenedor.querySelector(".song-card");
-
-    if (!tarjeta) return;
-
-    const gap = 10;
-    const distancia = tarjeta.offsetWidth + gap;
-
-    contenedor.scrollBy({
-        left: direccion * distancia,
-        behavior: "smooth"
-    });
-}
-
         if (played.length === 0) {
             contenedor.innerHTML = "";
             return;
@@ -312,6 +294,24 @@ function moverCola(direccion) {
     } catch (error) {
         console.error("Error al cargar historial:", error);
     }
+}
+
+function moverCola(direccion) {
+    const contenedor = document.getElementById("playlist-body");
+
+    if (!contenedor) return;
+
+    const tarjeta = contenedor.querySelector(".song-card");
+
+    if (!tarjeta) return;
+
+    const gap = 10;
+    const distancia = tarjeta.offsetWidth + gap;
+
+    contenedor.scrollBy({
+        left: direccion * distancia,
+        behavior: "smooth"
+    });
 }
 
 async function cargarLiveLikes() {
