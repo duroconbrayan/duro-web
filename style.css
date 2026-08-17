@@ -4026,7 +4026,7 @@ main{
 }
 
     .duro-live-grid #current-song{
-    margin-top: 3px;
+    margin-top: 10px;
     font-size: clamp(38px, 3.45vw, 52px);
     line-height: .88;
     white-space: nowrap;
@@ -4059,6 +4059,22 @@ main{
 
 .duro-live-grid .playing-animation span{
     width: 5px;
+}
+
+.duro-live-grid .playing-animation span:nth-child(3n + 1){
+    animation-duration: .72s;
+}
+
+.duro-live-grid .playing-animation span:nth-child(3n + 2){
+    animation-duration: 1.18s;
+}
+
+.duro-live-grid .playing-animation span:nth-child(4n){
+    animation-duration: .88s;
+}
+
+.duro-live-grid .playing-animation span:nth-child(5n){
+    animation-duration: 1.34s;
 }
 
     /* LIKES */
