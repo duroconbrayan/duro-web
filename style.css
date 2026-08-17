@@ -5769,15 +5769,22 @@ scroll-snap-align: start;
     }
 
     .queue-guide-slide{
-        padding: 12px 22px 21px 76px;
+        padding: 12px 16px 21px 76px;
+        min-width: 0;
     }
 
     .queue-guide-slide strong{
-        font-size: clamp(20px, 6.8vw, 27px);
+        font-size: clamp(18px, 6vw, 24px);
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: break-word;
+        line-height: .95;
     }
 
     .queue-guide-slide small{
         font-size: 7px;
+        max-width: 100%;
+        white-space: normal;
     }
 
     .duro-live-grid .now-playing{
