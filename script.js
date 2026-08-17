@@ -180,16 +180,17 @@ playingAnteriorId = playingActualId;
     
 colaActual = queue;
 
-            const currentSong = document.getElementById("current-song");
+const currentSong = document.getElementById("current-song");
+const currentNumber = document.getElementById("current-number");
 
-if (currentSong && playing) {
+if (currentSong && currentNumber && playing) {
 
-    if (playing.play_number) {
-        currentSong.textContent =
-            `#${playing.play_number} — ${playing.text}`;
-    } else {
-        currentSong.textContent = playing.text;
-    }
+    currentNumber.textContent =
+        playing.play_number
+            ? `#${playing.play_number}`
+            : "#--";
+
+    currentSong.textContent = playing.text;
 }
 
 const table = document.getElementById("playlist-body");
