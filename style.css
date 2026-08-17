@@ -4445,22 +4445,22 @@ main{
     isolation: isolate;
 
     width: 100%;
-    height: 220px;
-    margin-bottom: 22px;
+    height: 172px;
+    margin-bottom: 16px;
 
     overflow: hidden;
-    border-radius: 22px;
+    border-radius: 14px;
 
     background:
-        radial-gradient(circle at 13% 50%, rgba(255,90,31,.22), transparent 23%),
-        radial-gradient(circle at 92% 50%, rgba(255,0,110,.10), transparent 24%),
-        linear-gradient(100deg, rgba(8,8,9,.99), rgba(22,10,12,.98));
+        radial-gradient(circle at 13% 50%, rgba(255,90,31,.17), transparent 20%),
+        radial-gradient(circle at 94% 50%, rgba(255,0,110,.08), transparent 22%),
+        linear-gradient(100deg, rgba(5,5,6,.995), rgba(19,7,10,.99));
 
-    border: 2px solid rgba(255,105,25,.82);
+    border: 1px solid rgba(255,105,25,.82);
 
     box-shadow:
-        0 0 22px rgba(255,90,31,.20),
-        inset 0 0 55px rgba(255,90,31,.07);
+        0 0 18px rgba(255,90,31,.16),
+        inset 0 0 45px rgba(255,90,31,.05);
 }
 
 
@@ -4470,20 +4470,20 @@ main{
     content: "";
     position: absolute;
 
-    width: 170px;
-    height: 170px;
+    width: 132px;
+    height: 132px;
 
-    left: 42px;
+    left: 40px;
     top: 50%;
 
     transform: translateY(-50%);
 
     border-radius: 50%;
-    border: 2px solid rgba(255,105,25,.48);
+    border: 1px solid rgba(255,105,25,.55);
 
     box-shadow:
-        0 0 26px rgba(255,90,31,.25),
-        inset 0 0 35px rgba(255,90,31,.10);
+        0 0 20px rgba(255,90,31,.18),
+        inset 0 0 26px rgba(255,90,31,.08);
 
     z-index: 0;
 }
@@ -4492,18 +4492,19 @@ main{
     content: "";
     position: absolute;
 
-    width: 120px;
-    height: 120px;
+    width: 92px;
+    height: 92px;
 
-    left: 67px;
+    left: 60px;
     top: 50%;
 
     transform: translateY(-50%);
 
     border-radius: 50%;
-    border: 1px solid rgba(255,179,71,.30);
+    border: 1px solid rgba(255,179,71,.28);
 
-    box-shadow: 0 0 35px rgba(255,90,31,.18);
+    box-shadow:
+        0 0 24px rgba(255,90,31,.15);
 
     z-index: 0;
 }
@@ -4520,7 +4521,7 @@ main{
     align-items: flex-start;
     justify-content: center;
 
-    padding: 24px 205px 34px 285px;
+        padding: 18px 190px 24px 205px;
 
     text-align: left;
 
@@ -4540,15 +4541,15 @@ main{
 /* TEXTO SUPERIOR */
 
 .queue-guide-step{
-    margin: 0 0 7px;
+    margin: 0 0 4px;
 
     color: #ff982d;
 
     font-family: var(--font-body);
-    font-size: 15px;
-    font-weight: 800;
+    font-size: 14px;
+    font-weight: 900;
 
-    letter-spacing: 1px;
+    letter-spacing: .7px;
     line-height: 1;
 
     text-transform: uppercase;
@@ -4560,22 +4561,24 @@ main{
 .queue-guide-slide strong{
     display: block;
 
+    width: 100%;
+    max-width: 760px;
     margin: 0;
 
     color: #fff;
 
     font-family: var(--font-display);
-    font-size: clamp(54px, 5.3vw, 78px);
+    font-size: clamp(48px, 4.5vw, 66px);
     font-weight: 400;
 
-    line-height: .91;
-    letter-spacing: .5px;
+    line-height: .92;
+    letter-spacing: .2px;
 
-    white-space: normal;
+    white-space: nowrap;
 
     text-shadow:
-        0 3px 0 rgba(255,255,255,.04),
-        0 0 24px rgba(255,255,255,.07);
+        0 2px 0 rgba(255,255,255,.04),
+        0 0 18px rgba(255,255,255,.06);
 }
 
 
@@ -4584,16 +4587,16 @@ main{
 .queue-guide-slide small{
     display: block;
 
-    margin-top: 8px;
+    margin-top: 5px;
 
     color: #ff9a2e;
 
     font-family: var(--font-body);
-    font-size: 16px;
-    font-weight: 800;
+    font-size: 15px;
+    font-weight: 900;
 
-    line-height: 1.05;
-    letter-spacing: .3px;
+    line-height: 1;
+    letter-spacing: .2px;
 
     text-transform: uppercase;
 }
@@ -4606,7 +4609,7 @@ main{
 
     position: absolute;
 
-    left: 127px;
+    left: 106px;
 top: 50%;
 
 transform: translate(-50%, -50%);
@@ -4616,17 +4619,16 @@ transform: translate(-50%, -50%);
     color: #fff;
 
     font-family: Arial, sans-serif;
-    font-size: 78px;
+        font-size: 64px;
     font-weight: 900;
 
     line-height: 1;
 
-    text-shadow:
-        -6px -3px 0 #25f4ee,
-        6px 4px 0 #fe2c55,
-        0 0 22px rgba(255,255,255,.18);
+       text-shadow:
+        -4px -2px 0 #25f4ee,
+        4px 3px 0 #fe2c55,
+        0 0 18px rgba(255,255,255,.16);
 }
-
 
 /* ICONO BUSCAR */
 
@@ -4635,7 +4637,7 @@ transform: translate(-50%, -50%);
 
     position: absolute;
 
-    left: 127px;
+    left: 106px;
 top: 50%;
 
 transform: translate(-50%, -50%);
@@ -4645,7 +4647,7 @@ transform: translate(-50%, -50%);
     color: #ff8a2d;
 
     font-family: Arial, sans-serif;
-    font-size: 82px;
+    font-size: 66px;
     font-weight: 700;
 
     line-height: 1;
@@ -4663,7 +4665,7 @@ transform: translate(-50%, -50%);
 
     position: absolute;
 
-    left: 127px;
+    left: 106px;
 top: 50%;
 
 transform: translate(-50%, -50%);
@@ -4673,7 +4675,7 @@ transform: translate(-50%, -50%);
     color: #ff8a2d;
 
     font-family: var(--font-display);
-    font-size: 88px;
+        font-size: 70px;
 
     line-height: 1;
 
@@ -4688,7 +4690,7 @@ transform: translate(-50%, -50%);
 .queue-guide-arrow{
     position: absolute;
 
-    right: 70px;
+    right: 42px;
     top: 50%;
     bottom: auto;
 
@@ -4700,21 +4702,23 @@ transform: translate(-50%, -50%);
 }
 
 .queue-guide-arrow::before{
-    content: "›››";
+    content: "❯❯";
 
     display: block;
 
-    color: #ff7a26;
+    color: #25f4ee;
 
-    font-family: var(--font-display);
-    font-size: 76px;
+    font-family: Arial, sans-serif;
+    font-size: 54px;
+    font-weight: 900;
 
     line-height: 1;
-    letter-spacing: -9px;
+    letter-spacing: -12px;
 
     text-shadow:
-        0 0 10px rgba(255,90,31,.95),
-        0 0 28px rgba(255,90,31,.55);
+        8px 0 0 #fe2c55,
+        0 0 12px rgba(37,244,238,.85),
+        8px 0 22px rgba(254,44,85,.55);
 
     animation: duroCtaArrow .7s ease-in-out infinite alternate;
 }
@@ -4737,8 +4741,8 @@ transform: translate(-50%, -50%);
 .queue-guide-dots{
     position: absolute;
 
-    left: 285px;
-    bottom: 14px;
+        left: 205px;
+        bottom: 10px;
 
     display: flex;
     gap: 6px;
