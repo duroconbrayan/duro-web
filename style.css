@@ -737,13 +737,13 @@ a{ text-decoration: none; color: inherit; }
     align-items: flex-end;
     justify-content: space-between;
 
-    gap: 6px;
+    gap: 4px;
 
     padding-bottom: 5px;
 }
 
 .playing-animation span{
-    width: 6px;
+    width: 5px;
     flex: none;
 
     border-radius: 8px;
@@ -756,7 +756,7 @@ a{ text-decoration: none; color: inherit; }
         );
 
     box-shadow:
-        0 0 8px rgba(255,90,31,.35);
+            0 0 12px rgba(255,90,31,.55);
 
     animation: bars 1s ease-in-out infinite alternate;
 }
