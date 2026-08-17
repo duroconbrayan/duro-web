@@ -4474,10 +4474,10 @@ main{
 
     position: absolute;
 
-    left: 88px;
-    top: 50%;
+    left: 127px;
+top: 50%;
 
-    transform: translateY(-53%);
+transform: translate(-50%, -50%);
 
     z-index: 3;
 
@@ -4503,10 +4503,10 @@ main{
 
     position: absolute;
 
-    left: 86px;
-    top: 50%;
+    left: 127px;
+top: 50%;
 
-    transform: translateY(-54%);
+transform: translate(-50%, -50%);
 
     z-index: 3;
 
@@ -4531,10 +4531,10 @@ main{
 
     position: absolute;
 
-    left: 96px;
-    top: 50%;
+    left: 127px;
+top: 50%;
 
-    transform: translateY(-55%);
+transform: translate(-50%, -50%);
 
     z-index: 3;
 
