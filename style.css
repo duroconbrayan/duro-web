@@ -4303,3 +4303,351 @@ main{
         transform: translateX(-50%);
     }
 }
+
+/* =========================================================
+   DURO 2.2 — CTA TIKTOK / MOCKUP
+   ========================================================= */
+
+.queue-guide{
+    height: 245px;
+    position: relative;
+    isolation: isolate;
+
+    background:
+        radial-gradient(circle at 13% 50%, rgba(255,90,31,.20), transparent 24%),
+        radial-gradient(circle at 92% 50%, rgba(255,0,110,.12), transparent 22%),
+        linear-gradient(100deg, rgba(8,8,9,.98), rgba(18,11,10,.98));
+
+    border: 2px solid rgba(255,105,25,.85);
+
+    box-shadow:
+        0 0 18px rgba(255,90,31,.22),
+        inset 0 0 50px rgba(255,90,31,.08);
+
+    overflow: hidden;
+}
+
+
+/* resplandor circular izquierdo */
+.queue-guide::before{
+    content: "";
+    position: absolute;
+
+    width: 190px;
+    height: 190px;
+
+    left: 42px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(255,105,25,.48);
+
+    box-shadow:
+        0 0 25px rgba(255,90,31,.28),
+        inset 0 0 35px rgba(255,90,31,.12);
+
+    opacity: .85;
+
+    z-index: 0;
+}
+
+
+/* halo interior */
+.queue-guide::after{
+    content: "";
+    position: absolute;
+
+    width: 135px;
+    height: 135px;
+
+    left: 69px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255,179,71,.32);
+
+    box-shadow:
+        0 0 35px rgba(255,90,31,.18);
+
+    z-index: 0;
+}
+
+
+/* TODAS LAS SLIDES */
+.queue-guide-slide{
+    align-items: flex-start;
+    justify-content: center;
+
+    padding:
+        30px
+        190px
+        40px
+        285px;
+
+    text-align: left;
+
+    z-index: 2;
+}
+
+
+/* TEXTO PEQUEÑO SUPERIOR */
+.queue-guide-step{
+    margin: 0 0 5px;
+
+    color: #ff9a2e;
+
+    font-family: var(--font-body);
+
+    font-size: 19px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    line-height: 1;
+}
+
+
+/* TEXTO GIGANTE */
+.queue-guide-slide strong{
+    max-width: none;
+
+    color: #fff;
+
+    font-family: var(--font-display);
+
+    font-size: clamp(62px, 6.3vw, 94px);
+
+    line-height: .92;
+
+    letter-spacing: 1px;
+
+    text-shadow:
+        0 4px 0 rgba(255,255,255,.05),
+        0 0 25px rgba(255,255,255,.08);
+
+    white-space: nowrap;
+}
+
+
+/* FRASE INFERIOR */
+.queue-guide-slide small{
+    margin-top: 9px;
+
+    color: #ff9a2e;
+
+    font-size: 22px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    letter-spacing: .5px;
+}
+
+
+/* FLECHA DERECHA */
+.queue-guide-arrow{
+    right: 55px;
+    bottom: 50%;
+
+    color: #ff7a26;
+
+    font-size: 75px;
+
+    transform: translateY(50%);
+
+    text-shadow:
+        0 0 10px #ff5a1f,
+        0 0 30px rgba(255,90,31,.65);
+}
+
+
+/* PUNTOS */
+.queue-guide-dots{
+    left: 285px;
+    bottom: 17px;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   PRIMER SLIDE: TIKTOK
+   ========================================================= */
+
+.queue-guide-tiktok::before{
+    content: "♪";
+
+    position: absolute;
+
+    left: 98px;
+    top: 50%;
+
+    transform: translateY(-54%);
+
+    z-index: 3;
+
+    color: #fff;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 92px;
+    font-weight: 900;
+
+    line-height: 1;
+
+    text-shadow:
+        -7px -3px 0 #25f4ee,
+        7px 4px 0 #fe2c55,
+        0 0 20px rgba(255,255,255,.18);
+}
+
+
+/* TikTok todavía más protagonista */
+.queue-guide-tiktok strong{
+    font-size: clamp(66px, 6.7vw, 100px);
+}
+
+
+/* =========================================================
+   MÓVIL — MISMA IDEA, OTRA COMPOSICIÓN
+   ========================================================= */
+
+@media (max-width: 900px){
+
+    .queue-guide{
+        height: 205px;
+
+        border-width: 1px;
+        border-radius: 18px;
+    }
+
+    .queue-guide::before{
+        width: 105px;
+        height: 105px;
+
+        left: 17px;
+    }
+
+    .queue-guide::after{
+        width: 76px;
+        height: 76px;
+
+        left: 31px;
+    }
+
+    .queue-guide-slide{
+        align-items: flex-start;
+
+        padding:
+            25px
+            40px
+            37px
+            137px;
+
+        text-align: left;
+    }
+
+    .queue-guide-step{
+        font-size: 11px;
+        letter-spacing: .5px;
+    }
+
+    .queue-guide-slide strong,
+    .queue-guide-tiktok strong{
+        font-size: clamp(34px, 9vw, 48px);
+
+        line-height: .94;
+
+        white-space: normal;
+    }
+
+    .queue-guide-slide small{
+        margin-top: 7px;
+
+        font-size: 12px;
+        line-height: 1.1;
+    }
+
+    .queue-guide-tiktok::before{
+        left: 49px;
+
+        font-size: 54px;
+    }
+
+    .queue-guide-arrow{
+        right: 14px;
+
+        font-size: 38px;
+    }
+
+    .queue-guide-dots{
+        left: 137px;
+        bottom: 14px;
+    }
+}
+
+
+@media (max-width: 520px){
+
+    .queue-guide{
+        height: 185px;
+    }
+
+    .queue-guide::before{
+        width: 82px;
+        height: 82px;
+
+        left: 12px;
+    }
+
+    .queue-guide::after{
+        width: 58px;
+        height: 58px;
+
+        left: 24px;
+    }
+
+    .queue-guide-slide{
+        padding:
+            22px
+            31px
+            34px
+            108px;
+    }
+
+    .queue-guide-tiktok::before{
+        left: 36px;
+
+        font-size: 43px;
+    }
+
+    .queue-guide-step{
+        font-size: 9px;
+    }
+
+    .queue-guide-slide strong,
+    .queue-guide-tiktok strong{
+        font-size: clamp(29px, 9vw, 40px);
+    }
+
+    .queue-guide-slide small{
+        font-size: 10px;
+    }
+
+    .queue-guide-arrow{
+        right: 10px;
+
+        font-size: 29px;
+    }
+
+    .queue-guide-dots{
+        left: 108px;
+        bottom: 12px;
+    }
+}
