@@ -4039,21 +4039,27 @@ main{
         padding: 32px;
     }
 
-    .duro-live-grid .live-likes-top{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 18px;
+    .duro-live-grid .live-likes-title{
+    font-family: var(--font-display);
+    font-size: 27px;
+    line-height: 1;
+    color: #fff;
 }
 
-.duro-live-grid .live-likes-top span{
-    font-size: 58px;
+.duro-live-grid .live-likes-number{
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.duro-live-grid .live-heart{
+    font-size: 64px;
     line-height: 1;
     filter: drop-shadow(0 0 16px rgba(255,60,40,.45));
 }
 
-.duro-live-grid .live-likes-top strong{
+.duro-live-grid #live-likes-count{
     font-family: var(--font-display);
     font-size: clamp(64px, 5.5vw, 90px);
     line-height: .9;

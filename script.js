@@ -334,7 +334,7 @@ const topUsers = Array.isArray(data.top_users)
         );
 
         contador.textContent =
-    `${likesDelLive.toLocaleString("es-CO")} ❤️`;
+    likesDelLive.toLocaleString("es-CO");
 
         barra.style.width = `${porcentaje}%`;
 
