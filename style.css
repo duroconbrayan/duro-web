@@ -4388,7 +4388,7 @@ main{
     align-items: flex-start;
     justify-content: center;
 
-    padding: 24px 150px 34px 255px;
+    padding: 24px 205px 34px 285px;
 
     text-align: left;
 
@@ -4556,7 +4556,7 @@ transform: translate(-50%, -50%);
 .queue-guide-arrow{
     position: absolute;
 
-    right: 38px;
+    right: 70px;
     top: 50%;
     bottom: auto;
 
@@ -4575,10 +4575,10 @@ transform: translate(-50%, -50%);
     color: #ff7a26;
 
     font-family: var(--font-display);
-    font-size: 62px;
+    font-size: 76px;
 
     line-height: 1;
-    letter-spacing: -7px;
+    letter-spacing: -9px;
 
     text-shadow:
         0 0 10px rgba(255,90,31,.95),
@@ -4605,7 +4605,7 @@ transform: translate(-50%, -50%);
 .queue-guide-dots{
     position: absolute;
 
-    left: 255px;
+    left: 285px;
     bottom: 14px;
 
     display: flex;
