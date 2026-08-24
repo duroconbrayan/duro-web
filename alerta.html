@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerta de canciones | DURO</title>
+
+    <style>
+        :root {
+            --orange: #ff5a1f;
+            --amber: #ffb347;
+            --card: rgba(13, 9, 12, .97);
+            --text: #ffffff;
+            --muted: #cfc8d2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: transparent !important;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .alert-stage {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: clamp(36px, 7vh, 120px) clamp(22px, 4vw, 54px);
+            pointer-events: none;
+        }
+
+        .song-alert {
+            position: relative;
+            width: min(92vw, 900px);
+            min-height: clamp(126px, 14vw, 174px);
+            display: grid;
+            grid-template-columns: clamp(88px, 11vw, 126px) minmax(0, 1fr);
+            align-items: center;
+            gap: clamp(18px, 3vw, 32px);
+            padding:
+                clamp(20px, 2.7vw, 30px)
+                clamp(28px, 4vw, 46px)
+                clamp(22px, 3vw, 34px)
+                clamp(20px, 2.7vw, 30px);
+            overflow: hidden;
+            color: var(--text);
+            border: 3px solid transparent;
+            border-radius: clamp(24px, 3vw, 34px);
+            background:
+                linear-gradient(135deg, rgba(28, 17, 20, .98), var(--card)) padding-box,
+                linear-gradient(105deg, var(--orange), #ff8a24 54%, var(--amber)) border-box;
+            box-shadow:
+                0 24px 70px rgba(0, 0, 0, .72),
+                0 0 18px rgba(255, 90, 31, .72),
+                0 0 55px rgba(255, 90, 31, .30),
+                inset 0 0 42px rgba(255, 179, 71, .055);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-50px) scale(.84);
+            transform-origin: top center;
+        }
+
+        .song-alert::before {
+            content: "";
+            position: absolute;
+            width: 55%;
+            height: 170%;
+            top: -35%;
+            left: -70%;
+            pointer-events: none;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 179, 71, .14),
+                transparent
+            );
+            transform: skewX(-22deg);
+        }
+
+        .song-alert::after {
+            content: "";
+            position: absolute;
+            left: 4%;
+            right: 4%;
+            bottom: 8px;
+            height: clamp(4px, .6vw, 7px);
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--orange), var(--amber));
+            box-shadow: 0 0 16px rgba(255, 90, 31, .65);
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        .song-alert.is-visible {
+            visibility: visible;
+            animation: alert-in .55s cubic-bezier(.18, .89, .32, 1.28) forwards;
+        }
+
+        .song-alert.is-visible::before {
+            animation: shine 1s .2s ease-out forwards;
+        }
+
+        .song-alert.is-visible::after {
+            animation: timer 4.2s linear forwards;
+        }
+
+        .song-alert.is-exiting {
+            animation: alert-out .42s ease-in forwards;
+        }
+
+        .check-wrap {
+            width: clamp(84px, 10.5vw, 120px);
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            border: clamp(3px, .4vw, 5px) solid rgba(255, 133, 32, .95);
+            border-radius: 50%;
+            background: rgba(12, 8, 10, .95);
+            box-shadow:
+                0 0 0 3px rgba(255, 90, 31, .18),
+                0 0 25px rgba(255, 90, 31, .70);
+        }
+
+        .check {
+            width: 82%;
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: #110d0e;
+            font-size: clamp(48px, 6.4vw, 76px);
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(145deg, #ffd44d, #ff951f 55%, var(--orange));
+            box-shadow:
+                inset 0 3px 4px rgba(255, 255, 255, .42),
+                0 0 26px rgba(255, 126, 31, .48);
+        }
+
+        .alert-copy {
+            min-width: 0;
+            display: grid;
+            align-content: center;
+            gap: clamp(4px, .7vw, 9px);
+        }
+
+        .alert-title {
+            color: #ff9d20;
+            font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+            font-size: clamp(42px, 7vw, 76px);
+            font-style: italic;
+            font-weight: 900;
+            letter-spacing: .015em;
+            line-height: .92;
+            text-shadow: 0 0 24px rgba(255, 90, 31, .24);
+        }
+
+        .alert-song {
+            max-width: 100%;
+            overflow: hidden;
+            color: #ffffff;
+            font-size: clamp(20px, 3.3vw, 38px);
+            font-weight: 900;
+            letter-spacing: .015em;
+            line-height: 1.1;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .alert-cta {
+            overflow: hidden;
+            color: var(--muted);
+            font-size: clamp(12px, 1.8vw, 21px);
+            font-weight: 800;
+            letter-spacing: .045em;
+            line-height: 1.15;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @keyframes alert-in {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(.84);
+            }
+
+            72% {
+                opacity: 1;
+                transform: translateY(7px) scale(1.025);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes alert-out {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-34px) scale(.94);
+            }
+        }
+
+        @keyframes timer {
+            from { transform: scaleX(1); }
+            to { transform: scaleX(0); }
+        }
+
+        @keyframes shine {
+            from { left: -70%; }
+            to { left: 125%; }
+        }
+
+        @media (max-width: 560px) {
+            .song-alert {
+                min-height: 104px;
+                grid-template-columns: 64px minmax(0, 1fr);
+                gap: 14px;
+                padding: 15px 18px 19px 14px;
+                border-width: 2px;
+                border-radius: 20px;
+            }
+
+            .check-wrap {
+                width: 64px;
+                border-width: 3px;
+            }
+
+            .check {
+                font-size: 38px;
+            }
+
+            .alert-title {
+                font-size: 35px;
+            }
+
+            .alert-song {
+                font-size: 17px;
+            }
+
+            .alert-cta {
+                font-size: 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="alert-stage" aria-live="polite" aria-atomic="true">
+        <div id="song-alert" class="song-alert" role="status">
+            <div class="check-wrap" aria-hidden="true">
+                <div class="check">✓</div>
+            </div>
+
+            <div class="alert-copy">
+                <div class="alert-title">¡ANOTADO!</div>
+                <div id="alert-song" class="alert-song"></div>
+                <div class="alert-cta">
+                    MIRA TU PUESTO EN DUROCONBRAYAN.COM
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const REQUESTS_URL =
+            "https://playlist-api.bookingelbrayan.workers.dev/requests";
+
+        const POLL_INTERVAL = 1500;
+        const ALERT_DURATION = 4200;
+        const EXIT_DURATION = 450;
+
+        const knownRequestIds = new Set();
+        const alertQueue = [];
+
+        let initialized = false;
+        let alertActive = false;
+        let checkingRequests = false;
+
+        function queueAlert(song) {
+            const cleanSong = String(song || "").trim();
+
+            if (!cleanSong) return;
+
+            alertQueue.push(cleanSong);
+            showNextAlert();
+        }
+
+        function showNextAlert() {
+            if (alertActive || alertQueue.length === 0) return;
+
+            const alert = document.getElementById("song-alert");
+            const song = document.getElementById("alert-song");
+
+            alertActive = true;
+            song.textContent = alertQueue.shift();
+
+            alert.classList.remove("is-exiting");
+            alert.classList.add("is-visible");
+
+            window.setTimeout(() => {
+                alert.classList.add("is-exiting");
+
+                window.setTimeout(() => {
+                    alert.classList.remove("is-visible", "is-exiting");
+                    alertActive = false;
+                    showNextAlert();
+                }, EXIT_DURATION);
+            }, ALERT_DURATION);
+        }
+
+        async function checkNewRequests() {
+            if (checkingRequests) return;
+
+            checkingRequests = true;
+
+            try {
+                const response = await fetch(REQUESTS_URL, {
+                    cache: "no-store"
+                });
+
+                if (!response.ok) return;
+
+                const requests = await response.json();
+
+                if (!Array.isArray(requests)) return;
+
+                if (!initialized) {
+                    requests.forEach(request => {
+                        knownRequestIds.add(String(request.id));
+                    });
+
+                    initialized = true;
+                    return;
+                }
+
+                const newRequests = requests
+                    .filter(request => {
+                        return !knownRequestIds.has(String(request.id));
+                    })
+                    .sort((a, b) => Number(a.id) - Number(b.id));
+
+                newRequests.forEach(request => {
+                    knownRequestIds.add(String(request.id));
+                    queueAlert(request.text);
+                });
+            } catch (error) {
+                console.error("No se pudieron consultar las canciones:", error);
+            } finally {
+                checkingRequests = false;
+            }
+        }
+
+        checkNewRequests();
+        window.setInterval(checkNewRequests, POLL_INTERVAL);
+
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get("prueba") === "1") {
+            window.setTimeout(() => {
+                queueAlert("ANGELITO — SIN FRONTERAS");
+            }, 900);
+        }
+    </script>
+</body>
+</html>
