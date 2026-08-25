@@ -34,10 +34,157 @@
             position: fixed;
             inset: 0;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            justify-content: flex-start;
+            gap: clamp(12px, 1.7vw, 22px);
+            padding: clamp(64px, 9vh, 125px) clamp(18px, 3vw, 42px) 20px;
+            pointer-events: none;
+        }
+
+        .brand-banner {
+            position: relative;
+            width: min(96vw, 1020px);
+            padding-top: clamp(32px, 5.2vw, 58px);
+            z-index: 2;
+            animation: brand-breathe 3.8s ease-in-out infinite;
+        }
+
+        .brand-glasses {
+            position: absolute;
+            z-index: 4;
+            top: clamp(-20px, -1.8vw, -8px);
+            left: 50%;
+            width: clamp(130px, 19vw, 205px);
+            height: auto;
+            transform: translateX(-50%) rotate(-7deg);
+            filter:
+                drop-shadow(0 0 8px rgba(23, 233, 255, .98))
+                drop-shadow(0 0 18px rgba(199, 44, 255, .82))
+                drop-shadow(0 9px 12px rgba(0, 0, 0, .78));
+            animation: brand-glasses-float 2.2s ease-in-out infinite;
+        }
+
+        .brand-shell {
+            position: relative;
+            isolation: isolate;
+            min-height: clamp(112px, 14vw, 148px);
+            display: grid;
+            align-content: center;
+            gap: clamp(6px, 1vw, 11px);
+            padding:
+                clamp(28px, 3.4vw, 39px)
+                clamp(24px, 4vw, 48px)
+                clamp(17px, 2.3vw, 26px);
+            overflow: hidden;
+            border: clamp(3px, .42vw, 5px) solid transparent;
+            border-radius: clamp(24px, 3.2vw, 36px);
+            background:
+                linear-gradient(135deg, rgba(14, 8, 24, .985), rgba(8, 11, 19, .985)) padding-box,
+                linear-gradient(100deg, #ff351f, #ff2bb8 27%, #7258ff 50%, #13dcff 72%, #ffbd22) border-box;
+            background-size: 100% 100%, 260% 100%;
+            box-shadow:
+                0 18px 44px rgba(0, 0, 0, .72),
+                0 0 13px rgba(255, 53, 31, .78),
+                0 0 29px rgba(199, 44, 255, .42),
+                0 0 42px rgba(23, 233, 255, .24),
+                inset 0 0 28px rgba(115, 88, 255, .12);
+            animation: brand-border-flow 5s linear infinite;
+        }
+
+        .brand-shell::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            width: 38%;
+            height: 210%;
+            top: -55%;
+            left: -55%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, .13),
+                transparent
+            );
+            transform: skewX(-24deg);
+            animation: brand-shine 4.8s ease-in-out infinite;
+        }
+
+        .brand-shell::after {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            z-index: -1;
+            border: 1px solid rgba(255, 255, 255, .13);
+            border-radius: clamp(17px, 2.5vw, 28px);
+            box-shadow: inset 0 0 18px rgba(23, 233, 255, .08);
+        }
+
+        .brand-title {
+            overflow: hidden;
+            font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+            font-size: clamp(34px, 5.6vw, 62px);
+            font-style: italic;
+            font-weight: 900;
+            letter-spacing: .005em;
+            line-height: .95;
+            text-align: center;
+            white-space: nowrap;
+            background: linear-gradient(
+                95deg,
+                #ff4530,
+                #ff71c9 24%,
+                #ffffff 48%,
+                #6ee8ff 73%,
+                #ffc928
+            );
+            background-size: 190% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-stroke: clamp(1px, .16vw, 2px) rgba(255, 255, 255, .85);
+            filter: drop-shadow(0 0 8px rgba(199, 44, 255, .48));
+            animation: title-color-flow 5.5s linear infinite;
+        }
+
+        .brand-subrow {
+            display: grid;
+            grid-template-columns: minmax(32px, 1fr) auto minmax(32px, 1fr);
+            align-items: center;
+            gap: clamp(10px, 1.8vw, 21px);
+        }
+
+        .brand-line {
+            height: clamp(4px, .58vw, 7px);
+            border-radius: 999px;
+            background: linear-gradient(90deg, #ff3f23, #ff3ec8, #6d59ff);
+            box-shadow: 0 0 11px rgba(255, 54, 168, .72);
+        }
+
+        .brand-line:last-child {
+            background: linear-gradient(90deg, #6d59ff, #15e7ff, #ffc52c);
+            box-shadow: 0 0 11px rgba(23, 233, 255, .72);
+        }
+
+        .brand-subtitle {
+            color: #ffffff;
+            font-size: clamp(13px, 2.25vw, 25px);
+            font-weight: 1000;
+            letter-spacing: .035em;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            text-shadow: 0 0 10px rgba(255, 255, 255, .33);
+        }
+
+        .alert-slot {
+            width: 100%;
+            min-height: clamp(112px, 15vw, 182px);
+            display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: clamp(36px, 7vh, 120px) clamp(22px, 4vw, 54px);
-            pointer-events: none;
+            z-index: 1;
         }
 
         .song-alert {
@@ -292,7 +439,74 @@
             to { transform: rotate(-5deg) translateY(-4px) scale(1.04); }
         }
 
+        @keyframes brand-breathe {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-3px) scale(1.006); }
+        }
+
+        @keyframes brand-glasses-float {
+            0%, 100% {
+                transform: translateX(-50%) translateY(2px) rotate(-8deg) scale(.98);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-7px) rotate(-5deg) scale(1.035);
+            }
+        }
+
+        @keyframes brand-border-flow {
+            from { background-position: 0 0, 0% 50%; }
+            to { background-position: 0 0, 260% 50%; }
+        }
+
+        @keyframes title-color-flow {
+            from { background-position: 0% 50%; }
+            to { background-position: 190% 50%; }
+        }
+
+        @keyframes brand-shine {
+            0%, 54% { left: -55%; opacity: 0; }
+            62% { opacity: 1; }
+            88%, 100% { left: 125%; opacity: 0; }
+        }
+
         @media (max-width: 560px) {
+            .alert-stage {
+                gap: 10px;
+                padding: 48px 10px 12px;
+            }
+
+            .brand-banner {
+                width: 98vw;
+                padding-top: 28px;
+            }
+
+            .brand-glasses {
+                width: 108px;
+            }
+
+            .brand-shell {
+                min-height: 91px;
+                gap: 7px;
+                padding: 24px 14px 14px;
+                border-radius: 18px;
+            }
+
+            .brand-title {
+                font-size: 28px;
+            }
+
+            .brand-subrow {
+                gap: 7px;
+            }
+
+            .brand-subtitle {
+                font-size: 10px;
+            }
+
+            .brand-line {
+                height: 4px;
+            }
+
             .song-alert {
                 min-height: 104px;
                 grid-template-columns: 64px minmax(0, 1fr);
@@ -328,21 +542,43 @@
 
 <body>
     <div class="alert-stage" aria-live="polite" aria-atomic="true">
-        <div id="song-alert" class="song-alert" role="status">
-            <div class="check-wrap" aria-hidden="true">
-                <div class="check">✓</div>
-                <img
-                    class="gift-image"
-                    src="assets/sunglasses-gift.png"
-                    alt=""
-                >
-            </div>
+        <div class="brand-banner" aria-label="Reaccionando a tu canción">
+            <img
+                class="brand-glasses"
+                src="assets/sunglasses-gift.png"
+                alt=""
+            >
 
-            <div class="alert-copy">
-                <div id="alert-title" class="alert-title">¡ANOTADO!</div>
-                <div id="alert-song" class="alert-song"></div>
-                <div id="alert-cta" class="alert-cta">
-                    MIRA TU PUESTO EN DUROCONBRAYAN.COM
+            <div class="brand-shell">
+                <div class="brand-title">REACCIONANDO A TU CANCIÓN</div>
+
+                <div class="brand-subrow">
+                    <span class="brand-line"></span>
+                    <div class="brand-subtitle">
+                        ( MANDA GAFAS Y SALTAS LISTA )
+                    </div>
+                    <span class="brand-line"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert-slot">
+            <div id="song-alert" class="song-alert" role="status">
+                <div class="check-wrap" aria-hidden="true">
+                    <div class="check">✓</div>
+                    <img
+                        class="gift-image"
+                        src="assets/sunglasses-gift.png"
+                        alt=""
+                    >
+                </div>
+
+                <div class="alert-copy">
+                    <div id="alert-title" class="alert-title">¡ANOTADO!</div>
+                    <div id="alert-song" class="alert-song"></div>
+                    <div id="alert-cta" class="alert-cta">
+                        MIRA TU PUESTO EN DUROCONBRAYAN.COM
+                    </div>
                 </div>
             </div>
         </div>
