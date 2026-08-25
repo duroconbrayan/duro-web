@@ -9,6 +9,8 @@
         :root {
             --orange: #ff5a1f;
             --amber: #ffb347;
+            --cyan: #17e9ff;
+            --purple: #c72cff;
             --card: rgba(13, 9, 12, .97);
             --text: #ffffff;
             --muted: #cfc8d2;
@@ -146,6 +148,65 @@
                 0 0 26px rgba(255, 126, 31, .48);
         }
 
+        .gift-image {
+            display: none;
+            width: 145%;
+            max-width: none;
+            filter:
+                drop-shadow(0 0 9px rgba(23, 233, 255, .95))
+                drop-shadow(0 0 22px rgba(199, 44, 255, .72));
+            transform: rotate(-7deg);
+        }
+
+        .song-alert.gift-mode {
+            background:
+                linear-gradient(135deg, rgba(11, 9, 25, .98), var(--card)) padding-box,
+                linear-gradient(105deg, var(--purple), var(--cyan) 58%, var(--orange)) border-box;
+            box-shadow:
+                0 24px 70px rgba(0, 0, 0, .76),
+                0 0 20px rgba(23, 233, 255, .64),
+                0 0 58px rgba(199, 44, 255, .32),
+                inset 0 0 42px rgba(23, 233, 255, .055);
+        }
+
+        .song-alert.gift-mode::after {
+            background: linear-gradient(
+                90deg,
+                var(--purple),
+                var(--cyan),
+                var(--orange)
+            );
+            box-shadow: 0 0 18px rgba(23, 233, 255, .72);
+        }
+
+        .gift-mode .check-wrap {
+            border-color: rgba(23, 233, 255, .96);
+            background: rgba(8, 7, 20, .96);
+            box-shadow:
+                0 0 0 3px rgba(199, 44, 255, .20),
+                0 0 28px rgba(23, 233, 255, .72);
+        }
+
+        .gift-mode .check {
+            display: none;
+        }
+
+        .gift-mode .gift-image {
+            display: block;
+            animation: gift-float 1.1s ease-in-out infinite alternate;
+        }
+
+        .gift-mode .alert-title {
+            color: var(--cyan);
+            text-shadow:
+                0 0 12px rgba(23, 233, 255, .55),
+                0 0 26px rgba(199, 44, 255, .32);
+        }
+
+        .gift-mode .alert-song {
+            text-shadow: 0 0 18px rgba(199, 44, 255, .46);
+        }
+
         .alert-copy {
             min-width: 0;
             display: grid;
@@ -226,6 +287,11 @@
             to { left: 125%; }
         }
 
+        @keyframes gift-float {
+            from { transform: rotate(-9deg) translateY(3px) scale(.96); }
+            to { transform: rotate(-5deg) translateY(-4px) scale(1.04); }
+        }
+
         @media (max-width: 560px) {
             .song-alert {
                 min-height: 104px;
@@ -265,12 +331,17 @@
         <div id="song-alert" class="song-alert" role="status">
             <div class="check-wrap" aria-hidden="true">
                 <div class="check">✓</div>
+                <img
+                    class="gift-image"
+                    src="assets/sunglasses-gift.png"
+                    alt=""
+                >
             </div>
 
             <div class="alert-copy">
-                <div class="alert-title">¡ANOTADO!</div>
+                <div id="alert-title" class="alert-title">¡ANOTADO!</div>
                 <div id="alert-song" class="alert-song"></div>
-                <div class="alert-cta">
+                <div id="alert-cta" class="alert-cta">
                     MIRA TU PUESTO EN DUROCONBRAYAN.COM
                 </div>
             </div>
@@ -281,23 +352,52 @@
         const REQUESTS_URL =
             "https://playlist-api.bookingelbrayan.workers.dev/requests";
 
+        const GIFT_ALERTS_URL =
+            "https://playlist-api.bookingelbrayan.workers.dev/gift-alerts";
+
         const POLL_INTERVAL = 1500;
         const ALERT_DURATION = 4200;
         const EXIT_DURATION = 450;
 
         const knownRequestIds = new Set();
+        const knownGiftAlertIds = new Set();
         const alertQueue = [];
 
-        let initialized = false;
+        let requestsInitialized = false;
+        let giftsInitialized = false;
         let alertActive = false;
         let checkingRequests = false;
+        let checkingGifts = false;
 
-        function queueAlert(song) {
+        function queueSongAlert(song) {
             const cleanSong = String(song || "").trim();
 
             if (!cleanSong) return;
 
-            alertQueue.push(cleanSong);
+            alertQueue.push({
+                type: "song",
+                song: cleanSong
+            });
+
+            showNextAlert();
+        }
+
+        function queueGiftAlert(giftAlert) {
+            const username = String(
+                giftAlert?.username || ""
+            ).trim();
+
+            if (!username) return;
+
+            alertQueue.push({
+                type: "gift",
+                username,
+                repeatCount: Math.max(
+                    1,
+                    Number(giftAlert?.repeat_count || 1)
+                )
+            });
+
             showNextAlert();
         }
 
@@ -305,10 +405,34 @@
             if (alertActive || alertQueue.length === 0) return;
 
             const alert = document.getElementById("song-alert");
-            const song = document.getElementById("alert-song");
+            const title = document.getElementById("alert-title");
+            const mainText = document.getElementById("alert-song");
+            const cta = document.getElementById("alert-cta");
+            const nextAlert = alertQueue.shift();
+            const isGift = nextAlert.type === "gift";
 
             alertActive = true;
-            song.textContent = alertQueue.shift();
+
+            alert.classList.toggle(
+                "gift-mode",
+                isGift
+            );
+
+            if (isGift) {
+                const visibleUsername = nextAlert.username.startsWith("@")
+                    ? nextAlert.username
+                    : `@${nextAlert.username}`;
+
+                title.textContent = "¡SE PUSO LAS GAFAS!";
+                mainText.textContent = visibleUsername;
+                cta.textContent = nextAlert.repeatCount > 1
+                    ? `MANDÓ GAFAS ×${nextAlert.repeatCount} · GRACIAS POR APOYAR`
+                    : "GRACIAS POR APOYAR EL DIRECTO";
+            } else {
+                title.textContent = "¡ANOTADO!";
+                mainText.textContent = nextAlert.song;
+                cta.textContent = "MIRA TU PUESTO EN DUROCONBRAYAN.COM";
+            }
 
             alert.classList.remove("is-exiting");
             alert.classList.add("is-visible");
@@ -340,12 +464,12 @@
 
                 if (!Array.isArray(requests)) return;
 
-                if (!initialized) {
+                if (!requestsInitialized) {
                     requests.forEach(request => {
                         knownRequestIds.add(String(request.id));
                     });
 
-                    initialized = true;
+                    requestsInitialized = true;
                     return;
                 }
 
@@ -357,7 +481,7 @@
 
                 newRequests.forEach(request => {
                     knownRequestIds.add(String(request.id));
-                    queueAlert(request.text);
+                    queueSongAlert(request.text);
                 });
             } catch (error) {
                 console.error("No se pudieron consultar las canciones:", error);
@@ -366,14 +490,72 @@
             }
         }
 
+        async function checkNewGiftAlerts() {
+            if (checkingGifts) return;
+
+            checkingGifts = true;
+
+            try {
+                const response = await fetch(GIFT_ALERTS_URL, {
+                    cache: "no-store"
+                });
+
+                if (!response.ok) return;
+
+                const giftAlerts = await response.json();
+
+                if (!Array.isArray(giftAlerts)) return;
+
+                if (!giftsInitialized) {
+                    giftAlerts.forEach(giftAlert => {
+                        knownGiftAlertIds.add(String(giftAlert.id));
+                    });
+
+                    giftsInitialized = true;
+                    return;
+                }
+
+                const newGiftAlerts = giftAlerts
+                    .filter(giftAlert => {
+                        return !knownGiftAlertIds.has(
+                            String(giftAlert.id)
+                        );
+                    })
+                    .sort((a, b) => Number(a.id) - Number(b.id));
+
+                newGiftAlerts.forEach(giftAlert => {
+                    knownGiftAlertIds.add(String(giftAlert.id));
+                    queueGiftAlert(giftAlert);
+                });
+            } catch (error) {
+                console.error(
+                    "No se pudieron consultar las Gafas:",
+                    error
+                );
+            } finally {
+                checkingGifts = false;
+            }
+        }
+
         checkNewRequests();
+        checkNewGiftAlerts();
         window.setInterval(checkNewRequests, POLL_INTERVAL);
+        window.setInterval(checkNewGiftAlerts, POLL_INTERVAL);
 
         const params = new URLSearchParams(window.location.search);
 
         if (params.get("prueba") === "1") {
             window.setTimeout(() => {
-                queueAlert("ANGELITO — SIN FRONTERAS");
+                queueSongAlert("ANGELITO — SIN FRONTERAS");
+            }, 900);
+        }
+
+        if (params.get("prueba") === "gafas") {
+            window.setTimeout(() => {
+                queueGiftAlert({
+                    username: "usuario_duro",
+                    repeat_count: 1
+                });
             }, 900);
         }
     </script>
