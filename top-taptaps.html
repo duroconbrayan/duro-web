@@ -9,9 +9,9 @@
             color-scheme: dark;
             --orange: #ff6800;
             --orange-soft: #ff9a3d;
-            --carbon: rgba(7, 8, 11, 0.91);
-            --panel: rgba(20, 22, 28, 0.94);
-            --line: rgba(255, 255, 255, 0.12);
+            --carbon: rgba(7, 8, 11, 0.56);
+            --panel: rgba(12, 14, 19, 0.70);
+            --line: rgba(255, 255, 255, 0.19);
             --text: #f7f7f8;
             --muted: #a9adb9;
             --green: #5ce597;
@@ -36,15 +36,15 @@
         }
 
         .ranking {
-            width: min(430px, calc(100vw - 20px));
-            padding: 14px;
+            width: min(520px, calc(100vw - 20px));
+            padding: 15px;
             border: 1px solid rgba(255, 104, 0, 0.54);
             border-radius: 22px;
             background:
                 radial-gradient(circle at 88% 0%, rgba(255, 104, 0, 0.22), transparent 36%),
                 var(--carbon);
-            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.38);
-            backdrop-filter: blur(12px);
+            box-shadow: 0 14px 38px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(9px);
         }
 
         .header {
@@ -57,7 +57,7 @@
 
         .title {
             color: var(--text);
-            font-size: 21px;
+            font-size: 26px;
             font-weight: 950;
             letter-spacing: -0.03em;
         }
@@ -71,7 +71,7 @@
             align-items: center;
             gap: 7px;
             color: var(--muted);
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 850;
             letter-spacing: 0.08em;
         }
@@ -92,45 +92,45 @@
 
         .person {
             display: grid;
-            grid-template-columns: 34px 46px minmax(0, 1fr) auto;
+            grid-template-columns: 42px 54px minmax(0, 1fr) auto;
             align-items: center;
-            min-height: 58px;
-            padding: 6px 10px 6px 7px;
+            min-height: 66px;
+            padding: 7px 12px 7px 8px;
             border: 1px solid var(--line);
             border-radius: 15px;
             background: var(--panel);
         }
 
         .person.first {
-            min-height: 65px;
+            min-height: 72px;
             border-color: rgba(255, 177, 54, 0.75);
             background: linear-gradient(90deg, rgba(255, 150, 25, 0.20), var(--panel) 62%);
         }
 
         .position {
             color: var(--muted);
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 950;
             text-align: center;
         }
 
         .first .position {
             color: #ffc45b;
-            font-size: 22px;
+            font-size: 26px;
         }
 
         .avatar-wrap {
             position: relative;
-            width: 42px;
-            height: 42px;
+            width: 50px;
+            height: 50px;
         }
 
         .avatar,
         .fallback {
             position: absolute;
             inset: 0;
-            width: 42px;
-            height: 42px;
+            width: 50px;
+            height: 50px;
             border: 2px solid rgba(255, 255, 255, 0.16);
             border-radius: 999px;
         }
@@ -146,20 +146,21 @@
             place-items: center;
             background: linear-gradient(145deg, #ff7a13, #9f3200);
             color: white;
-            font-size: 17px;
+            font-size: 20px;
             font-weight: 950;
         }
 
         .identity {
             min-width: 0;
-            padding-left: 9px;
+            padding-left: 11px;
         }
 
         .username {
             overflow: hidden;
             color: var(--text);
-            font-size: 15px;
+            font-size: 19px;
             font-weight: 900;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
             text-overflow: ellipsis;
             white-space: nowrap;
         }
@@ -167,16 +168,21 @@
         .label {
             margin-top: 2px;
             color: var(--muted);
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
             letter-spacing: 0.06em;
+        }
+
+        .label:empty {
+            display: none;
         }
 
         .likes {
             padding-left: 8px;
             color: var(--orange-soft);
-            font-size: 14px;
+            font-size: 19px;
             font-weight: 950;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
             white-space: nowrap;
         }
 
@@ -191,7 +197,7 @@
 
         .spotlight .person {
             border: 0;
-            background: rgba(10, 11, 15, 0.96);
+            background: rgba(8, 9, 13, 0.78);
             animation: enter 420ms ease both;
         }
 
@@ -294,7 +300,7 @@
 
             const label = document.createElement("div");
             label.className = "label";
-            label.textContent = position <= 5 ? "TOP DEL LIVE" : "EN ASCENSO";
+            label.textContent = position <= 5 ? "" : "EN ASCENSO";
 
             identity.append(username, label);
 
