@@ -36,7 +36,7 @@
         }
 
         .ranking {
-            width: min(520px, calc(100vw - 20px));
+            width: min(620px, calc(100vw - 20px));
             padding: 3px;
             background: transparent;
         }
@@ -81,24 +81,25 @@
 
         .list {
             display: grid;
-            gap: 7px;
+            gap: 4px;
         }
 
         .person {
             display: grid;
-            grid-template-columns: 58px minmax(0, 1fr) auto;
+            grid-template-columns: 68px minmax(0, 1fr) auto;
             align-items: center;
-            min-height: 70px;
-            padding: 8px 14px 8px 9px;
-            border: 1px solid var(--line);
-            border-radius: 15px;
-            background: var(--panel);
+            min-height: 80px;
+            padding: 9px 17px 9px 10px;
+            border: 0;
+            border-radius: 13px;
+            background: rgba(5, 6, 9, 0.54);
+            backdrop-filter: blur(7px);
         }
 
         .person.first {
-            min-height: 74px;
-            border-color: rgba(255, 177, 54, 0.75);
-            background: linear-gradient(90deg, rgba(255, 150, 25, 0.20), var(--panel) 62%);
+            min-height: 80px;
+            border: 0;
+            background: rgba(5, 6, 9, 0.54);
         }
 
         .position {
@@ -112,16 +113,16 @@
 
         .avatar-wrap {
             position: relative;
-            width: 50px;
-            height: 50px;
+            width: 58px;
+            height: 58px;
         }
 
         .avatar,
         .fallback {
             position: absolute;
             inset: 0;
-            width: 50px;
-            height: 50px;
+            width: 58px;
+            height: 58px;
             border: 2px solid rgba(255, 255, 255, 0.16);
             border-radius: 999px;
         }
@@ -137,7 +138,7 @@
             place-items: center;
             background: linear-gradient(145deg, #ff7a13, #9f3200);
             color: white;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 950;
         }
 
@@ -149,7 +150,7 @@
         .username {
             overflow: hidden;
             color: var(--text);
-            font-size: 22px;
+            font-size: 28px;
             font-weight: 900;
             text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
             text-overflow: ellipsis;
@@ -167,24 +168,21 @@
         .likes {
             padding-left: 8px;
             color: var(--orange-soft);
-            font-size: 22px;
+            font-size: 27px;
             font-weight: 950;
             text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
             white-space: nowrap;
         }
 
         .spotlight {
-            margin-top: 10px;
-            padding: 3px;
-            border-radius: 17px;
-            background: linear-gradient(105deg, var(--orange), #ffb04a, var(--orange));
-            background-size: 220% 100%;
-            animation: glow 4s linear infinite;
+            margin-top: 4px;
+            padding: 0;
+            background: transparent;
         }
 
         .spotlight .person {
             border: 0;
-            background: rgba(8, 9, 13, 0.78);
+            background: rgba(5, 6, 9, 0.54);
             animation: enter 420ms ease both;
         }
 
