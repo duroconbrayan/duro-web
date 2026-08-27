@@ -37,7 +37,7 @@
 
         .ranking {
             width: min(620px, calc(100vw - 20px));
-            padding: 3px;
+            padding: 4px;
             background: transparent;
         }
 
@@ -81,7 +81,7 @@
 
         .list {
             display: grid;
-            gap: 4px;
+            gap: 8px;
         }
 
         .person {
@@ -89,17 +89,16 @@
             grid-template-columns: 68px minmax(0, 1fr) auto;
             align-items: center;
             min-height: 80px;
-            padding: 9px 17px 9px 10px;
+            padding: 4px 8px;
             border: 0;
-            border-radius: 13px;
-            background: rgba(5, 6, 9, 0.54);
-            backdrop-filter: blur(7px);
+            border-radius: 0;
+            background: transparent;
         }
 
         .person.first {
             min-height: 80px;
             border: 0;
-            background: rgba(5, 6, 9, 0.54);
+            background: transparent;
         }
 
         .position {
@@ -123,7 +122,7 @@
             inset: 0;
             width: 58px;
             height: 58px;
-            border: 2px solid rgba(255, 255, 255, 0.16);
+            border: 0;
             border-radius: 999px;
         }
 
@@ -152,7 +151,12 @@
             color: var(--text);
             font-size: 28px;
             font-weight: 900;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
+            text-shadow:
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                2px 2px 0 #000,
+                0 4px 9px rgba(0, 0, 0, 0.95);
             text-overflow: ellipsis;
             white-space: nowrap;
         }
@@ -170,19 +174,24 @@
             color: var(--orange-soft);
             font-size: 27px;
             font-weight: 950;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
+            text-shadow:
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                2px 2px 0 #000,
+                0 4px 9px rgba(0, 0, 0, 0.95);
             white-space: nowrap;
         }
 
         .spotlight {
-            margin-top: 4px;
+            margin-top: 8px;
             padding: 0;
             background: transparent;
         }
 
         .spotlight .person {
             border: 0;
-            background: rgba(5, 6, 9, 0.54);
+            background: transparent;
             animation: enter 420ms ease both;
         }
 
@@ -308,13 +317,13 @@
                 return;
             }
 
-            ranking.slice(0, 5).forEach((user, index) => {
+            ranking.slice(0, 3).forEach((user, index) => {
                 topFive.append(createPerson(user, index + 1, index === 0 ? "first" : ""));
             });
         }
 
         function renderRotation() {
-            const candidates = ranking.slice(5, 10);
+            const candidates = ranking.slice(3, 10);
 
             if (!candidates.length) {
                 spotlight.hidden = true;
@@ -322,7 +331,7 @@
             }
 
             rotationIndex %= candidates.length;
-            const position = rotationIndex + 6;
+            const position = rotationIndex + 4;
             spotlight.hidden = false;
             spotlight.replaceChildren(createPerson(candidates[rotationIndex], position));
             rotationIndex = (rotationIndex + 1) % candidates.length;
