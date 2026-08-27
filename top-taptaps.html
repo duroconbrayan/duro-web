@@ -36,7 +36,7 @@
         }
 
         .ranking {
-            width: min(620px, calc(100vw - 20px));
+            width: min(600px, calc(100vw - 12px));
             padding: 4px;
             background: transparent;
         }
@@ -81,22 +81,22 @@
 
         .list {
             display: grid;
-            gap: 8px;
+            gap: 4px;
         }
 
         .person {
             display: grid;
-            grid-template-columns: 68px minmax(0, 1fr) auto;
+            grid-template-columns: minmax(0, 1fr) auto;
             align-items: center;
-            min-height: 80px;
-            padding: 4px 8px;
+            min-height: 54px;
+            padding: 1px 6px;
             border: 0;
             border-radius: 0;
             background: transparent;
         }
 
         .person.first {
-            min-height: 80px;
+            min-height: 54px;
             border: 0;
             background: transparent;
         }
@@ -143,19 +143,19 @@
 
         .identity {
             min-width: 0;
-            padding-left: 8px;
+            padding-left: 0;
         }
 
         .username {
             overflow: hidden;
             color: var(--text);
-            font-size: 28px;
+            font-size: 40px;
             font-weight: 900;
             text-shadow:
-                -2px -2px 0 #000,
-                2px -2px 0 #000,
-                -2px 2px 0 #000,
-                2px 2px 0 #000,
+                -3px -3px 0 #000,
+                3px -3px 0 #000,
+                -3px 3px 0 #000,
+                3px 3px 0 #000,
                 0 4px 9px rgba(0, 0, 0, 0.95);
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -172,19 +172,19 @@
         .likes {
             padding-left: 8px;
             color: var(--orange-soft);
-            font-size: 27px;
+            font-size: 38px;
             font-weight: 950;
             text-shadow:
-                -2px -2px 0 #000,
-                2px -2px 0 #000,
-                -2px 2px 0 #000,
-                2px 2px 0 #000,
+                -3px -3px 0 #000,
+                3px -3px 0 #000,
+                -3px 3px 0 #000,
+                3px 3px 0 #000,
                 0 4px 9px rgba(0, 0, 0, 0.95);
             white-space: nowrap;
         }
 
         .spotlight {
-            margin-top: 8px;
+            margin-top: 4px;
             padding: 0;
             background: transparent;
         }
@@ -301,7 +301,7 @@
             likes.className = "likes";
             likes.textContent = `${Number(user.likes || 0).toLocaleString("es-CO")} ❤️`;
 
-            row.append(avatarWrap, identity, likes);
+            row.append(identity, likes);
             return row;
         }
 
