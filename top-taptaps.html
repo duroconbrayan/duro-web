@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DURO · Top TapTaps</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --orange: #ff6800;
+            --orange-soft: #ff9a3d;
+            --carbon: rgba(7, 8, 11, 0.91);
+            --panel: rgba(20, 22, 28, 0.94);
+            --line: rgba(255, 255, 255, 0.12);
+            --text: #f7f7f8;
+            --muted: #a9adb9;
+            --green: #5ce597;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            padding: 10px;
+        }
+
+        .ranking {
+            width: min(430px, calc(100vw - 20px));
+            padding: 14px;
+            border: 1px solid rgba(255, 104, 0, 0.54);
+            border-radius: 22px;
+            background:
+                radial-gradient(circle at 88% 0%, rgba(255, 104, 0, 0.22), transparent 36%),
+                var(--carbon);
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.38);
+            backdrop-filter: blur(12px);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 2px 4px 12px;
+        }
+
+        .title {
+            color: var(--text);
+            font-size: 21px;
+            font-weight: 950;
+            letter-spacing: -0.03em;
+        }
+
+        .title span {
+            color: var(--orange);
+        }
+
+        .live {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 850;
+            letter-spacing: 0.08em;
+        }
+
+        .live::before {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--green);
+            box-shadow: 0 0 12px var(--green);
+            content: "";
+        }
+
+        .list {
+            display: grid;
+            gap: 7px;
+        }
+
+        .person {
+            display: grid;
+            grid-template-columns: 34px 46px minmax(0, 1fr) auto;
+            align-items: center;
+            min-height: 58px;
+            padding: 6px 10px 6px 7px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: var(--panel);
+        }
+
+        .person.first {
+            min-height: 65px;
+            border-color: rgba(255, 177, 54, 0.75);
+            background: linear-gradient(90deg, rgba(255, 150, 25, 0.20), var(--panel) 62%);
+        }
+
+        .position {
+            color: var(--muted);
+            font-size: 15px;
+            font-weight: 950;
+            text-align: center;
+        }
+
+        .first .position {
+            color: #ffc45b;
+            font-size: 22px;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            width: 42px;
+            height: 42px;
+        }
+
+        .avatar,
+        .fallback {
+            position: absolute;
+            inset: 0;
+            width: 42px;
+            height: 42px;
+            border: 2px solid rgba(255, 255, 255, 0.16);
+            border-radius: 999px;
+        }
+
+        .avatar {
+            z-index: 2;
+            display: none;
+            object-fit: cover;
+        }
+
+        .fallback {
+            display: grid;
+            place-items: center;
+            background: linear-gradient(145deg, #ff7a13, #9f3200);
+            color: white;
+            font-size: 17px;
+            font-weight: 950;
+        }
+
+        .identity {
+            min-width: 0;
+            padding-left: 9px;
+        }
+
+        .username {
+            overflow: hidden;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 900;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .label {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+        }
+
+        .likes {
+            padding-left: 8px;
+            color: var(--orange-soft);
+            font-size: 14px;
+            font-weight: 950;
+            white-space: nowrap;
+        }
+
+        .spotlight {
+            margin-top: 10px;
+            padding: 3px;
+            border-radius: 17px;
+            background: linear-gradient(105deg, var(--orange), #ffb04a, var(--orange));
+            background-size: 220% 100%;
+            animation: glow 4s linear infinite;
+        }
+
+        .spotlight .person {
+            border: 0;
+            background: rgba(10, 11, 15, 0.96);
+            animation: enter 420ms ease both;
+        }
+
+        .spotlight .position,
+        .spotlight .label {
+            color: var(--orange-soft);
+        }
+
+        .empty {
+            display: grid;
+            min-height: 170px;
+            place-items: center;
+            border: 1px dashed var(--line);
+            border-radius: 16px;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        @keyframes enter {
+            from { opacity: 0; transform: translateY(7px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            to { background-position: -220% 0; }
+        }
+    </style>
+</head>
+<body>
+    <main class="ranking">
+        <header class="header">
+            <div class="title">❤️ TOP <span>TAPTAPS</span></div>
+            <div class="live">EN VIVO</div>
+        </header>
+
+        <section class="list" id="top-five">
+            <div class="empty">Esperando los primeros TapTaps…</div>
+        </section>
+
+        <section class="spotlight" id="spotlight" hidden></section>
+    </main>
+
+    <script>
+        const API_URL = "https://playlist-api.bookingelbrayan.workers.dev/live-likes";
+        const DEMO = new URLSearchParams(location.search).get("demo") === "1";
+        const MEDALS = ["🥇", "🥈", "🥉"];
+        const topFive = document.getElementById("top-five");
+        const spotlight = document.getElementById("spotlight");
+
+        let ranking = [];
+        let rotationIndex = 0;
+
+        const demoUsers = Array.from({ length: 10 }, (_, index) => ({
+            username: [
+                "la_reina_del_live", "andres_music", "elparce_027",
+                "valentina", "uraba_presente", "flowcaribe", "santiagox",
+                "mariap", "davidbeats", "elkin_440"
+            ][index],
+            likes: 12840 - (index * 873),
+            avatar_url: ""
+        }));
+
+        function initials(username) {
+            return String(username || "?").replace(/^@/, "").slice(0, 1).toUpperCase() || "?";
+        }
+
+        function createPerson(user, position, extraClass = "") {
+            const row = document.createElement("article");
+            row.className = `person ${extraClass}`.trim();
+
+            const number = document.createElement("div");
+            number.className = "position";
+            number.textContent = MEDALS[position - 1] || `#${position}`;
+
+            const avatarWrap = document.createElement("div");
+            avatarWrap.className = "avatar-wrap";
+
+            const fallback = document.createElement("div");
+            fallback.className = "fallback";
+            fallback.textContent = initials(user.username);
+
+            const avatar = document.createElement("img");
+            avatar.className = "avatar";
+            avatar.alt = "";
+            avatar.referrerPolicy = "no-referrer";
+            avatar.onload = () => { avatar.style.display = "block"; };
+            avatar.onerror = () => { avatar.style.display = "none"; };
+            if (user.avatar_url) avatar.src = user.avatar_url;
+
+            avatarWrap.append(fallback, avatar);
+
+            const identity = document.createElement("div");
+            identity.className = "identity";
+
+            const username = document.createElement("div");
+            username.className = "username";
+            username.textContent = `@${String(user.username || "usuario").replace(/^@/, "")}`;
+
+            const label = document.createElement("div");
+            label.className = "label";
+            label.textContent = position <= 5 ? "TOP DEL LIVE" : "EN ASCENSO";
+
+            identity.append(username, label);
+
+            const likes = document.createElement("div");
+            likes.className = "likes";
+            likes.textContent = `${Number(user.likes || 0).toLocaleString("es-CO")} ❤️`;
+
+            row.append(number, avatarWrap, identity, likes);
+            return row;
+        }
+
+        function renderTopFive() {
+            topFive.replaceChildren();
+
+            if (!ranking.length) {
+                const empty = document.createElement("div");
+                empty.className = "empty";
+                empty.textContent = "Esperando los primeros TapTaps…";
+                topFive.append(empty);
+                spotlight.hidden = true;
+                return;
+            }
+
+            ranking.slice(0, 5).forEach((user, index) => {
+                topFive.append(createPerson(user, index + 1, index === 0 ? "first" : ""));
+            });
+        }
+
+        function renderRotation() {
+            const candidates = ranking.slice(5, 10);
+
+            if (!candidates.length) {
+                spotlight.hidden = true;
+                return;
+            }
+
+            rotationIndex %= candidates.length;
+            const position = rotationIndex + 6;
+            spotlight.hidden = false;
+            spotlight.replaceChildren(createPerson(candidates[rotationIndex], position));
+            rotationIndex = (rotationIndex + 1) % candidates.length;
+        }
+
+        async function refresh() {
+            try {
+                const data = DEMO
+                    ? { top_users: demoUsers }
+                    : await fetch(API_URL, { cache: "no-store" }).then(response => {
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        return response.json();
+                    });
+
+                ranking = Array.isArray(data.top_users)
+                    ? data.top_users.slice(0, 10)
+                    : [];
+
+                renderTopFive();
+                if (spotlight.hidden) renderRotation();
+            } catch (error) {
+                console.error("No se pudo cargar el ranking:", error);
+            }
+        }
+
+        refresh();
+        setInterval(refresh, 3000);
+        setInterval(renderRotation, 6000);
+    </script>
+</body>
+</html>
