@@ -1351,6 +1351,34 @@ function encolarEventoStage(tipo, icono, kicker, titulo, usuario = "") {
     mostrarSiguienteEventoStage();
 }
 
+// ============ SONIDOS DE ALERTAS ============
+
+const stageSonidos = {
+    added: new Audio("sounds/added.mp3"),
+    gift: new Audio("sounds/gafas.mp3"),
+    paypal: new Audio("sounds/paypal.mp3"),
+    move: new Audio("sounds/move.mp3"),
+    goal: new Audio("sounds/goal.mp3")
+};
+
+Object.values(stageSonidos).forEach((audio) => {
+    audio.preload = "auto";
+    audio.volume = 1;
+});
+
+function reproducirSonidoStage(tipo) {
+    const audio = stageSonidos[tipo];
+
+    if (!audio) return;
+
+    audio.pause();
+    audio.currentTime = 0;
+
+    audio.play().catch((error) => {
+        console.warn("No se pudo reproducir sonido:", tipo, error);
+    });
+}
+
 function mostrarSiguienteEventoStage() {
     if (stageEventoActivo || stageEventosPendientes.length === 0) return;
     const evento = stageEventosPendientes.shift();
@@ -1362,7 +1390,10 @@ function mostrarSiguienteEventoStage() {
     document.getElementById("stage-event-kicker").textContent = evento.kicker;
     document.getElementById("stage-event-title").textContent = evento.titulo;
     document.getElementById("stage-event-user").textContent = evento.usuario;
-    requestAnimationFrame(() => overlay.classList.add("show"));
+
+reproducirSonidoStage(evento.tipo);
+
+requestAnimationFrame(() => overlay.classList.add("show"));
     setTimeout(() => {
         overlay.classList.remove("show");
         setTimeout(() => {
