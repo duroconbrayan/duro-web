@@ -1272,9 +1272,18 @@ function detectarEventosRequests(requests, playing, queue) {
         if (!anterior) {
             if (item.source === "tiktok_gift") {
                 encolarEventoStage("gift", "😎", item.status === "playing" ? "ENTRÓ A SONAR" : "ENTRÓ DE SIGUIENTE", textoSolicitud(item), usuarioSolicitud(item));
-            } else if (item.status === "queue") {
-                encolarEventoStage("added", "＋", "NUEVO EN LA LISTA", textoSolicitud(item), usuarioSolicitud(item));
-            }
+            } else if (
+    item.status === "queue" &&
+    item.source === "tiktok_comment"
+) {
+    encolarEventoStage(
+        "added",
+        "＋",
+        "NUEVO EN LA LISTA",
+        textoSolicitud(item),
+        usuarioSolicitud(item)
+    );
+}
         }
     });
 
@@ -1379,6 +1388,33 @@ function reproducirSonidoStage(tipo) {
     });
 }
 
+// ============ VOZ ANOTADO ============
+
+function hablarAnotadoStage(comentario) {
+    if (!("speechSynthesis" in window)) return;
+
+    const voces = speechSynthesis.getVoices();
+
+    const voz =
+        voces.find(v => v.name.includes("Paulina")) ||
+        voces.find(v => v.lang === "es-MX") ||
+        voces.find(v => v.lang.startsWith("es"));
+
+    const mensaje = new SpeechSynthesisUtterance(
+        `${comentario}. Anotado en la lista.`
+    );
+
+    if (voz) mensaje.voice = voz;
+
+    mensaje.lang = voz?.lang || "es-MX";
+    mensaje.rate = 1.10;
+    mensaje.pitch = 0.95;
+    mensaje.volume = 1;
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(mensaje);
+}
+
 function mostrarSiguienteEventoStage() {
     if (stageEventoActivo || stageEventosPendientes.length === 0) return;
     const evento = stageEventosPendientes.shift();
@@ -1392,6 +1428,12 @@ function mostrarSiguienteEventoStage() {
     document.getElementById("stage-event-user").textContent = evento.usuario;
 
 reproducirSonidoStage(evento.tipo);
+
+if (evento.tipo === "added") {
+    setTimeout(() => {
+        hablarAnotadoStage(evento.titulo);
+    }, 900);
+}
 
 requestAnimationFrame(() => overlay.classList.add("show"));
     setTimeout(() => {
