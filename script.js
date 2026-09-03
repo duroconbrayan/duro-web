@@ -11,6 +11,20 @@ let playingAnteriorId = null;
 let topLikesAbierto = false;
 let historialCompletoAbierto = false;
 let anuncioHistorialMostrado = false;
+let stageRequestsAnterior = new Map();
+let stageQueueAnterior = new Map();
+let stagePrimeraCarga = true;
+let stagePlayingId = null;
+let stageHistorialDesbloqueado = false;
+let stageEventoActivo = false;
+let stageEventosPendientes = [];
+let stageGoalEventKey = null;
+let stageGoalInicializado = false;
+let stageCarouselInicializado = false;
+let stageCargaRequestsActiva = false;
+let stageCargaLikesActiva = false;
+let stageRequestsFirma = "";
+let stageUltimosDatos = { played: [], playing: null, queue: [] };
 
 // ============ SKINS DURO ============
 
@@ -521,7 +535,7 @@ cargarLiveLikes();
 setInterval(() => {
     comprobarEstadoLive();
     cargarHistorial();
-}, 10000);
+}, 2000);
 
 setInterval(() => {
     cargarLiveLikes();
@@ -1092,5 +1106,331 @@ async function crearOrdenPayPal() {
             boton.disabled = false;
             boton.textContent = "💵 PAGAR $2 CON PAYPAL";
         }
+    }
+}
+
+// ============ ESCENARIO TV / PLAYLIST HORIZONTAL ============
+
+function textoSolicitud(item) {
+    return String(item?.raw_comment || item?.text || "Sin comentario").trim();
+}
+
+function usuarioSolicitud(item) {
+    const username = String(item?.username || "").trim().replace(/^@+/, "");
+    return username ? `@${username}` : "";
+}
+
+function claveEventoGoal(evento) {
+    if (!evento?.occurred_at) return null;
+    return `${evento.occurred_at}:${evento.completed_goals || 0}`;
+}
+
+function tarjetaStage(item, tipo, posicion) {
+    const card = document.createElement("article");
+    card.className = `stage-song-card stage-${tipo}-card`;
+    card.dataset.requestId = String(item.id);
+    card.dataset.stageKey = `${tipo}:${item.id}`;
+
+    const label = document.createElement("span");
+    label.className = "stage-card-label";
+
+    if (tipo === "current") {
+        label.textContent = "⚡ AHORA SUENA ⚡";
+    } else if (tipo === "played") {
+        label.textContent = "✓ YA SONÓ";
+    } else {
+        label.textContent = posicion === 0 ? "SIGUIENTE" : `EN COLA · #${posicion + 1}`;
+    }
+
+    const comment = document.createElement("strong");
+    const texto = textoSolicitud(item);
+    comment.textContent = texto;
+    comment.className = "stage-comment";
+    if (texto.length > 90) comment.classList.add("stage-comment-long");
+    if (texto.length > 150) comment.classList.add("stage-comment-xlong");
+
+    const user = document.createElement("span");
+    user.className = "stage-requester";
+    user.textContent = usuarioSolicitud(item);
+
+    card.append(label, comment);
+    if (user.textContent) card.appendChild(user);
+
+    if (tipo === "queue") {
+        const action = document.createElement("span");
+        action.className = "stage-card-action";
+        action.textContent = "TOCA PARA ADELANTAR ↑";
+        card.appendChild(action);
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.addEventListener("click", () => seleccionarCancion(item.id, texto));
+        card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                seleccionarCancion(item.id, texto);
+            }
+        });
+    }
+
+    if (item.tap_exempt_reason === "gafas") {
+        card.classList.add("stage-card-gift");
+        const badge = document.createElement("span");
+        badge.className = "stage-special-badge";
+        badge.textContent = "😎 GAFAS";
+        card.appendChild(badge);
+    } else if (item.tap_exempt_reason === "paypal") {
+        card.classList.add("stage-card-paypal");
+        const badge = document.createElement("span");
+        badge.className = "stage-special-badge";
+        badge.textContent = "PAGO ✓";
+        card.appendChild(badge);
+    }
+
+    return card;
+}
+
+function tarjetaBloqueoHistorial(cantidad) {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "stage-song-card stage-history-gate";
+    card.dataset.stageKey = "history-gate";
+    card.innerHTML = `<span class="stage-card-label">← MÁS ANTERIORES</span><strong>DESBLOQUEAR HISTORIAL</strong><span class="stage-requester">${cantidad} canciones · abre un anuncio</span><span class="stage-card-action">VER AHORA</span>`;
+    card.addEventListener("click", desbloquearHistorialStage);
+    return card;
+}
+
+function elementoCentradoStage() {
+    const carousel = document.getElementById("stage-carousel");
+    if (!carousel) return null;
+    const centro = carousel.getBoundingClientRect().left + carousel.clientWidth / 2;
+    let mejor = null;
+    let distancia = Infinity;
+    carousel.querySelectorAll("[data-stage-key]").forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const actual = Math.abs(rect.left + rect.width / 2 - centro);
+        if (actual < distancia) {
+            distancia = actual;
+            mejor = card.dataset.stageKey;
+        }
+    });
+    return mejor;
+}
+
+function centrarStage(key, behavior = "auto") {
+    const track = document.getElementById("stage-carousel-track");
+    const card = Array.from(track?.children || []).find((item) => item.dataset.stageKey === key);
+    card?.scrollIntoView({ behavior, block: "nearest", inline: "center" });
+}
+
+function renderizarCarruselStage(played, playing, queue) {
+    const track = document.getElementById("stage-carousel-track");
+    if (!track) return;
+
+    const claveVisible = elementoCentradoStage();
+    const cambioActual = Boolean(stagePlayingId && playing?.id && stagePlayingId !== playing.id);
+    const playedOrdenado = [...played].sort((a, b) => new Date(a.played_at || a.created_at) - new Date(b.played_at || b.created_at));
+    const anterioresGratis = playedOrdenado.slice(-3);
+    const anterioresVisibles = stageHistorialDesbloqueado ? playedOrdenado : anterioresGratis;
+
+    track.innerHTML = "";
+
+    if (!stageHistorialDesbloqueado && playedOrdenado.length > 3) {
+        track.appendChild(tarjetaBloqueoHistorial(playedOrdenado.length - 3));
+    }
+    anterioresVisibles.forEach((item) => track.appendChild(tarjetaStage(item, "played", 0)));
+
+    if (playing) {
+        track.appendChild(tarjetaStage(playing, "current", 0));
+    } else {
+        const empty = document.createElement("article");
+        empty.className = "stage-song-card stage-current-card stage-loading";
+        empty.dataset.stageKey = "current:empty";
+        empty.innerHTML = '<span class="stage-card-label">AHORA SUENA</span><strong>Esperando la primera canción…</strong>';
+        track.appendChild(empty);
+    }
+
+    queue.forEach((item, index) => track.appendChild(tarjetaStage(item, "queue", index)));
+    colaActual = queue;
+
+    requestAnimationFrame(() => {
+        const keyActual = playing ? `current:${playing.id}` : "current:empty";
+        if (!stageCarouselInicializado || cambioActual) {
+            centrarStage(keyActual, cambioActual ? "smooth" : "auto");
+        } else if (claveVisible) {
+            centrarStage(claveVisible, "auto");
+        }
+        stageCarouselInicializado = true;
+        stagePlayingId = playing?.id || null;
+    });
+}
+
+function detectarEventosRequests(requests, playing, queue) {
+    if (stagePrimeraCarga) return;
+
+    requests.forEach((item) => {
+        const anterior = stageRequestsAnterior.get(item.id);
+        if (!anterior) {
+            if (item.source === "tiktok_gift") {
+                encolarEventoStage("gift", "😎", item.status === "playing" ? "ENTRÓ A SONAR" : "ENTRÓ DE SIGUIENTE", textoSolicitud(item), usuarioSolicitud(item));
+            } else if (item.status === "queue") {
+                encolarEventoStage("added", "＋", "NUEVO EN LA LISTA", textoSolicitud(item), usuarioSolicitud(item));
+            }
+        }
+    });
+
+    queue.forEach((item, index) => {
+        const posicionAnterior = stageQueueAnterior.get(item.id);
+        if (posicionAnterior !== undefined && index < posicionAnterior && stagePlayingId === playing?.id) {
+            const salto = posicionAnterior - index;
+            if (item.tap_exempt_reason === "paypal" && index === 0) {
+                encolarEventoStage("paypal", "✓", "PAGO CONFIRMADO · SALTÓ AL #1", textoSolicitud(item), usuarioSolicitud(item));
+            } else {
+                encolarEventoStage("move", "↑", `ADELANTÓ ${salto} ${salto === 1 ? "PUESTO" : "PUESTOS"}`, textoSolicitud(item), usuarioSolicitud(item));
+            }
+        }
+    });
+}
+
+async function cargarHistorial() {
+    if (stageCargaRequestsActiva) return;
+    stageCargaRequestsActiva = true;
+    try {
+        const response = await fetch(requestsURL, { cache: "no-store" });
+        if (!response.ok) return;
+        const requests = await response.json();
+        const played = requests.filter((item) => item.status === "played");
+        const playing = requests.find((item) => item.status === "playing") || null;
+        const queue = requests.filter((item) => item.status === "queue").sort((a, b) => Number(a.sort_order) - Number(b.sort_order));
+        const firma = JSON.stringify(requests.map((item) => [
+            item.id,
+            item.status,
+            item.sort_order,
+            item.text,
+            item.raw_comment,
+            item.username,
+            item.tap_exempt_reason
+        ]));
+
+        detectarEventosRequests(requests, playing, queue);
+        stageUltimosDatos = { played, playing, queue };
+        if (firma !== stageRequestsFirma) {
+            renderizarCarruselStage(played, playing, queue);
+            stageRequestsFirma = firma;
+        }
+        stageRequestsAnterior = new Map(requests.map((item) => [item.id, { ...item }]));
+        stageQueueAnterior = new Map(queue.map((item, index) => [item.id, index]));
+        stagePrimeraCarga = false;
+    } catch (error) {
+        console.error("Error al cargar la playlist:", error);
+    } finally {
+        stageCargaRequestsActiva = false;
+    }
+}
+
+function moverCola(direccion) {
+    const carousel = document.getElementById("stage-carousel");
+    const card = carousel?.querySelector(".stage-song-card");
+    if (!carousel || !card) return;
+    carousel.scrollBy({ left: direccion * (card.offsetWidth + 18), behavior: "smooth" });
+}
+
+function desbloquearHistorialStage() {
+    if (stageHistorialDesbloqueado) return;
+    const anuncio = window.open("https://omg10.com/4/11599214", "_blank", "noopener,noreferrer");
+    stageHistorialDesbloqueado = true;
+    renderizarCarruselStage(
+        stageUltimosDatos.played,
+        stageUltimosDatos.playing,
+        stageUltimosDatos.queue
+    );
+    if (!anuncio) console.info("El navegador bloqueó la pestaña del anuncio.");
+}
+
+function encolarEventoStage(tipo, icono, kicker, titulo, usuario = "") {
+    stageEventosPendientes.push({ tipo, icono, kicker, titulo, usuario });
+    mostrarSiguienteEventoStage();
+}
+
+function mostrarSiguienteEventoStage() {
+    if (stageEventoActivo || stageEventosPendientes.length === 0) return;
+    const evento = stageEventosPendientes.shift();
+    const overlay = document.getElementById("stage-event");
+    if (!overlay) return;
+    stageEventoActivo = true;
+    overlay.className = `stage-event stage-event-${evento.tipo}`;
+    document.getElementById("stage-event-icon").textContent = evento.icono;
+    document.getElementById("stage-event-kicker").textContent = evento.kicker;
+    document.getElementById("stage-event-title").textContent = evento.titulo;
+    document.getElementById("stage-event-user").textContent = evento.usuario;
+    requestAnimationFrame(() => overlay.classList.add("show"));
+    setTimeout(() => {
+        overlay.classList.remove("show");
+        setTimeout(() => {
+            stageEventoActivo = false;
+            mostrarSiguienteEventoStage();
+        }, 450);
+    }, evento.tipo === "goal" ? 5200 : 3800);
+}
+
+function actualizarRankingStage(topUsers) {
+    const rankingList = document.getElementById("live-likes-ranking-list");
+    if (!rankingList) return;
+    if (!topUsers.length) {
+        rankingList.innerHTML = '<div class="live-likes-ranking-empty">Todavía no hay ranking.</div>';
+        return;
+    }
+    rankingList.innerHTML = topUsers.slice(0, 5).map((user, index) => `
+        <div class="live-likes-ranking-item">
+            <span class="live-likes-ranking-position">${["🥇", "🥈", "🥉"][index] || `${index + 1}.`}</span>
+            <strong class="live-likes-ranking-user">@${escaparHTML(String(user.username || "").replace(/^@+/, ""))}</strong>
+            <span class="live-likes-ranking-count">${Number(user.likes || 0).toLocaleString("es-CO")} ❤️</span>
+        </div>`).join("");
+}
+
+async function cargarLiveLikes() {
+    if (stageCargaLikesActiva) return;
+    stageCargaLikesActiva = true;
+    try {
+        const response = await fetch(liveLikesURL, { cache: "no-store" });
+        if (!response.ok) return;
+        const data = await response.json();
+        const goal = Number(data.goal) || 5000;
+        const progress = Number(data.progress) || 0;
+        const total = Number(data.total) || 0;
+        const base = Number(data.base) || 0;
+        const likesDelLive = Math.max(0, total - base);
+        const porcentaje = Math.min(100, progress / goal * 100);
+
+        document.getElementById("live-likes-count").textContent = progress.toLocaleString("es-CO");
+        document.getElementById("live-likes-goal").textContent = goal.toLocaleString("es-CO");
+        document.getElementById("live-likes-total").textContent = likesDelLive.toLocaleString("es-CO");
+        document.getElementById("live-likes-progress").style.width = `${porcentaje}%`;
+        document.getElementById("live-likes-message").textContent = `${Math.max(0, goal - progress).toLocaleString("es-CO")} TAP TAPS PARA LA SIGUIENTE`;
+        actualizarRankingStage(Array.isArray(data.top_users) ? data.top_users : []);
+
+        document.body.classList.remove("likes-50k", "likes-100k", "likes-150k", "likes-200k");
+        if (likesDelLive >= 200000) document.body.classList.add("likes-200k");
+        else if (likesDelLive >= 150000) document.body.classList.add("likes-150k");
+        else if (likesDelLive >= 100000) document.body.classList.add("likes-100k");
+        else if (likesDelLive >= 50000) document.body.classList.add("likes-50k");
+
+        const eventKey = claveEventoGoal(data.last_goal_event);
+        if (!stageGoalInicializado) {
+            stageGoalEventKey = eventKey;
+            stageGoalInicializado = true;
+        } else if (eventKey && eventKey !== stageGoalEventKey) {
+            const evento = data.last_goal_event;
+            if (evento.song_changed) {
+                encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "¡SIGUIENTE CANCIÓN!", "EL LIVE LA DESBLOQUEÓ");
+            } else {
+                const proteccion = evento.exempt_reason === "gafas" ? "PROTEGIDA POR GAFAS 😎" : "PROTEGIDA POR PAYPAL ✓";
+                encolarEventoStage("goal", "🛡️", "META DE TAP TAPS COMPLETADA", "LA CANCIÓN CONTINÚA", proteccion);
+            }
+            stageGoalEventKey = eventKey;
+        }
+    } catch (error) {
+        console.error("Error cargando Tap Taps:", error);
+    } finally {
+        stageCargaLikesActiva = false;
     }
 }
