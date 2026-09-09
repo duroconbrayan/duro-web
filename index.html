@@ -1,70 +1,85 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DURO | Brayan</title>
-    <meta name="description" content="La comunidad oficial de DURO con Brayan. Playlist en vivo, redes y contacto.">
-    <link rel="stylesheet" href="style.css?v=8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DURO | Música, cultura e historias</title>
+  <meta name="description" content="DURO: noticias, música, artistas, videos e historias de la cultura urbana. La comunidad de DURO con Brayan.">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
-<body>
-
+<body class="portal-home">
 <div class="stage-glow"></div>
 
-<main>
-<div class="container">
-
-    <div class="avatar-wrap">
-        <div class="avatar-ring"></div>
-        <img src="assets/profile.jpg" alt="Brayan" class="profile">
+<header class="portal-header">
+  <div class="portal-shell header-inner">
+    <a class="portal-logo" href="index.html" aria-label="DURO inicio">DURO</a>
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <a class="active" href="index.html">Inicio</a><a href="#ultimas">Noticias</a><a href="#musica">Música</a><a href="#artistas">Artistas</a><a href="#videos">Videos</a><a href="#nosotros">Nosotros</a>
+    </nav>
+    <div class="header-actions">
+      <a class="playlist-nav" href="playlist.html"><span class="live-dot-mini"></span> Playlist</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
     </div>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="index.html">Inicio</a><a href="#ultimas">Noticias</a><a href="#musica">Música</a><a href="#artistas">Artistas</a><a href="#videos">Videos</a><a href="#nosotros">Nosotros</a>
+  </nav>
+</header>
 
-    <h1 class="wordmark">DURO</h1>
-    <p class="subtitle">Con Brayan</p>
-    <p class="tagline">La comunidad oficial del directo.</p>
+<a class="live-strip" href="playlist.html">
+  <div class="portal-shell live-strip-inner"><span><b>● EN VIVO</b> &nbsp; PLAYLIST DEL DIRECTO</span><span class="live-copy">Mira qué está sonando y mueve tu canción</span><strong>ENTRAR →</strong></div>
+</a>
 
-    <div class="eq-divider" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-    </div>
-
-    <section class="actions">
-
-        <a href="playlist.html">
-            <div class="action-tile">
-                <span class="action-tile-icon">🎵</span>
-                <span class="action-tile-body">
-                    <span class="action-tile-title">Playlist del directo</span>
-                    <span class="action-tile-desc">Mira qué está sonando y mueve tu canción.</span>
-                </span>
-                <span class="action-tile-arrow">→</span>
-            </div>
-        </a>
-
-        <a href="mailto:contacto@duroconbrayan.com">
-            <div class="action-tile action-tile-alt">
-                <span class="action-tile-icon">✉️</span>
-                <span class="action-tile-body">
-                    <span class="action-tile-title">Contacto</span>
-                    <span class="action-tile-desc">Trabajemos juntos.</span>
-                </span>
-                <span class="action-tile-arrow">→</span>
-            </div>
-        </a>
-
+<main class="portal-main">
+  <div class="portal-shell">
+    <section class="hero-grid" aria-label="Historias destacadas">
+      <article class="hero-story story-visual story-main">
+        <div class="story-overlay"></div>
+        <div class="story-content"><span class="category">MÚSICA</span><h1>GTA VI podría tener a Myke Towers mencionando a Guayaquil</h1><p>Una filtración dejó ver una emisora y una canción que conecta inesperadamente al juego con Ecuador.</p><span class="meta">DURO · Hace 2 horas</span></div>
+      </article>
+      <div class="hero-side">
+        <article class="side-story visual-two"><div class="story-overlay"></div><div class="story-content"><span class="category">NOTICIAS</span><h2>Cosculluela y Anuel vuelven a poner a hablar al género</h2><span class="meta">Hace 4 horas</span></div></article>
+        <article class="side-story visual-three"><div class="story-overlay"></div><div class="story-content"><span class="category">INTERNACIONAL</span><h2>Lil Durk, YoungBoy y 6ix9ine aparecen en una nueva historia</h2><span class="meta">Ayer</span></div></article>
+      </div>
     </section>
 
-    <section class="socials">
-        <p class="socials-label">Sígueme</p>
-        <div class="socials-row">
-            <a href="https://www.twitch.tv/duroconbrayan" target="_blank" class="social-chip" aria-label="Twitch">📺</a>
-            <a href="https://youtube.com/@Brayanus14" target="_blank" class="social-chip" aria-label="YouTube">▶️</a>
-            <a href="https://www.instagram.com/brayan_trampa" target="_blank" class="social-chip" aria-label="Instagram">📸</a>
-            <a href="https://www.tiktok.com/@duroconbrayan" target="_blank" class="social-chip" aria-label="TikTok">🎵</a>
+    <section class="portal-section content-grid" id="ultimas">
+      <div>
+        <div class="section-heading"><div><span class="section-kicker">AL DÍA</span><h2>Últimas noticias</h2></div><a href="#">VER TODAS →</a></div>
+        <div class="news-list">
+          <article class="news-row"><div class="news-thumb thumb-one"></div><div><span class="category">PANAMÁ</span><h3>Akim: una figura esencial de Colón y su lugar en la música urbana</h3><p>La historia, el contexto y el impacto detrás del artista.</p><span class="meta">Hoy · 9:40 AM</span></div></article>
+          <article class="news-row"><div class="news-thumb thumb-two"></div><div><span class="category">HISTORIAS</span><h3>Anthony Zambrano: el artista que puso a sonar a Caquetá</h3><p>Su carrera volvía a despegar cuando su historia tomó un giro inesperado.</p><span class="meta">Ayer</span></div></article>
+          <article class="news-row"><div class="news-thumb thumb-three"></div><div><span class="category">MÚSICA</span><h3>Las historias que están moviendo la cultura urbana esta semana</h3><p>Artistas, lanzamientos y momentos que vale la pena entender.</p><span class="meta">Hace 2 días</span></div></article>
         </div>
+      </div>
+      <aside class="trending-card">
+        <span class="section-kicker">TENDENCIA</span><h2>Más visto</h2>
+        <ol><li><span>01</span><a href="#">GTA VI, Myke Towers y la conexión con Guayaquil</a></li><li><span>02</span><a href="#">La historia detrás de Akim y Colón</a></li><li><span>03</span><a href="#">Cosculluela y Anuel: lo que está pasando</a></li><li><span>04</span><a href="#">Anthony Zambrano y Caquetá</a></li></ol>
+      </aside>
     </section>
 
-</div>
+    <section class="portal-section" id="videos">
+      <div class="section-heading"><div><span class="section-kicker">MIRA</span><h2>Videos</h2></div><a href="#">VER MÁS →</a></div>
+      <div class="video-rail">
+        <article class="video-card video-one"><span class="play-button">▶</span><div><span class="category">DURO</span><h3>La conexión que nadie esperaba</h3></div></article>
+        <article class="video-card video-two"><span class="play-button">▶</span><div><span class="category">HISTORIA</span><h3>El momento que cambió su carrera</h3></div></article>
+        <article class="video-card video-three"><span class="play-button">▶</span><div><span class="category">MÚSICA</span><h3>Esto está pasando en el género</h3></div></article>
+        <article class="video-card video-four"><span class="play-button">▶</span><div><span class="category">ARTISTAS</span><h3>Una historia que tienes que conocer</h3></div></article>
+      </div>
+    </section>
+
+    <section class="portal-section identity-section" id="nosotros">
+      <div class="section-heading"><div><span class="section-kicker">CONÓCENOS</span><h2>Detrás de DURO</h2></div></div>
+      <div class="identity-grid">
+        <article><span>01</span><h3>¿Qué es DURO?</h3><p>Un espacio para descubrir, entender y vivir la música y la cultura urbana desde nuestra perspectiva.</p><a href="#">CONOCER DURO →</a></article>
+        <article><span>02</span><h3>¿Quién es Brayan?</h3><p>Creador de contenido y la persona detrás de las historias, los directos y la visión que impulsa este proyecto.</p><a href="#">CONOCER A BRAYAN →</a></article>
+        <article><span>03</span><h3>¿Qué es DURO con Brayan?</h3><p>La comunidad alrededor de los directos: música, audiencia, playlist y experiencias que conectan todo el ecosistema.</p><a href="playlist.html">IR A LA PLAYLIST →</a></article>
+      </div>
+    </section>
+  </div>
 </main>
 
+<footer class="portal-footer"><div class="portal-shell footer-inner"><div><strong class="portal-logo">DURO</strong><p>Música. Cultura. Historias.</p></div><div class="footer-links"><a href="https://www.twitch.tv/duroconbrayan" target="_blank">Twitch</a><a href="https://youtube.com/@Brayanus14" target="_blank">YouTube</a><a href="https://www.instagram.com/brayan_trampa" target="_blank">Instagram</a><a href="https://www.tiktok.com/@duroconbrayan" target="_blank">TikTok</a><a href="mailto:contacto@duroconbrayan.com">Contacto</a></div></div></footer>
+<script>const b=document.getElementById('menuToggle'),n=document.getElementById('mobileNav');b.addEventListener('click',()=>{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);b.textContent=o?'✕':'☰'});n.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{n.classList.remove('open');b.textContent='☰';b.setAttribute('aria-expanded','false')}));</script>
 </body>
 </html>
