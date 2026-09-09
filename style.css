@@ -7384,3 +7384,48 @@ body.offline.stage-v2 .skip-banner{ display: none; }
 .portal-footer{position:relative;z-index:2;border-top:1px solid var(--line);padding:38px 0 50px;background:#09070a}.footer-inner{display:flex;justify-content:space-between;align-items:center}.footer-inner p{font-size:12px;margin-top:8px}.footer-links{display:flex;gap:22px;flex-wrap:wrap}.footer-links a{font-size:12px;color:var(--muted)}
 @media(max-width:900px){.desktop-nav{display:none}.menu-toggle{display:block}.mobile-nav{position:absolute;left:0;right:0;top:74px;padding:12px 20px 20px;background:rgba(11,9,13,.98);border-bottom:1px solid var(--line);flex-direction:column}.mobile-nav.open{display:flex}.mobile-nav a{padding:14px 0;border-bottom:1px solid var(--line);font-weight:700}.hero-grid,.content-grid{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr;grid-template-rows:none}.trending-card{position:static}.video-rail{grid-template-columns:repeat(4,210px);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}.video-card{scroll-snap-align:start}.identity-grid{grid-template-columns:1fr}.identity-grid p{min-height:0}}
 @media(max-width:600px){.portal-shell{width:min(100% - 28px,1240px)}.header-inner{height:62px;gap:14px}.portal-logo{font-size:30px}.playlist-nav{padding:9px 11px;font-size:10px}.mobile-nav{top:62px}.live-strip-inner{min-height:42px}.live-copy{display:none}.live-strip strong{font-size:9px}.portal-main{padding-top:14px}.hero-grid{gap:10px}.story-main{min-height:470px;border-radius:18px}.story-content{padding:20px}.story-main h1{font-size:42px}.story-main p{font-size:13px;line-height:1.45}.hero-side{grid-template-columns:1fr;gap:10px}.side-story{min-height:220px}.portal-section{margin-top:48px}.section-heading h2,.trending-card h2{font-size:32px}.news-row{grid-template-columns:120px 1fr;gap:14px}.news-thumb{min-height:112px}.news-row h3{font-size:16px}.news-row p{display:none}.video-rail{grid-template-columns:repeat(4,165px);margin-right:-14px}.identity-grid article{padding:22px}.footer-inner{align-items:flex-start;flex-direction:column;gap:25px}.footer-links{gap:15px 20px}}
+
+/* ============ PROMOCIONATE HEADER CTA ============ */
+
+.promote-nav{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 16px;
+    border-radius: 10px;
+
+    background: var(--orange);
+    color: #fff;
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .5px;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.promote-nav:hover{
+    transform: translateY(-2px);
+    background: #ff6b32;
+    box-shadow: 0 8px 24px rgba(255,90,31,.28);
+}
+
+
+/* MÓVIL */
+@media (max-width: 760px){
+
+    .promote-nav{
+        padding: 9px 12px;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    /* Ya tenemos la franja Playlist debajo */
+    .header-actions .playlist-nav{
+        display: none;
+    }
+}
