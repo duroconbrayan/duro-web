@@ -1,90 +1,48 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DURO | Música, cultura e historias</title>
-  <meta name="description" content="DURO: noticias, música, artistas, videos e historias de la cultura urbana. La comunidad de DURO con Brayan.">
-  <link rel="stylesheet" href="style.css?v=9">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DURO con Brayan | Playlist del directo</title>
+<meta name="description" content="Entra a la playlist del directo de DURO con Brayan. Pide canciones y participa en el Live.">
+<style>
+:root{--bg:#0b090d;--surface:#151118;--line:rgba(255,255,255,.09);--text:#f5f3f6;--muted:#a7a1aa;--orange:#ff5a1f}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}
+body{font-family:Arial,Helvetica,sans-serif}.page{min-height:100vh;display:flex;flex-direction:column;text-align:center}
+.top{width:min(1120px,calc(100% - 32px));margin:auto;padding:24px 0;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:30px;font-weight:950;letter-spacing:4px}.status{padding:9px 14px;border:1px solid rgba(255,90,31,.35);border-radius:999px;background:rgba(255,90,31,.08);font-size:11px;font-weight:900;letter-spacing:2px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 14px rgba(255,90,31,.9);margin-right:8px}
+.hero{width:min(760px,calc(100% - 32px));margin:auto;padding:70px 0 80px}
+.kicker{color:var(--orange);font-size:12px;font-weight:950;letter-spacing:3px;margin-bottom:18px}
+h1{margin:0;font-size:clamp(42px,8vw,76px);line-height:.96;letter-spacing:-3px}
+.lead{max-width:570px;margin:24px auto 0;color:var(--muted);font-size:18px;line-height:1.55}
+.cta{display:block;margin:34px auto 0;width:min(360px,100%);padding:18px 24px;border-radius:14px;background:linear-gradient(135deg,#ff5a1f,#ff8a24);color:white;font-size:14px;font-weight:950;letter-spacing:1px;text-decoration:none;box-shadow:0 18px 45px rgba(255,90,31,.22)}
+.sub{margin-top:13px;color:#6f6972;font-size:12px}
+.features{width:min(760px,calc(100% - 32px));margin:0 auto 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.feature{padding:20px 16px;border:1px solid var(--line);border-radius:16px;background:rgba(21,17,24,.75)}
+.feature strong{display:block;font-size:14px;margin-bottom:7px}.feature span{color:var(--muted);font-size:12px}
+footer{margin-top:auto;border-top:1px solid var(--line);padding:22px 16px;color:#6f6972;font-size:12px}
+@media(max-width:620px){.top{padding:18px 0}.logo{font-size:25px}.status{font-size:9px;padding:8px 10px}.hero{padding:55px 0 65px}.lead{font-size:16px}.features{grid-template-columns:1fr}}
+</style>
 </head>
-<body class="portal-home">
-<div class="stage-glow"></div>
-
-<header class="portal-header">
-  <div class="portal-shell header-inner">
-    <a class="portal-logo" href="index.html" aria-label="DURO inicio">DURO</a>
-    <nav class="desktop-nav" aria-label="Navegación principal">
-      <a class="active" href="index.html">Inicio</a><a href="#ultimas">Noticias</a><a href="#musica">Música</a><a href="#artistas">Artistas</a><a href="#videos">Videos</a><a href="#nosotros">Nosotros</a>
-    </nav>
-    <div class="header-actions">
-  <a class="promote-nav" href="promocionate.html">PROMOCIÓNATE +</a>
-
-  <a class="playlist-nav" href="playlist.html">
-    <span class="live-dot-mini"></span> Playlist
-  </a>
-
-  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
-</div>
-  </div>
-  <nav class="mobile-nav" id="mobileNav">
-    <a href="index.html">Inicio</a><a href="#ultimas">Noticias</a><a href="#musica">Música</a><a href="#artistas">Artistas</a><a href="#videos">Videos</a><a href="#nosotros">Nosotros</a>
-  </nav>
-</header>
-
-<a class="live-strip" href="playlist.html">
-  <div class="portal-shell live-strip-inner"><span><b>● EN VIVO</b> &nbsp; PLAYLIST DEL DIRECTO</span><span class="live-copy">Mira qué está sonando y mueve tu canción</span><strong>ENTRAR →</strong></div>
-</a>
-
-<main class="portal-main">
-  <div class="portal-shell">
-    <section class="hero-grid" aria-label="Historias destacadas">
-      <article class="hero-story story-visual story-main">
-        <div class="story-overlay"></div>
-        <div class="story-content"><span class="category">MÚSICA</span><h1>GTA VI podría tener a Myke Towers mencionando a Guayaquil</h1><p>Una filtración dejó ver una emisora y una canción que conecta inesperadamente al juego con Ecuador.</p><span class="meta">DURO · Hace 2 horas</span></div>
-      </article>
-      <div class="hero-side">
-        <article class="side-story visual-two"><div class="story-overlay"></div><div class="story-content"><span class="category">NOTICIAS</span><h2>Cosculluela y Anuel vuelven a poner a hablar al género</h2><span class="meta">Hace 4 horas</span></div></article>
-        <article class="side-story visual-three"><div class="story-overlay"></div><div class="story-content"><span class="category">INTERNACIONAL</span><h2>Lil Durk, YoungBoy y 6ix9ine aparecen en una nueva historia</h2><span class="meta">Ayer</span></div></article>
-      </div>
-    </section>
-
-    <section class="portal-section content-grid" id="ultimas">
-      <div>
-        <div class="section-heading"><div><span class="section-kicker">AL DÍA</span><h2>Últimas noticias</h2></div><a href="#">VER TODAS →</a></div>
-        <div class="news-list">
-          <article class="news-row"><div class="news-thumb thumb-one"></div><div><span class="category">PANAMÁ</span><h3>Akim: una figura esencial de Colón y su lugar en la música urbana</h3><p>La historia, el contexto y el impacto detrás del artista.</p><span class="meta">Hoy · 9:40 AM</span></div></article>
-          <article class="news-row"><div class="news-thumb thumb-two"></div><div><span class="category">HISTORIAS</span><h3>Anthony Zambrano: el artista que puso a sonar a Caquetá</h3><p>Su carrera volvía a despegar cuando su historia tomó un giro inesperado.</p><span class="meta">Ayer</span></div></article>
-          <article class="news-row"><div class="news-thumb thumb-three"></div><div><span class="category">MÚSICA</span><h3>Las historias que están moviendo la cultura urbana esta semana</h3><p>Artistas, lanzamientos y momentos que vale la pena entender.</p><span class="meta">Hace 2 días</span></div></article>
-        </div>
-      </div>
-      <aside class="trending-card">
-        <span class="section-kicker">TENDENCIA</span><h2>Más visto</h2>
-        <ol><li><span>01</span><a href="#">GTA VI, Myke Towers y la conexión con Guayaquil</a></li><li><span>02</span><a href="#">La historia detrás de Akim y Colón</a></li><li><span>03</span><a href="#">Cosculluela y Anuel: lo que está pasando</a></li><li><span>04</span><a href="#">Anthony Zambrano y Caquetá</a></li></ol>
-      </aside>
-    </section>
-
-    <section class="portal-section" id="videos">
-      <div class="section-heading"><div><span class="section-kicker">MIRA</span><h2>Videos</h2></div><a href="#">VER MÁS →</a></div>
-      <div class="video-rail">
-        <article class="video-card video-one"><span class="play-button">▶</span><div><span class="category">DURO</span><h3>La conexión que nadie esperaba</h3></div></article>
-        <article class="video-card video-two"><span class="play-button">▶</span><div><span class="category">HISTORIA</span><h3>El momento que cambió su carrera</h3></div></article>
-        <article class="video-card video-three"><span class="play-button">▶</span><div><span class="category">MÚSICA</span><h3>Esto está pasando en el género</h3></div></article>
-        <article class="video-card video-four"><span class="play-button">▶</span><div><span class="category">ARTISTAS</span><h3>Una historia que tienes que conocer</h3></div></article>
-      </div>
-    </section>
-
-    <section class="portal-section identity-section" id="nosotros">
-      <div class="section-heading"><div><span class="section-kicker">CONÓCENOS</span><h2>Detrás de DURO</h2></div></div>
-      <div class="identity-grid">
-        <article><span>01</span><h3>¿Qué es DURO?</h3><p>Un espacio para descubrir, entender y vivir la música y la cultura urbana desde nuestra perspectiva.</p><a href="#">CONOCER DURO →</a></article>
-        <article><span>02</span><h3>¿Quién es Brayan?</h3><p>Creador de contenido y la persona detrás de las historias, los directos y la visión que impulsa este proyecto.</p><a href="#">CONOCER A BRAYAN →</a></article>
-        <article><span>03</span><h3>¿Qué es DURO con Brayan?</h3><p>La comunidad alrededor de los directos: música, audiencia, playlist y experiencias que conectan todo el ecosistema.</p><a href="playlist.html">IR A LA PLAYLIST →</a></article>
-      </div>
-    </section>
-  </div>
+<body>
+<div class="page">
+<header class="top"><a class="logo" href="index.html">DURO</a><div class="status"><span class="dot"></span>EN VIVO</div></header>
+<main>
+<section class="hero">
+<div class="kicker">DURO CON BRAYAN</div>
+<h1>PLAYLIST DEL DIRECTO</h1>
+<p class="lead">Tú eliges qué suena. Pide tu canción, participa en el Live y mira cómo avanza la playlist en tiempo real.</p>
+<a class="cta" href="playlist.html">ENTRAR A LA PLAYLIST →</a>
+<div class="sub">La playlist se actualiza durante el directo.</div>
+</section>
+<section class="features">
+<div class="feature"><strong>🎵 PIDE</strong><span>Agrega la canción que quieres escuchar.</span></div>
+<div class="feature"><strong>🔥 PARTICIPA</strong><span>Apoya canciones y mueve el ranking.</span></div>
+<div class="feature"><strong>🔴 EN DIRECTO</strong><span>Todo ocurre mientras estamos en Live.</span></div>
+</section>
 </main>
-
-<footer class="portal-footer"><div class="portal-shell footer-inner"><div><strong class="portal-logo">DURO</strong><p>Música. Cultura. Historias.</p></div><div class="footer-links"><a href="https://www.twitch.tv/duroconbrayan" target="_blank">Twitch</a><a href="https://youtube.com/@Brayanus14" target="_blank">YouTube</a><a href="https://www.instagram.com/brayan_trampa" target="_blank">Instagram</a><a href="https://www.tiktok.com/@duroconbrayan" target="_blank">TikTok</a><a href="mailto:contacto@duroconbrayan.com">Contacto</a></div></div></footer>
-<script>const b=document.getElementById('menuToggle'),n=document.getElementById('mobileNav');b.addEventListener('click',()=>{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);b.textContent=o?'✕':'☰'});n.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{n.classList.remove('open');b.textContent='☰';b.setAttribute('aria-expanded','false')}));</script>
+<footer>DURO con Brayan · Música, comunidad y directo</footer>
+</div>
 </body>
 </html>
