@@ -740,6 +740,29 @@ function mostrarOpcionesSubir() {
 
 </div>
 
+<div class="action-card" onclick="mostrarPrueba(
+    'artista_destacado',
+    'Completa la misión: suscríbete, dale Me gusta y comenta',
+    '+15',
+    'https://www.youtube.com/watch?v=O3jcOvUVdr8'
+)">
+    <div class="action-left">
+        <span class="action-icon">🔥</span>
+
+        <div>
+            <div class="action-title">Misión del artista</div>
+            <div class="action-description">
+                Suscríbete, dale Me gusta y comenta. Luego envía una captura.
+            </div>
+        </div>
+    </div>
+
+    <div class="action-right">
+        <span class="action-reward">+15</span>
+        <span class="action-arrow">›</span>
+    </div>
+</div>
+
 </div>
 
 <div class="action-card" onclick="mostrarPrueba(
