@@ -1055,14 +1055,19 @@ if (!response.ok) {
             </div>
         `;
 
-    } catch (error) {
+} catch (error) {
+
+    console.error("ERROR REAL ENVIANDO PRUEBA:", error);
 
     if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.textContent = "ENVIAR PRUEBA";
     }
 
-    alert("Error de conexión al enviar la prueba.");
+    alert(
+        "Error al enviar la prueba.\n\n" +
+        (error?.message || error)
+    );
 }
 }
 
