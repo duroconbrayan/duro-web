@@ -732,11 +732,13 @@ function mostrarOpcionesSubir() {
 
     </div>
 
-    <div class="action-right">
+        <div class="action-right">
 
-    <span class="action-reward">+5</span>
+        <span class="action-reward">+5</span>
 
-    <span class="action-arrow">›</span>
+        <span class="action-arrow">›</span>
+
+    </div>
 
 </div>
 
@@ -761,8 +763,6 @@ function mostrarOpcionesSubir() {
         <span class="action-reward">+15</span>
         <span class="action-arrow">›</span>
     </div>
-</div>
-
 </div>
 
 <div class="action-card" onclick="mostrarPrueba(
