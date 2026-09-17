@@ -7460,3 +7460,105 @@ body.offline.stage-v2 .skip-banner{ display: none; }
         display: none;
     }
 }
+
+/* =========================================================
+   DURO LIVE — FIX MÓVIL EN VIVO
+   ========================================================= */
+
+@media (max-width: 520px){
+
+    html,
+    body{
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    body.stage-v2{
+        overflow-x: hidden;
+    }
+
+    body.stage-v2 main{
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    body.stage-v2 .live-stage{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    body.stage-v2 .unified-carousel-shell{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    body.stage-v2 .stage-carousel{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding-left: 6vw;
+        padding-right: 6vw;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    body.stage-v2 .stage-carousel-track{
+        width: max-content;
+        min-width: 0;
+        max-width: none;
+        gap: 10px;
+    }
+
+    body.stage-v2 .stage-song-card{
+        flex: 0 0 76vw;
+        width: 76vw;
+        max-width: 76vw;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    body.stage-v2 .stage-current-card{
+        flex: 0 0 84vw;
+        width: 84vw;
+        max-width: 84vw;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    body.stage-v2 .tap-player{
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    body.stage-v2 .tap-player-top,
+    body.stage-v2 .tap-player-bottom{
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    body.stage-v2 .tap-callout,
+    body.stage-v2 .tap-total{
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    body.stage-v2 .stage-instruction{
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
