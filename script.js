@@ -21,6 +21,7 @@ let stageEventosPendientes = [];
 let stageGoalEventKey = null;
 let stageGoalInicializado = false;
 let stageCarouselInicializado = false;
+let stageAvancesGratis = 0;
 let stageCargaRequestsActiva = false;
 let stageCargaLikesActiva = false;
 let stageRequestsFirma = "";
@@ -530,15 +531,19 @@ function toggleTopLikes() {
 
 comprobarEstadoLive();
 cargarHistorial();
+cargarStageHistorial();
 cargarLiveLikes();
+cargarStageLiveLikes();
 
 setInterval(() => {
     comprobarEstadoLive();
     cargarHistorial();
+    cargarStageHistorial();
 }, 2000);
 
 setInterval(() => {
     cargarLiveLikes();
+    cargarStageLiveLikes();
 }, 2000);
 
 function seleccionarCancion(id, cancion) {
@@ -1003,16 +1008,35 @@ if (submitBtn) {
             }
         );
 
-        const data = await response.json();
+        const textoRespuesta = await response.text();
 
-        if (!response.ok) {
-            alert(data.error || "No se pudo enviar la prueba.");
-            if (submitBtn) {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "ENVIAR PRUEBA";
+let data = {};
+
+try {
+    data = JSON.parse(textoRespuesta);
+} catch {
+    data = {
+        error: textoRespuesta || "Respuesta inválida del servidor."
+    };
 }
-            return;
-        }
+
+if (!response.ok) {
+    const detalle = data.detail
+        ? `\n\nDetalle: ${data.detail}`
+        : "";
+
+    alert(
+        (data.error || "No se pudo enviar la prueba.") +
+        detalle
+    );
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "ENVIAR PRUEBA";
+    }
+
+    return;
+}
 
         const contenido = document.getElementById("menu-contenido");
 
@@ -1240,9 +1264,28 @@ function elementoCentradoStage() {
 }
 
 function centrarStage(key, behavior = "auto") {
+    const carousel = document.getElementById("stage-carousel");
     const track = document.getElementById("stage-carousel-track");
-    const card = Array.from(track?.children || []).find((item) => item.dataset.stageKey === key);
-    card?.scrollIntoView({ behavior, block: "nearest", inline: "center" });
+
+    if (!carousel || !track) return;
+
+    const card = Array.from(track.children).find(
+        (item) => item.dataset.stageKey === key
+    );
+
+    if (!card) return;
+
+    const carouselRect = carousel.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+
+    const desplazamiento =
+        (cardRect.left + cardRect.width / 2) -
+        (carouselRect.left + carouselRect.width / 2);
+
+    carousel.scrollBy({
+        left: desplazamiento,
+        behavior
+    });
 }
 
 function renderizarCarruselStage(played, playing, queue) {
@@ -1323,7 +1366,7 @@ function detectarEventosRequests(requests, playing, queue) {
     });
 }
 
-async function cargarHistorial() {
+async function cargarStageHistorial() {
     if (stageCargaRequestsActiva) return;
     stageCargaRequestsActiva = true;
     try {
@@ -1359,11 +1402,36 @@ async function cargarHistorial() {
     }
 }
 
-function moverCola(direccion) {
+function moverColaStage(direccion) {
     const carousel = document.getElementById("stage-carousel");
     const card = carousel?.querySelector(".stage-song-card");
+
     if (!carousel || !card) return;
-    carousel.scrollBy({ left: direccion * (card.offsetWidth + 18), behavior: "smooth" });
+
+    if (direccion > 0) {
+        if (stageAvancesGratis >= 5) {
+            stageAvancesGratis = 0;
+
+            const anuncio = window.open(
+                "https://omg10.com/4/11599214",
+                "_blank",
+                "noopener,noreferrer"
+            );
+
+            if (!anuncio) {
+                console.info("El navegador bloqueó la pestaña del anuncio.");
+            }
+
+            return;
+        }
+
+        stageAvancesGratis++;
+    }
+
+    carousel.scrollBy({
+        left: direccion * (card.offsetWidth + 18),
+        behavior: "smooth"
+    });
 }
 
 function desbloquearHistorialStage() {
@@ -1483,7 +1551,7 @@ function actualizarRankingStage(topUsers) {
         </div>`).join("");
 }
 
-async function cargarLiveLikes() {
+async function cargarStageLiveLikes() {
     if (stageCargaLikesActiva) return;
     stageCargaLikesActiva = true;
     try {
