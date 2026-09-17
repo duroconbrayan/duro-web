@@ -22,6 +22,7 @@ let stageGoalEventKey = null;
 let stageGoalInicializado = false;
 let stageCarouselInicializado = false;
 let stageAvancesGratis = 0;
+let stageAvanceBloqueado = false;
 let stageCargaRequestsActiva = false;
 let stageCargaLikesActiva = false;
 let stageRequestsFirma = "";
@@ -1282,8 +1283,11 @@ function centrarStage(key, behavior = "auto") {
         (cardRect.left + cardRect.width / 2) -
         (carouselRect.left + carouselRect.width / 2);
 
-    carousel.scrollBy({
-        left: desplazamiento,
+    const objetivo =
+        carousel.scrollLeft + desplazamiento;
+
+    carousel.scrollTo({
+        left: Math.max(0, objetivo),
         behavior
     });
 }
@@ -1404,13 +1408,14 @@ async function cargarStageHistorial() {
 
 function moverColaStage(direccion) {
     const carousel = document.getElementById("stage-carousel");
-    const card = carousel?.querySelector(".stage-song-card");
 
-    if (!carousel || !card) return;
+    if (!carousel) return;
+
+    if (stageAvanceBloqueado) return;
 
     if (direccion > 0) {
         if (stageAvancesGratis >= 5) {
-            stageAvancesGratis = 0;
+            stageAvanceBloqueado = true;
 
             const anuncio = window.open(
                 "https://omg10.com/4/11599214",
@@ -1420,7 +1425,16 @@ function moverColaStage(direccion) {
 
             if (!anuncio) {
                 console.info("El navegador bloqueó la pestaña del anuncio.");
+                alert("Activa las ventanas emergentes para continuar.");
+                stageAvanceBloqueado = false;
+                return;
             }
+
+            stageAvancesGratis = 0;
+
+            setTimeout(() => {
+                stageAvanceBloqueado = false;
+            }, 1000);
 
             return;
         }
@@ -1429,7 +1443,10 @@ function moverColaStage(direccion) {
     }
 
     carousel.scrollBy({
-        left: direccion * (card.offsetWidth + 18),
+        left: direccion * Math.min(
+            carousel.clientWidth * 0.78,
+            carousel.scrollWidth
+        ),
         behavior: "smooth"
     });
 }
