@@ -1018,11 +1018,19 @@ try {
 }
 
 if (!response.ok) {
+
+    console.error(
+        "ERROR HTTP ENVIANDO PRUEBA:",
+        response.status,
+        data
+    );
+
     const detalle = data.detail
         ? `\n\nDetalle: ${data.detail}`
         : "";
 
     alert(
+        `ERROR ${response.status}\n\n` +
         (data.error || "No se pudo enviar la prueba.") +
         detalle
     );
