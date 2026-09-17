@@ -25,6 +25,7 @@ let stageAvancesGratis = 0;
 let stageAvanceBloqueado = false;
 let stageCargaRequestsActiva = false;
 let stageCargaLikesActiva = false;
+let historialCargaActiva = false;
 let stageRequestsFirma = "";
 let stageUltimosDatos = { played: [], playing: null, queue: [] };
 
@@ -183,6 +184,8 @@ async function comprobarEstadoLive() {
 }
 
 async function cargarHistorial() {
+    if (historialCargaActiva) return;
+    historialCargaActiva = true;
 
     const contenedor = document.getElementById("played-history");
 
@@ -531,19 +534,12 @@ function toggleTopLikes() {
 }
 
 comprobarEstadoLive();
-cargarHistorial();
 cargarStageHistorial();
-cargarLiveLikes();
 cargarStageLiveLikes();
 
 setInterval(() => {
     comprobarEstadoLive();
-    cargarHistorial();
     cargarStageHistorial();
-}, 2000);
-
-setInterval(() => {
-    cargarLiveLikes();
     cargarStageLiveLikes();
 }, 2000);
 
@@ -1453,8 +1449,19 @@ function moverColaStage(direccion) {
 
 function desbloquearHistorialStage() {
     if (stageHistorialDesbloqueado) return;
-    const anuncio = window.open("https://omg10.com/4/11599214", "_blank", "noopener,noreferrer");
-    stageHistorialDesbloqueado = true;
+    const anuncio = window.open(
+    "https://omg10.com/4/11599214",
+    "_blank",
+    "noopener,noreferrer"
+);
+
+if (!anuncio) {
+    console.info("El navegador bloqueó la pestaña del anuncio.");
+    alert("Activa las ventanas emergentes para desbloquear el historial.");
+    return;
+}
+
+stageHistorialDesbloqueado = true;
     renderizarCarruselStage(
         stageUltimosDatos.played,
         stageUltimosDatos.playing,
