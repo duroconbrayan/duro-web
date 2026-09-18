@@ -1064,123 +1064,212 @@ async function enviarPrueba(action) {
         return;
     }
 
-    const file = await comprimirPruebaImagen(fileOriginal);
-
     const submitBtn = document.getElementById("proof-submit-btn");
 
-if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = "ENVIANDO...";
-}
-
-    const formData = new FormData();
-
-    formData.append("request_id", solicitudSeleccionadaId);
-    formData.append("action", action);
-    formData.append("visitor_id", visitorId);
-    formData.append("proof", file);
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "ENVIANDO...";
+    }
 
     try {
 
-        const response = await fetch(
-            "https://playlist-api.bookingelbrayan.workers.dev/submit-proof",
-            {
-                method: "POST",
-                body: formData
+        const file = await comprimirPruebaImagen(fileOriginal);
+
+        const MAX_INTENTOS = 3;
+        let ultimoError = null;
+
+        for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
+
+            const formData = new FormData();
+
+            formData.append(
+                "request_id",
+                solicitudSeleccionadaId
+            );
+
+            formData.append(
+                "action",
+                action
+            );
+
+            formData.append(
+                "visitor_id",
+                visitorId
+            );
+
+            formData.append(
+                "proof",
+                file
+            );
+
+            const controller = new AbortController();
+
+            const timeout = setTimeout(
+                () => controller.abort(),
+                30000
+            );
+
+            try {
+
+                const response = await fetch(
+                    "https://playlist-api.bookingelbrayan.workers.dev/submit-proof",
+                    {
+                        method: "POST",
+                        body: formData,
+                        signal: controller.signal
+                    }
+                );
+
+                clearTimeout(timeout);
+
+                const textoRespuesta =
+                    await response.text();
+
+                let data = {};
+
+                try {
+                    data = JSON.parse(
+                        textoRespuesta
+                    );
+                } catch {
+                    data = {
+                        error:
+                            textoRespuesta ||
+                            "Respuesta inválida del servidor."
+                    };
+                }
+
+                /*
+                 * Los errores HTTP son respuestas reales
+                 * del servidor. NO debemos repetir el envío.
+                 */
+                if (!response.ok) {
+
+                    console.error(
+                        "ERROR HTTP ENVIANDO PRUEBA:",
+                        response.status,
+                        data
+                    );
+
+                    const detalle = data.detail
+                        ? `\n\nDetalle: ${data.detail}`
+                        : "";
+
+                    alert(
+                        `ERROR ${response.status}\n\n` +
+                        (
+                            data.error ||
+                            "No se pudo enviar la prueba."
+                        ) +
+                        detalle
+                    );
+
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent =
+                            "ENVIAR PRUEBA";
+                    }
+
+                    return;
+                }
+
+                /*
+                 * ÉXITO
+                 */
+                const contenido =
+                    document.getElementById(
+                        "menu-contenido"
+                    );
+
+                contenido.innerHTML = `
+                    <div class="proof-box">
+                        <strong>✅ PRUEBA ENVIADA</strong>
+
+                        <p class="proof-text">
+                            Tu captura quedó pendiente de revisión.
+                            Cuando sea aprobada, tu canción se
+                            adelantará automáticamente.
+                        </p>
+
+                        <button
+                            type="button"
+                            onclick="cerrarMenu()"
+                        >
+                            LISTO
+                        </button>
+                    </div>
+                `;
+
+                return;
+
+            } catch (error) {
+
+                clearTimeout(timeout);
+
+                ultimoError = error;
+
+                console.warn(
+                    `Intento ${intento}/${MAX_INTENTOS} falló:`,
+                    error
+                );
+
+                /*
+                 * Solo reintentamos errores reales de red
+                 * o timeout.
+                 */
+                if (intento < MAX_INTENTOS) {
+
+                    const espera =
+                        intento === 1
+                            ? 1000
+                            : 2000;
+
+                    await new Promise(
+                        resolve =>
+                            setTimeout(
+                                resolve,
+                                espera
+                            )
+                    );
+
+                    continue;
+                }
             }
+        }
+
+        /*
+         * Los 3 intentos fallaron.
+         */
+        console.error(
+            "ERROR FINAL ENVIANDO PRUEBA:",
+            ultimoError
         );
 
-        const textoRespuesta = await response.text();
+        alert(
+            "No se pudo enviar la prueba después de varios intentos.\n\n" +
+            "Revisa tu conexión a Internet e inténtalo nuevamente."
+        );
 
-let data = {};
+    } catch (error) {
 
-try {
-    data = JSON.parse(textoRespuesta);
-} catch {
-    data = {
-        error: textoRespuesta || "Respuesta inválida del servidor."
-    };
-}
+        console.error(
+            "ERROR PREPARANDO LA PRUEBA:",
+            error
+        );
 
-if (!response.ok) {
+        alert(
+            "No se pudo preparar la captura para enviarla.\n\n" +
+            (error?.message || error)
+        );
 
-    console.error(
-        "ERROR HTTP ENVIANDO PRUEBA:",
-        response.status,
-        data
-    );
+    } finally {
 
-    const detalle = data.detail
-        ? `\n\nDetalle: ${data.detail}`
-        : "";
-
-    alert(
-        `ERROR ${response.status}\n\n` +
-        (data.error || "No se pudo enviar la prueba.") +
-        detalle
-    );
-
-    if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "ENVIAR PRUEBA";
-    }
-
-    return;
-}
-
-        const contenido = document.getElementById("menu-contenido");
-
-        contenido.innerHTML = `
-            <div class="proof-box">
-                <strong>✅ PRUEBA ENVIADA</strong>
-
-                <p class="proof-text">
-    Tu captura quedó pendiente de revisión.
-   Cuando sea aprobada, tu canción se adelantará automáticamente.
-</p>
-
-                <button
-                    type="button"
-                    onclick="cerrarMenu()"
-                >
-                    LISTO
-                </button>
-            </div>
-        `;
-
-} catch (error) {
-
-    console.error(
-        "ERROR REAL ENVIANDO PRUEBA:",
-        error
-    );
-
-    console.error(
-        "DETALLES DE LA PRUEBA:",
-        {
-            action,
-            request_id: solicitudSeleccionadaId,
-            visitor_id: visitorId,
-            original_name: fileOriginal?.name,
-            original_type: fileOriginal?.type,
-            original_size: fileOriginal?.size,
-            enviada_name: file?.name,
-            enviada_type: file?.type,
-            enviada_size: file?.size
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent =
+                "ENVIAR PRUEBA";
         }
-    );
-
-    if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "ENVIAR PRUEBA";
     }
-
-    alert(
-        "ERROR DE CONEXIÓN AL ENVIAR LA PRUEBA.\n\n" +
-        "Revisa tu conexión e inténtalo nuevamente.\n\n" +
-        "Si vuelve a ocurrir, envíame una captura de este mensaje."
-    );
-}
 }
 
 function mostrarOpcionesSaltar() {
