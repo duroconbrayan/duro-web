@@ -2509,11 +2509,17 @@ a:focus-visible, button:focus-visible{
 
 .live-likes-ranking-user{
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    max-width: 100%;
+
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
     color: var(--text);
     font-size: 12px;
+    line-height: 1.25;
 }
 
 .live-likes-ranking-count{
