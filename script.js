@@ -966,20 +966,105 @@ function mostrarNombrePrueba(input) {
     }
 }
 
+async function comprimirPruebaImagen(file) {
+
+    if (!file || !file.type.startsWith("image/")) {
+        return file;
+    }
+
+    try {
+
+        const bitmap = await createImageBitmap(file);
+
+        const MAX_DIMENSION = 2200;
+
+        let width = bitmap.width;
+        let height = bitmap.height;
+
+        if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+
+            const escala = Math.min(
+                MAX_DIMENSION / width,
+                MAX_DIMENSION / height
+            );
+
+            width = Math.round(width * escala);
+            height = Math.round(height * escala);
+        }
+
+        const canvas = document.createElement("canvas");
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) {
+            bitmap.close();
+            return file;
+        }
+
+        ctx.drawImage(
+            bitmap,
+            0,
+            0,
+            width,
+            height
+        );
+
+        bitmap.close();
+
+        const blob = await new Promise(resolve => {
+
+            canvas.toBlob(
+                resolve,
+                "image/jpeg",
+                0.88
+            );
+
+        });
+
+        if (!blob) {
+            return file;
+        }
+
+        return new File(
+            [blob],
+            "prueba.jpg",
+            {
+                type: "image/jpeg",
+                lastModified: Date.now()
+            }
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "No se pudo comprimir la captura. Se enviará original:",
+            error
+        );
+
+        return file;
+    }
+}
+
+
 async function enviarPrueba(action) {
 
     const input = document.getElementById("proof-file");
-    const file = input?.files?.[0];
+    const fileOriginal = input?.files?.[0];
 
     if (!solicitudSeleccionadaId) {
         alert("No se encontró la canción seleccionada.");
         return;
     }
 
-    if (!file) {
+    if (!fileOriginal) {
         alert("Selecciona una captura primero.");
         return;
     }
+
+    const file = await comprimirPruebaImagen(fileOriginal);
 
     const submitBtn = document.getElementById("proof-submit-btn");
 
@@ -1065,7 +1150,25 @@ if (!response.ok) {
 
 } catch (error) {
 
-    console.error("ERROR REAL ENVIANDO PRUEBA:", error);
+    console.error(
+        "ERROR REAL ENVIANDO PRUEBA:",
+        error
+    );
+
+    console.error(
+        "DETALLES DE LA PRUEBA:",
+        {
+            action,
+            request_id: solicitudSeleccionadaId,
+            visitor_id: visitorId,
+            original_name: fileOriginal?.name,
+            original_type: fileOriginal?.type,
+            original_size: fileOriginal?.size,
+            enviada_name: file?.name,
+            enviada_type: file?.type,
+            enviada_size: file?.size
+        }
+    );
 
     if (submitBtn) {
         submitBtn.disabled = false;
@@ -1073,8 +1176,9 @@ if (!response.ok) {
     }
 
     alert(
-        "Error al enviar la prueba.\n\n" +
-        (error?.message || error)
+        "ERROR DE CONEXIÓN AL ENVIAR LA PRUEBA.\n\n" +
+        "Revisa tu conexión e inténtalo nuevamente.\n\n" +
+        "Si vuelve a ocurrir, envíame una captura de este mensaje."
     );
 }
 }
