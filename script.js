@@ -538,10 +538,13 @@ cargarStageHistorial();
 cargarStageLiveLikes();
 
 setInterval(() => {
-    comprobarEstadoLive();
     cargarStageHistorial();
     cargarStageLiveLikes();
-}, 2000);
+}, 5000);
+
+setInterval(() => {
+    comprobarEstadoLive();
+}, 15000);
 
 function seleccionarCancion(id, cancion) {
 
