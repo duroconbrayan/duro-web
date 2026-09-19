@@ -533,18 +533,85 @@ function toggleTopLikes() {
     );
 }
 
-comprobarEstadoLive();
-cargarStageHistorial();
-cargarStageLiveLikes();
+// ============ POLLING OPTIMIZADO ============
 
-setInterval(() => {
+let stageRequestsTimer = null;
+let stageLikesTimer = null;
+let stageStatusTimer = null;
+
+const STAGE_REQUESTS_INTERVAL = 15000;
+const STAGE_LIKES_INTERVAL = 10000;
+const STAGE_STATUS_INTERVAL = 60000;
+
+function detenerPollingStage() {
+
+    if (stageRequestsTimer !== null) {
+        clearInterval(stageRequestsTimer);
+        stageRequestsTimer = null;
+    }
+
+    if (stageLikesTimer !== null) {
+        clearInterval(stageLikesTimer);
+        stageLikesTimer = null;
+    }
+
+    if (stageStatusTimer !== null) {
+        clearInterval(stageStatusTimer);
+        stageStatusTimer = null;
+    }
+}
+
+function iniciarPollingStage() {
+
+    detenerPollingStage();
+
+    if (document.hidden) {
+        return;
+    }
+
+    // Actualización inmediata al entrar o volver a la página.
+    comprobarEstadoLive();
     cargarStageHistorial();
     cargarStageLiveLikes();
-}, 5000);
 
-setInterval(() => {
-    comprobarEstadoLive();
-}, 15000);
+    stageRequestsTimer = setInterval(() => {
+
+        if (document.hidden) return;
+
+        cargarStageHistorial();
+
+    }, STAGE_REQUESTS_INTERVAL);
+
+    stageLikesTimer = setInterval(() => {
+
+        if (document.hidden) return;
+
+        cargarStageLiveLikes();
+
+    }, STAGE_LIKES_INTERVAL);
+
+    stageStatusTimer = setInterval(() => {
+
+        if (document.hidden) return;
+
+        comprobarEstadoLive();
+
+    }, STAGE_STATUS_INTERVAL);
+}
+
+document.addEventListener("visibilitychange", () => {
+
+    if (document.hidden) {
+
+        detenerPollingStage();
+
+        return;
+    }
+
+    iniciarPollingStage();
+});
+
+iniciarPollingStage();
 
 function seleccionarCancion(id, cancion) {
 
@@ -1579,7 +1646,7 @@ async function cargarStageHistorial() {
     if (stageCargaRequestsActiva) return;
     stageCargaRequestsActiva = true;
     try {
-        const response = await fetch(requestsURL, { cache: "no-store" });
+        const response = await fetch(requestsURL);
         if (!response.ok) return;
         const requests = await response.json();
         const played = requests.filter((item) => item.status === "played");
@@ -1788,7 +1855,7 @@ async function cargarStageLiveLikes() {
     if (stageCargaLikesActiva) return;
     stageCargaLikesActiva = true;
     try {
-        const response = await fetch(liveLikesURL, { cache: "no-store" });
+        const response = await fetch(liveLikesURL);
         if (!response.ok) return;
         const data = await response.json();
         const goal = Number(data.goal) || 5000;
