@@ -8040,26 +8040,33 @@ body.stage-v2 .carousel-legend {
 }
 
 /* =========================================================
-   DURO LIVE — PREMIUM STAGE V3
-   Vertical 9:16 · Desktop + Mobile
+   DURO LIVE — PREMIUM STAGE V4
+   DESKTOP WIDE + MOBILE RESPONSIVE
    ========================================================= */
 
+/* =========================
+   DESKTOP / BASE
+   ========================= */
+
 body.stage-v2 .live-stage{
-    width: min(500px, calc((100vh - 28px) * .5625)) !important;
-    height: min(889px, calc(100vh - 28px)) !important;
-    min-height: 0 !important;
-    max-width: 500px !important;
-    max-height: 889px !important;
-    aspect-ratio: 9 / 16 !important;
+    width: min(1180px, calc(100vw - 48px)) !important;
+    max-width: 1180px !important;
+
+    height: auto !important;
+    min-height: 760px !important;
+    max-height: none !important;
+
+    aspect-ratio: auto !important;
 
     margin: 0 auto !important;
-    padding: 18px !important;
+    padding: 28px !important;
 
     display: grid !important;
+
     grid-template-rows:
         auto
         auto
-        minmax(0, 1fr)
+        minmax(360px, 1fr)
         auto
         auto !important;
 
@@ -8068,17 +8075,17 @@ body.stage-v2 .live-stage{
     overflow: hidden !important;
 
     border: 1px solid rgba(255,91,35,.55) !important;
-    border-radius: 28px !important;
+    border-radius: 30px !important;
 
     background:
         radial-gradient(
-            circle at 50% 22%,
+            circle at 50% 20%,
             rgba(255,88,25,.16),
-            transparent 32%
+            transparent 35%
         ),
         radial-gradient(
-            circle at 50% 75%,
-            rgba(255,44,12,.07),
+            circle at 50% 80%,
+            rgba(255,44,12,.08),
             transparent 42%
         ),
         linear-gradient(
@@ -8095,62 +8102,81 @@ body.stage-v2 .live-stage{
 }
 
 
-/* =========================================================
+/* =========================
    HEADER
-   ========================================================= */
+   ========================= */
 
 body.stage-v2 .live-stage .stage-header{
-    min-height: 58px;
-    padding: 0 2px !important;
+    min-height: 72px;
+
+    padding: 0 !important;
     margin: 0 !important;
+
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
 }
 
 body.stage-v2 .live-stage .stage-brand{
     display: flex !important;
     align-items: baseline;
-    gap: 8px;
+
+    gap: 16px;
 }
 
 body.stage-v2 .live-stage .stage-header .wordmark{
-    font-size: 50px !important;
+    font-size: clamp(58px, 5vw, 86px) !important;
     line-height: .82 !important;
     letter-spacing: -.055em !important;
 }
 
 body.stage-v2 .live-stage .stage-tagline{
-    max-width: 78px;
-    font-size: 8px !important;
-    line-height: 1.15 !important;
-    letter-spacing: .12em !important;
+    max-width: 180px;
+
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+
+    letter-spacing: .16em !important;
     color: #ff9a72 !important;
 }
 
+body.stage-v2 .live-stage .playlist-header-controls{
+    display: flex !important;
+    align-items: center;
+    gap: 14px;
+}
+
 body.stage-v2 .live-stage .live-status{
-    padding: 7px 10px !important;
-    font-size: 8px !important;
-    letter-spacing: .1em !important;
+    padding: 9px 14px !important;
+
+    font-size: 10px !important;
+    letter-spacing: .12em !important;
+
     white-space: nowrap;
 }
 
 
-/* =========================================================
+/* =========================
    INSTRUCCIÓN
-   ========================================================= */
+   ========================= */
 
 body.stage-v2 .live-stage .stage-instruction{
-    margin: 8px 0 10px !important;
-    padding: 0 4px !important;
+    margin: 18px 0 12px !important;
 
-    display: flex;
+    padding: 0 8px !important;
+
+    display: flex !important;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
 
-    font-size: 8px !important;
+    gap: 20px;
+
+    font-size: 10px !important;
     line-height: 1.2 !important;
-    letter-spacing: .09em !important;
 
-    color: #74747b !important;
+    letter-spacing: .12em !important;
 }
 
 body.stage-v2 .live-stage .stage-instruction strong{
@@ -8158,70 +8184,75 @@ body.stage-v2 .live-stage .stage-instruction strong{
 }
 
 
-/* =========================================================
-   ÁREA CENTRAL
-   ========================================================= */
+/* =========================
+   ÁREA DE LA LISTA
+   ========================= */
 
 body.stage-v2 .live-stage .unified-carousel-shell{
     min-height: 0 !important;
     height: 100% !important;
 
     display: grid !important;
-    grid-template-columns: 0 minmax(0,1fr) 0 !important;
+
+    grid-template-columns:
+        52px
+        minmax(0, 1fr)
+        52px !important;
+
+    gap: 12px;
 
     margin: 0 !important;
 }
 
 body.stage-v2 .live-stage .stage-carousel{
+    width: 100% !important;
+    max-width: none !important;
+
     min-height: 0 !important;
     height: 100% !important;
-    max-height: none !important;
+    max-height: 560px !important;
 
-    padding: 8px 2px 12px !important;
+    padding: 18px 4px !important;
 
     overflow-x: hidden !important;
     overflow-y: auto !important;
-
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,77,22,.35) transparent;
 }
 
 body.stage-v2 .live-stage .stage-carousel-track{
     width: 100% !important;
     min-width: 0 !important;
 
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
 
-    gap: 12px !important;
+    gap: 16px !important;
 }
 
 
-/* =========================================================
+/* =========================
    TARJETA ACTUAL
-   ========================================================= */
+   ========================= */
 
 body.stage-v2 .live-stage .stage-current-card{
     width: 100% !important;
     max-width: none !important;
+
     min-width: 0 !important;
 
-    flex: 0 0 auto !important;
+    min-height: 330px !important;
 
-    min-height: 245px !important;
+    padding: 42px 50px !important;
 
-    padding: 25px 20px !important;
+    border-radius: 26px !important;
 
-    border-radius: 22px !important;
-
-    border: 1px solid rgba(255,94,40,.65) !important;
+    border: 1px solid rgba(255,94,40,.70) !important;
 
     background:
         radial-gradient(
             circle at 50% 15%,
-            rgba(255,169,42,.15),
-            transparent 36%
+            rgba(255,169,42,.16),
+            transparent 38%
         ),
         linear-gradient(
             145deg,
@@ -8231,69 +8262,99 @@ body.stage-v2 .live-stage .stage-current-card{
 
     box-shadow:
         0 0 0 1px rgba(255,77,22,.06),
-        0 0 35px rgba(255,69,17,.13),
-        0 20px 40px rgba(0,0,0,.32) !important;
+        0 0 45px rgba(255,69,17,.15),
+        0 24px 60px rgba(0,0,0,.42) !important;
 }
 
 body.stage-v2 .live-stage .stage-current-card .stage-card-label{
-    padding: 7px 12px !important;
-    font-size: 9px !important;
-    letter-spacing: .15em !important;
+    padding: 8px 15px !important;
+
+    font-size: 10px !important;
+    letter-spacing: .18em !important;
 }
 
 body.stage-v2 .live-stage .stage-current-card .stage-comment{
-    max-width: 100% !important;
+    max-width: 900px !important;
 
-    font-size: clamp(30px, 7vw, 46px) !important;
-    line-height: .98 !important;
+    font-size: clamp(42px, 4.2vw, 72px) !important;
+    line-height: .96 !important;
+
+    margin: 18px auto !important;
 
     text-wrap: balance;
-
-    margin: 12px 0 !important;
 }
 
 body.stage-v2 .live-stage .stage-current-card .stage-requester{
-    font-size: 11px !important;
+    font-size: 13px !important;
 }
 
 
-/* =========================================================
+/* =========================
    TARJETAS DE COLA
-   ========================================================= */
+   ========================= */
 
 body.stage-v2 .live-stage .stage-song-card{
     width: 100% !important;
     max-width: none !important;
 
-    flex: 0 0 auto !important;
+    min-height: 125px !important;
 
-    min-height: 100px !important;
+    padding: 24px 28px !important;
 
-    padding: 17px !important;
+    border-radius: 20px !important;
 
-    border-radius: 17px !important;
-
-    border-color: rgba(255,255,255,.10) !important;
+    border-color: rgba(255,255,255,.11) !important;
 }
 
 body.stage-v2 .live-stage .stage-song-card .stage-comment{
-    font-size: 18px !important;
+    font-size: 22px !important;
 }
 
 
-/* =========================================================
-   TAP TAPS — ELEMENTO HERO
-   ========================================================= */
+/* =========================
+   FLECHAS
+   ========================= */
+
+body.stage-v2 .live-stage .stage-arrow{
+    display: flex !important;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 48px !important;
+    height: 82px !important;
+
+    align-self: center;
+
+    font-size: 52px !important;
+}
+
+
+/* =========================
+   LEYENDA
+   ========================= */
+
+body.stage-v2 .live-stage .carousel-legend{
+    padding: 0 65px 12px !important;
+
+    font-size: 10px !important;
+}
+
+
+/* =========================
+   TAP TAPS
+   ========================= */
 
 body.stage-v2 .live-stage .tap-player{
     width: 100% !important;
 
     margin: 0 !important;
-    padding: 18px 17px !important;
 
-    border-radius: 22px !important;
+    padding: 24px 28px !important;
 
-    border: 1px solid rgba(255,92,39,.62) !important;
+    border-radius: 24px !important;
+
+    border: 1px solid rgba(255,92,39,.65) !important;
 
     background:
         linear-gradient(
@@ -8303,77 +8364,65 @@ body.stage-v2 .live-stage .tap-player{
         ) !important;
 
     box-shadow:
-        0 0 35px rgba(255,57,17,.12),
+        0 0 40px rgba(255,57,17,.13),
         inset 0 1px rgba(255,255,255,.06) !important;
 }
 
 body.stage-v2 .live-stage .tap-player-top{
     align-items: flex-end !important;
-    gap: 12px !important;
+    gap: 20px !important;
 }
 
 body.stage-v2 .live-stage .tap-eyebrow{
-    font-size: 9px !important;
-    letter-spacing: .13em !important;
+    font-size: 11px !important;
+    letter-spacing: .14em !important;
 }
 
 body.stage-v2 .live-stage .tap-callout{
-    max-width: 230px !important;
+    max-width: 560px !important;
 
-    font-size: 22px !important;
+    font-size: clamp(24px, 2.2vw, 34px) !important;
     line-height: .98 !important;
     font-weight: 950 !important;
 }
 
-body.stage-v2 .live-stage .tap-counter{
-    gap: 4px !important;
-}
-
 body.stage-v2 .live-stage .tap-counter > strong{
-    font-size: 42px !important;
-    line-height: .85 !important;
+    font-size: clamp(48px, 5vw, 72px) !important;
 }
 
 body.stage-v2 .live-stage .tap-counter span{
-    font-size: 10px !important;
+    font-size: 13px !important;
 }
 
 body.stage-v2 .live-stage .tap-track{
-    height: 12px !important;
+    height: 14px !important;
 
-    margin: 15px 0 11px !important;
-
-    border: 0 !important;
+    margin: 18px 0 13px !important;
 }
 
 body.stage-v2 .live-stage .tap-heart{
-    right: -2px !important;
-    font-size: 28px !important;
+    right: -4px !important;
+    font-size: 34px !important;
 }
 
 body.stage-v2 .live-stage .tap-player-bottom{
-    font-size: 8px !important;
-    line-height: 1.25 !important;
-}
-
-body.stage-v2 .live-stage .tap-total{
-    font-size: 8px !important;
+    font-size: 10px !important;
 }
 
 
-/* =========================================================
-   PAYPAL / SALTAR AL #1
-   ========================================================= */
+/* =========================
+   SALTAR AL #1
+   ========================= */
 
 body.stage-v2 .skip-banner{
     width: 100% !important;
-    max-width: 500px !important;
+    max-width: 1180px !important;
 
-    min-height: 56px !important;
+    min-height: 68px !important;
 
-    margin: 10px auto 0 !important;
+    margin: 16px auto 0 !important;
 
-    border-radius: 15px !important;
+    border-radius: 17px !important;
 
     overflow: hidden;
 
@@ -8383,467 +8432,56 @@ body.stage-v2 .skip-banner{
 }
 
 
-/* =========================================================
+/* =========================
    REDES
-   ========================================================= */
+   ========================= */
 
 body.stage-v2 .playlist-socials{
-    margin-top: 10px !important;
-    opacity: .75;
+    margin-top: 18px !important;
+
+    opacity: .82;
 }
 
 body.stage-v2 .back-link{
-    margin-top: 8px !important;
-    opacity: .45;
+    margin-top: 10px !important;
+
+    opacity: .50;
 }
 
 
 /* =========================================================
-   DESKTOP GRANDE
+   TABLET
    ========================================================= */
 
-@media (min-width: 1000px){
+@media (max-width: 900px){
 
-    body.stage-v2 .live-stage{
-        width: min(500px, calc((100vh - 28px) * .5625)) !important;
-        height: min(889px, calc(100vh - 28px)) !important;
+    body.stage-v2 main{
+        padding: 14px !important;
     }
-
-}
-
-
-/* =========================================================
-   MÓVIL
-   ========================================================= */
-
-@media (max-width: 700px){
 
     body.stage-v2 .live-stage{
         width: 100% !important;
-        max-width: none !important;
+        max-width: 760px !important;
 
-        height: auto !important;
-        min-height: calc(100dvh - 16px) !important;
-        max-height: none !important;
+        min-height: 720px !important;
 
-        aspect-ratio: auto !important;
-
-        margin: 0 !important;
-
-        border-radius: 20px !important;
-
-        padding: 13px 9px 11px !important;
-    }
-
-    body.stage-v2 .live-stage .stage-header .wordmark{
-        font-size: 43px !important;
+        padding: 22px !important;
     }
 
     body.stage-v2 .live-stage .stage-current-card{
-        min-height: 220px !important;
+        min-height: 300px !important;
+
+        padding: 32px !important;
     }
 
-    body.stage-v2 .live-stage .tap-callout{
-        font-size: 20px !important;
+    body.stage-v2 .live-stage .stage-current-card .stage-comment{
+        font-size: clamp(36px, 6vw, 58px) !important;
     }
-
-    body.stage-v2 .live-stage .tap-counter > strong{
-        font-size: 38px !important;
-    }
-
 }
 
 
 /* =========================================================
-   ELIMINAR EL 16:9 ANTERIOR
-   ========================================================= */
-
-@media (min-width: 1200px) and (min-height: 700px){
-
-    body.stage-v2 .live-stage{
-        aspect-ratio: 9 / 16 !important;
-        min-height: 0 !important;
-    }
-
-}
-
-/* =========================================================
-   DURO LIVE — PREMIUM V4
-   SOLUCIÓN FINAL DE LAYOUT
-   ========================================================= */
-
-body.stage-v2{
-    overflow-x: hidden;
-}
-
-/* CONTENEDOR PRINCIPAL */
-body.stage-v2 .page-wrap{
-    width: min(100%, 520px) !important;
-    margin: 0 auto !important;
-}
-
-/* ESCENARIO */
-body.stage-v2 .live-stage{
-    width: 100% !important;
-    max-width: 520px !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-
-    aspect-ratio: auto !important;
-
-    display: block !important;
-
-    padding: 18px !important;
-    margin: 0 auto !important;
-
-    border-radius: 28px !important;
-
-    overflow: hidden !important;
-
-    background:
-        radial-gradient(
-            circle at 50% 18%,
-            rgba(255,82,24,.15),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 50% 75%,
-            rgba(255,42,10,.07),
-            transparent 40%
-        ),
-        linear-gradient(
-            145deg,
-            #151011 0%,
-            #09090b 55%,
-            #050506 100%
-        ) !important;
-
-    border: 1px solid rgba(255,86,34,.52) !important;
-
-    box-shadow:
-        0 28px 80px rgba(0,0,0,.55),
-        0 0 55px rgba(255,69,18,.10),
-        inset 0 0 60px rgba(255,70,20,.025) !important;
-}
-
-
-/* HEADER */
-body.stage-v2 .live-stage .stage-header{
-    min-height: 64px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-body.stage-v2 .stage-v2 .stage-header .wordmark,
-body.stage-v2 .stage-header .wordmark{
-    font-size: 54px !important;
-    line-height: .8 !important;
-    letter-spacing: -.06em !important;
-}
-
-body.stage-v2 .stage-brand{
-    gap: 12px !important;
-}
-
-body.stage-v2 .stage-tagline{
-    max-width: 90px !important;
-    font-size: 8px !important;
-    line-height: 1.15 !important;
-    letter-spacing: .12em !important;
-}
-
-body.stage-v2 .playlist-header-controls{
-    gap: 7px !important;
-}
-
-body.stage-v2 .skin-switch{
-    transform: scale(.82);
-    transform-origin: right center;
-}
-
-body.stage-v2 .live-status{
-    padding: 7px 10px !important;
-    font-size: 8px !important;
-}
-
-
-/* INSTRUCCIÓN */
-body.stage-v2 .stage-instruction{
-    margin: 12px 2px 4px !important;
-    padding: 0 !important;
-
-    font-size: 8px !important;
-    letter-spacing: .1em !important;
-}
-
-body.stage-v2 .stage-instruction strong{
-    max-width: 52% !important;
-    text-align: right !important;
-}
-
-
-/* CONTENEDOR DE LA COLA */
-body.stage-v2 .unified-carousel-shell{
-    display: block !important;
-
-    margin: 0 !important;
-    min-height: 0 !important;
-
-    width: 100% !important;
-}
-
-body.stage-v2 .stage-carousel{
-    width: 100% !important;
-    max-width: none !important;
-
-    height: auto !important;
-    max-height: none !important;
-    min-height: 0 !important;
-
-    overflow: hidden !important;
-
-    padding: 12px 0 7px !important;
-}
-
-body.stage-v2 .stage-carousel-track{
-    width: 100% !important;
-    min-width: 0 !important;
-
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-}
-
-
-/* ELIMINAR ESPACIO FALSO DEL CURRENT CARD */
-body.stage-v2 .stage-current-card{
-    width: 100% !important;
-    max-width: none !important;
-
-    flex: none !important;
-
-    min-height: 265px !important;
-    height: 265px !important;
-
-    padding: 24px !important;
-
-    border-radius: 22px !important;
-
-    justify-content: center !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* TEXTO DE LA CANCIÓN */
-body.stage-v2 .stage-current-card .stage-comment{
-    max-width: 94% !important;
-
-    font-size: clamp(30px, 6vw, 48px) !important;
-    line-height: .96 !important;
-
-    text-wrap: balance !important;
-}
-
-body.stage-v2 .stage-current-card .stage-comment-long{
-    font-size: clamp(25px, 5vw, 40px) !important;
-}
-
-body.stage-v2 .stage-current-card .stage-comment-xlong{
-    font-size: clamp(21px, 4.2vw, 34px) !important;
-}
-
-body.stage-v2 .stage-current-card .stage-requester{
-    font-size: 11px !important;
-}
-
-
-/* OCULTAR LAS CANCIONES DE COLA DEL ÁREA PRINCIPAL
-   PERO SIN TOCAR JAVASCRIPT */
-body.stage-v2 .stage-queue-card,
-body.stage-v2 .stage-played-card{
-    min-height: 90px !important;
-}
-
-
-/* LEYENDA */
-body.stage-v2 .carousel-legend{
-    padding: 2px 3px 10px !important;
-    font-size: 8px !important;
-}
-
-
-/* =========================================================
-   TAP TAPS — HERO SECUNDARIO
-   ========================================================= */
-
-body.stage-v2 .tap-player{
-    width: 100% !important;
-    box-sizing: border-box !important;
-
-    margin: 0 !important;
-    padding: 18px !important;
-
-    border-radius: 22px !important;
-
-    border: 1px solid rgba(255,94,40,.62) !important;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            rgba(255,130,30,.12),
-            transparent 40%
-        ),
-        linear-gradient(
-            145deg,
-            #24110d,
-            #0d0a0a 70%
-        ) !important;
-
-    box-shadow:
-        0 0 38px rgba(255,65,17,.12),
-        inset 0 1px rgba(255,255,255,.05) !important;
-}
-
-body.stage-v2 .tap-player-top{
-    align-items: flex-end !important;
-    gap: 12px !important;
-}
-
-body.stage-v2 .tap-eyebrow{
-    font-size: 8px !important;
-    letter-spacing: .13em !important;
-}
-
-body.stage-v2 .tap-callout{
-    max-width: 230px !important;
-
-    font-size: 21px !important;
-    line-height: .96 !important;
-}
-
-body.stage-v2 .tap-counter{
-    gap: 4px !important;
-}
-
-body.stage-v2 .tap-counter > strong{
-    font-size: 40px !important;
-}
-
-body.stage-v2 .tap-counter span{
-    font-size: 9px !important;
-}
-
-body.stage-v2 .tap-track{
-    height: 11px !important;
-
-    margin: 15px 0 10px !important;
-}
-
-body.stage-v2 .tap-heart{
-    font-size: 27px !important;
-}
-
-body.stage-v2 .tap-player-bottom{
-    font-size: 8px !important;
-}
-
-
-/* =========================================================
-   BOTÓN SALTAR
-   ========================================================= */
-
-body.stage-v2 .skip-banner{
-    width: 100% !important;
-    max-width: 520px !important;
-
-    margin: 12px auto 0 !important;
-
-    min-height: 58px !important;
-
-    border-radius: 15px !important;
-
-    overflow: hidden !important;
-
-    box-shadow:
-        0 12px 30px rgba(0,0,0,.38),
-        0 0 24px rgba(255,78,17,.12) !important;
-}
-
-
-/* =========================================================
-   REDES
-   ========================================================= */
-
-body.stage-v2 .playlist-socials{
-    margin-top: 14px !important;
-}
-
-body.stage-v2 .back-link{
-    margin-top: 9px !important;
-    opacity: .5;
-}
-
-
-/* =========================================================
-   DESKTOP — ESCALA PREMIUM
-   ========================================================= */
-
-@media (min-width: 900px){
-
-    body.stage-v2 .page-wrap{
-        width: min(520px, calc(100vw - 40px)) !important;
-    }
-
-    body.stage-v2 .live-stage{
-        width: 100% !important;
-    }
-
-    body.stage-v2 .stage-current-card{
-        height: 280px !important;
-        min-height: 280px !important;
-    }
-
-    body.stage-v2 .stage-current-card .stage-comment{
-        font-size: clamp(34px, 4vw, 52px) !important;
-    }
-
-}
-
-
-/* =========================================================
-   PANTALLAS BAJAS
-   ========================================================= */
-
-@media (min-width: 701px) and (max-height: 800px){
-
-    body.stage-v2 .live-stage{
-        padding: 14px !important;
-    }
-
-    body.stage-v2 .stage-current-card{
-        height: 225px !important;
-        min-height: 225px !important;
-    }
-
-    body.stage-v2 .tap-player{
-        padding: 14px !important;
-    }
-
-    body.stage-v2 .tap-callout{
-        font-size: 18px !important;
-    }
-
-    body.stage-v2 .tap-counter > strong{
-        font-size: 34px !important;
-    }
-
-}
-
-
-/* =========================================================
-   MÓVIL
+   MOBILE
    ========================================================= */
 
 @media (max-width: 700px){
@@ -8854,52 +8492,266 @@ body.stage-v2 .back-link{
 
     body.stage-v2 .page-wrap{
         width: 100% !important;
+        max-width: 100% !important;
     }
 
     body.stage-v2 .live-stage{
         width: 100% !important;
-        max-width: none !important;
+        max-width: 100% !important;
 
-        padding: 14px 9px 12px !important;
+        height: auto !important;
 
-        border-radius: 21px !important;
+        min-height: calc(100dvh - 16px) !important;
+
+        max-height: none !important;
+
+        aspect-ratio: auto !important;
+
+        margin: 0 !important;
+
+        padding: 14px 10px 12px !important;
+
+        border-radius: 20px !important;
     }
 
-    body.stage-v2 .stage-current-card{
-        height: 245px !important;
-        min-height: 245px !important;
+    body.stage-v2 .live-stage .stage-header{
+        min-height: 54px;
+
+        padding: 0 4px !important;
+
+        gap: 8px;
     }
 
-    body.stage-v2 .stage-current-card .stage-comment{
-        font-size: clamp(29px, 8vw, 43px) !important;
+    body.stage-v2 .live-stage .stage-brand{
+        gap: 7px;
     }
 
-    body.stage-v2 .tap-player{
+    body.stage-v2 .live-stage .stage-header .wordmark{
+        font-size: 43px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-tagline{
+        max-width: 75px;
+
+        font-size: 7px !important;
+        line-height: 1.15 !important;
+    }
+
+    body.stage-v2 .live-stage .skin-switch{
+        display: none !important;
+    }
+
+    body.stage-v2 .live-stage .live-status{
+        padding: 7px 9px !important;
+
+        font-size: 8px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-instruction{
+        margin: 8px 0 !important;
+
+        padding: 0 5px !important;
+
+        font-size: 8px !important;
+
+        gap: 8px;
+    }
+
+    body.stage-v2 .live-stage .stage-instruction strong{
+        max-width: 58%;
+
+        text-align: right;
+    }
+
+
+    /* lista móvil */
+
+    body.stage-v2 .live-stage .unified-carousel-shell{
+        display: block !important;
+
+        width: 100% !important;
+
+        min-height: 0 !important;
+    }
+
+    body.stage-v2 .live-stage .stage-arrow{
+        display: none !important;
+    }
+
+    body.stage-v2 .live-stage .stage-carousel{
+        width: 100% !important;
+
+        height: auto !important;
+
+        max-height: 52vh !important;
+
+        padding: 10px 4px 14px !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    body.stage-v2 .live-stage .stage-carousel-track{
+        width: 100% !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        gap: 10px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-song-card{
+        width: 100% !important;
+
+        min-height: 135px !important;
+
+        padding: 18px !important;
+
+        border-radius: 18px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-current-card{
+        width: 100% !important;
+
+        min-height: 220px !important;
+
+        padding: 24px 18px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-current-card .stage-comment{
+        font-size: clamp(32px, 10vw, 52px) !important;
+
+        line-height: .98 !important;
+    }
+
+
+    /* tap taps móvil */
+
+    body.stage-v2 .live-stage .tap-player{
+        width: 100% !important;
+
+        margin: 0 !important;
+
         padding: 16px 14px !important;
+
+        border-radius: 19px !important;
     }
 
-    body.stage-v2 .tap-callout{
-        max-width: 57% !important;
+    body.stage-v2 .live-stage .tap-player-top{
+        align-items: flex-start !important;
+
+        gap: 8px !important;
+    }
+
+    body.stage-v2 .live-stage .tap-eyebrow{
+        font-size: 8px !important;
+    }
+
+    body.stage-v2 .live-stage .tap-callout{
+        max-width: 55vw !important;
+
         font-size: 18px !important;
     }
 
-    body.stage-v2 .tap-counter > strong{
-        font-size: 35px !important;
+    body.stage-v2 .live-stage .tap-counter > strong{
+        font-size: 38px !important;
     }
 
+    body.stage-v2 .live-stage .tap-track{
+        height: 10px !important;
+
+        margin: 14px 0 10px !important;
+    }
+
+    body.stage-v2 .live-stage .tap-player-bottom{
+        align-items: flex-start !important;
+
+        font-size: 8px !important;
+    }
+
+    body.stage-v2 .live-stage .tap-total{
+        max-width: 38%;
+
+        text-align: right;
+
+        font-size: 8px !important;
+    }
+
+
+    /* salto móvil */
+
+    body.stage-v2 .skip-banner{
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        margin-top: 10px !important;
+
+        min-height: 58px !important;
+    }
+
+    body.stage-v2 .playlist-socials{
+        margin-top: 14px !important;
+    }
 }
 
 
 /* =========================================================
-   ANULAR DEFINITIVAMENTE EL 16:9 ORIGINAL
+   MÓVILES MUY PEQUEÑOS
    ========================================================= */
 
-@media (min-width: 1200px) and (min-height: 700px){
+@media (max-width: 380px){
+
+    body.stage-v2 .live-stage .stage-header .wordmark{
+        font-size: 37px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-tagline{
+        font-size: 6px !important;
+    }
+
+    body.stage-v2 .live-stage .live-status{
+        padding: 6px 7px !important;
+
+        font-size: 7px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-current-card{
+        min-height: 200px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-current-card .stage-comment{
+        font-size: 29px !important;
+    }
+
+    body.stage-v2 .live-stage .tap-callout{
+        font-size: 16px !important;
+    }
+
+    body.stage-v2 .live-stage .tap-counter > strong{
+        font-size: 32px !important;
+    }
+}
+
+
+/* =========================================================
+   SEGURIDAD FINAL
+   Nunca volver a forzar 9:16 en desktop.
+   ========================================================= */
+
+@media (min-width: 701px){
 
     body.stage-v2 .live-stage{
         aspect-ratio: auto !important;
-        min-height: 0 !important;
-        height: auto !important;
-    }
 
+        width: min(1180px, calc(100vw - 48px)) !important;
+
+        max-width: 1180px !important;
+
+        height: auto !important;
+
+        min-height: 760px !important;
+
+        max-height: none !important;
+    }
 }
