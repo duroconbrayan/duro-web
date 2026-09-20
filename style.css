@@ -9632,3 +9632,410 @@ body.stage-v2 .live-stage > .skip-banner button {
         box-sizing: border-box !important;
     }
 }
+
+/* =========================================================
+   DURO LIVE — PRESENTACIÓN FINAL
+   ========================================================= */
+
+/* ---------- CONTENEDOR DESKTOP ---------- */
+
+@media (min-width: 701px) {
+
+    body.stage-v2 main {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 18px 24px 50px !important;
+        box-sizing: border-box !important;
+    }
+
+    body.stage-v2 .page-wrap {
+        width: 100% !important;
+        max-width: 1180px !important;
+        min-width: 0 !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+    }
+
+    body.stage-v2 .live-stage {
+        width: 100% !important;
+        max-width: 1180px !important;
+        min-width: 0 !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+
+        aspect-ratio: auto !important;
+
+        margin: 0 auto !important;
+        padding: 28px !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        gap: 0 !important;
+
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+
+    /* ---------- HEADER ---------- */
+
+    body.stage-v2 .live-stage .stage-header {
+        flex: 0 0 auto !important;
+        min-height: 72px !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    /* ---------- INSTRUCCIÓN ---------- */
+
+    body.stage-v2 .live-stage .stage-instruction {
+        flex: 0 0 auto !important;
+
+        margin: 16px 0 10px !important;
+        padding: 0 8px !important;
+    }
+
+
+    /* ---------- AHORA SUENA ---------- */
+
+    body.stage-v2 .live-stage .stage-now-playing {
+        width: 100% !important;
+        flex: 0 0 auto !important;
+
+        margin: 0 !important;
+    }
+
+    body.stage-v2 .live-stage .stage-current-display {
+        width: 100% !important;
+        min-height: 300px !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* ---------- PAYPAL ---------- */
+
+    body.stage-v2 .live-stage .skip-banner {
+        width: min(520px, 100%) !important;
+        max-width: 520px !important;
+
+        min-height: 64px !important;
+
+        margin: 12px auto 16px !important;
+        padding: 0 !important;
+
+        flex: 0 0 auto !important;
+
+        border-radius: 16px !important;
+
+        box-sizing: border-box !important;
+
+        display: flex !important;
+        align-items: stretch !important;
+
+        overflow: hidden !important;
+
+        background: rgba(8, 8, 9, .96) !important;
+
+        border: 1px solid rgba(255, 139, 55, .55) !important;
+
+        box-shadow:
+            0 10px 30px rgba(0,0,0,.35),
+            0 0 28px rgba(255,83,20,.10) !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner button {
+        flex: 1 1 auto !important;
+
+        min-width: 0 !important;
+        min-height: 64px !important;
+
+        border: 0 !important;
+        border-radius: 0 !important;
+
+        padding: 0 22px !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 12px !important;
+
+        background:
+            linear-gradient(
+                90deg,
+                #ff9b19,
+                #ff7412
+            ) !important;
+
+        color: #130904 !important;
+
+        box-shadow: none !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner .skip-cta {
+        font-family: var(--font-display) !important;
+        font-size: clamp(22px, 2.2vw, 32px) !important;
+        line-height: 1 !important;
+        letter-spacing: .02em !important;
+        white-space: nowrap !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner .skip-price {
+        font-family: var(--font-display) !important;
+        font-size: clamp(24px, 2.4vw, 36px) !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal {
+        flex: 0 0 145px !important;
+
+        min-height: 64px !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 9px !important;
+
+        background: #090a0d !important;
+
+        border-left: 1px solid rgba(255,255,255,.08) !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal span {
+        color: #b7b7bd !important;
+        font-size: 7px !important;
+        line-height: 1.15 !important;
+        font-weight: 800 !important;
+        text-align: right !important;
+        letter-spacing: .04em !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal strong {
+        color: #1687ff !important;
+        font-size: 30px !important;
+        font-weight: 900 !important;
+    }
+
+
+    /* ---------- TAP TAPS ---------- */
+
+    body.stage-v2 .live-stage .tap-player {
+        width: 100% !important;
+        flex: 0 0 auto !important;
+
+        margin: 0 !important;
+
+        padding: 24px 28px !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* ---------- LISTA ---------- */
+
+    body.stage-v2 .live-stage .unified-carousel-shell {
+        width: 100% !important;
+        min-width: 0 !important;
+
+        flex: 0 0 auto !important;
+
+        margin-top: 16px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-carousel {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        max-height: 430px !important;
+
+        padding: 4px 0 12px !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    body.stage-v2 .live-stage .stage-carousel-track {
+        width: 100% !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-song-card {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        min-height: 118px !important;
+
+        padding: 22px 26px !important;
+
+        box-sizing: border-box !important;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    body.stage-v2 main {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        padding: 8px !important;
+    }
+
+    body.stage-v2 .page-wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.stage-v2 .live-stage {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        min-height: calc(100dvh - 16px) !important;
+
+        height: auto !important;
+        max-height: none !important;
+
+        aspect-ratio: auto !important;
+
+        padding: 14px 10px 12px !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* AHORA SUENA */
+
+    body.stage-v2 .live-stage .stage-now-playing {
+        width: 100% !important;
+    }
+
+    body.stage-v2 .live-stage .stage-current-display {
+        width: 100% !important;
+        min-height: 220px !important;
+    }
+
+
+    /* PAYPAL */
+
+    body.stage-v2 .live-stage .skip-banner {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        min-height: 56px !important;
+
+        margin: 9px 0 12px !important;
+
+        display: flex !important;
+
+        border-radius: 14px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner button {
+        min-height: 56px !important;
+
+        padding: 0 12px !important;
+
+        gap: 7px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner .skip-cta {
+        font-size: 20px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner .skip-price {
+        font-size: 23px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal {
+        flex: 0 0 105px !important;
+        min-height: 56px !important;
+
+        gap: 5px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal span {
+        font-size: 6px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal strong {
+        font-size: 25px !important;
+    }
+
+
+    /* TAP TAPS */
+
+    body.stage-v2 .live-stage .tap-player {
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        padding: 16px 14px !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* LISTA */
+
+    body.stage-v2 .live-stage .unified-carousel-shell {
+        width: 100% !important;
+
+        margin-top: 12px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-carousel {
+        width: 100% !important;
+
+        max-height: 48vh !important;
+
+        padding: 4px 0 10px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-song-card {
+        width: 100% !important;
+
+        min-height: 120px !important;
+
+        padding: 18px !important;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL MUY PEQUEÑO
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    body.stage-v2 .live-stage .skip-banner .skip-cta {
+        font-size: 17px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner .skip-price {
+        font-size: 20px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal {
+        flex-basis: 92px !important;
+    }
+}
