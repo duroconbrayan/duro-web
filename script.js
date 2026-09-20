@@ -183,6 +183,8 @@ async function comprobarEstadoLive() {
 
         const estaEnVivo = data.live === true;
 
+        stageLiveActivo = estaEnVivo;
+
         document.body.classList.toggle(
             "offline",
             !estaEnVivo
@@ -213,6 +215,8 @@ async function comprobarEstadoLive() {
             if (offlineMode) {
                 offlineMode.style.display = "";
             }
+
+            detenerPollingStage();
 
             /*
              * Limpiar completamente el estado visual del LIVE.
@@ -671,7 +675,7 @@ function detenerPollingStage() {
     }
 }
 
-function iniciarPollingStage() {
+async function iniciarPollingStage() {
 
     detenerPollingStage();
 
@@ -680,11 +684,20 @@ function iniciarPollingStage() {
     }
 
     // Comprobar primero si el directo está activo.
-    comprobarEstadoLive();
+    await comprobarEstadoLive();
+
+    if (!stageLiveActivo) {
+        return;
+    }
+
+    // Cargar inmediatamente al entrar en LIVE.
+    await cargarStageHistorial();
+    await cargarStageLiveLikes();
 
     stageRequestsTimer = setInterval(() => {
 
         if (document.hidden) return;
+        if (!stageLiveActivo) return;
 
         cargarStageHistorial();
 
@@ -693,6 +706,7 @@ function iniciarPollingStage() {
     stageLikesTimer = setInterval(() => {
 
         if (document.hidden) return;
+        if (!stageLiveActivo) return;
 
         cargarStageLiveLikes();
 
@@ -705,18 +719,6 @@ function iniciarPollingStage() {
         comprobarEstadoLive();
 
     }, STAGE_STATUS_INTERVAL);
-
-    document.addEventListener("visibilitychange", () => {
-
-        if (document.hidden) {
-
-            detenerPollingStage();
-
-            return;
-        }
-
-        iniciarPollingStage();
-    });
 }
 
 function seleccionarCancion(id, cancion) {
@@ -2231,3 +2233,9 @@ if (!stageLiveActivo) {
         stageCargaLikesActiva = false;
     }
 }
+
+// =====================================================
+// INICIO DEL SISTEMA LIVE / OFFLINE
+// =====================================================
+
+iniciarPollingStage();
