@@ -1632,9 +1632,9 @@ function centrarStage(key, behavior = "auto") {
 }
 
 function renderizarCarruselStage(played, playing, queue) {
-    const track = document.getElementById("stage-carousel-track");
+    const currentDisplay = document.getElementById("stage-current-display");
 
-    if (!track) {
+    if (!currentDisplay) {
         return;
     }
 
@@ -1644,40 +1644,14 @@ function renderizarCarruselStage(played, playing, queue) {
             new Date(b.played_at || b.created_at)
     );
 
-    const anterioresGratis = playedOrdenado.slice(-3);
+    /*
+     * AHORA SUENA
+     * Se renderiza exclusivamente en su bloque superior.
+     */
+    currentDisplay.innerHTML = "";
 
-    const anterioresVisibles =
-        stageHistorialDesbloqueado
-            ? playedOrdenado
-            : anterioresGratis;
-
-    track.innerHTML = "";
-
-    // HISTORIAL
-    if (
-        !stageHistorialDesbloqueado &&
-        playedOrdenado.length > 3
-    ) {
-        track.appendChild(
-            tarjetaBloqueoHistorial(
-                playedOrdenado.length - 3
-            )
-        );
-    }
-
-    anterioresVisibles.forEach((item) => {
-        track.appendChild(
-            tarjetaStage(
-                item,
-                "played",
-                0
-            )
-        );
-    });
-
-    // AHORA SUENA
     if (playing) {
-        track.appendChild(
+        currentDisplay.appendChild(
             tarjetaStage(
                 playing,
                 "current",
@@ -1685,29 +1659,100 @@ function renderizarCarruselStage(played, playing, queue) {
             )
         );
     } else {
-        const empty =
-            document.createElement("article");
+        const empty = document.createElement("div");
 
         empty.className =
-            "stage-song-card stage-current-card stage-loading";
+            "stage-current-empty";
 
-        empty.dataset.stageKey =
-            "current:empty";
+        empty.innerHTML = `
+            <span class="stage-card-label">
+                AHORA SUENA
+            </span>
 
-        empty.innerHTML =
-            '<span class="stage-card-label">' +
-            'AHORA SUENA' +
-            '</span>' +
-            '<strong>' +
-            'Esperando la primera canción…' +
-            '</strong>';
+            <strong>
+                Esperando la primera canción...
+            </strong>
+        `;
 
-        track.appendChild(empty);
+        currentDisplay.appendChild(empty);
     }
 
-    // COLA
+    /*
+     * LISTA EN VIVO
+     * Se crea dinámicamente debajo de TAP TAPS.
+     * Así no dependemos del antiguo carrusel.
+     */
+    let lista = document.getElementById("stage-live-list");
+
+    if (!lista) {
+        lista = document.createElement("section");
+
+        lista.id = "stage-live-list";
+        lista.className = "stage-live-list";
+
+        lista.innerHTML = `
+            <div class="stage-live-list-header">
+                <div>
+                    <span class="stage-section-label">
+                        LISTA EN VIVO
+                    </span>
+
+                    <h2>
+                        Canciones en espera
+                    </h2>
+                </div>
+
+                <span
+                    id="stage-live-list-count"
+                    class="stage-live-list-count"
+                >
+                    0
+                </span>
+            </div>
+
+            <div
+                id="stage-live-list-items"
+                class="stage-live-list-items"
+            ></div>
+        `;
+
+        const tapPlayer =
+            document.querySelector(".tap-player");
+
+        if (tapPlayer) {
+            tapPlayer.insertAdjacentElement(
+                "afterend",
+                lista
+            );
+        } else {
+            currentDisplay
+                .closest(".stage-v2")
+                ?.appendChild(lista);
+        }
+    }
+
+    const listaItems =
+        document.getElementById(
+            "stage-live-list-items"
+        );
+
+    const listaCount =
+        document.getElementById(
+            "stage-live-list-count"
+        );
+
+    if (!listaItems) {
+        return;
+    }
+
+    listaItems.innerHTML = "";
+
+    /*
+     * Primero mostramos TODA la cola,
+     * en orden vertical.
+     */
     queue.forEach((item, index) => {
-        track.appendChild(
+        listaItems.appendChild(
             tarjetaStage(
                 item,
                 "queue",
@@ -1716,6 +1761,38 @@ function renderizarCarruselStage(played, playing, queue) {
         );
     });
 
+    /*
+     * Si no hay canciones esperando,
+     * mostramos un estado limpio.
+     */
+    if (queue.length === 0) {
+        const empty = document.createElement("div");
+
+        empty.className =
+            "stage-live-list-empty";
+
+        empty.innerHTML = `
+            <span>🎵</span>
+            <strong>
+                La lista está esperando canciones
+            </strong>
+            <small>
+                Agrega una canción desde el directo.
+            </small>
+        `;
+
+        listaItems.appendChild(empty);
+    }
+
+    if (listaCount) {
+        listaCount.textContent =
+            queue.length.toLocaleString("es-CO");
+    }
+
+    /*
+     * Guardamos los datos actuales
+     * para las demás funciones del sistema.
+     */
     colaActual = queue;
 
     stageUltimosDatos = {

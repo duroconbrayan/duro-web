@@ -25,17 +25,17 @@
 
         <div class="stage-instruction"><span>DESLIZA LA LISTA</span><strong>TOCA TU CANCIÓN PARA ADELANTARLA</strong></div>
 
-        <div class="unified-carousel-shell">
-            <button class="stage-arrow stage-arrow-left" type="button" onclick="moverColaStage(-1)" aria-label="Ver canciones anteriores">‹</button>
-            <div id="stage-carousel" class="stage-carousel" aria-live="polite">
-                <div id="stage-carousel-track" class="stage-carousel-track">
-                    <article class="stage-song-card stage-current-card stage-loading"><span class="stage-card-label">AHORA SUENA</span><strong>Esperando playlist...</strong></article>
-                </div>
-            </div>
-            <button class="stage-arrow stage-arrow-right" type="button" onclick="moverColaStage(1)" aria-label="Ver siguientes canciones">›</button>
-        </div>
+        <!-- AHORA SUENA -->
+        <section class="stage-now-playing" aria-label="Canción actual">
+            <div class="stage-section-label">AHORA SUENA</div>
 
-        <div class="carousel-legend" aria-hidden="true"><span>← YA SONARON</span><span>SIGUIENTES →</span></div>
+            <div id="stage-current-display" class="stage-current-display">
+                <span class="stage-card-label">AHORA SUENA</span>
+                <strong>Esperando la primera canción...</strong>
+            </div>
+        </section>
+
+        <!-- TAP TAPS -->
 
         <section class="tap-player" id="live-likes" onclick="toggleTopLikes()" aria-label="Meta de Tap Taps">
             <div class="tap-player-top">
