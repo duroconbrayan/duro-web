@@ -169,17 +169,57 @@ procesarRegresoPayPal();
 
 async function comprobarEstadoLive() {
     try {
-        const response = await fetch(statusURL);
+
+        const response = await fetch(
+            `${statusURL}?t=${Date.now()}`,
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
+
         const data = await response.json();
 
-        if (data.live) {
-            document.body.classList.remove("offline");
+        const estaEnVivo = data.live === true;
+
+        document.body.classList.toggle(
+            "offline",
+            !estaEnVivo
+        );
+
+        if (!estaEnVivo) {
+
+            const liveStage = document.querySelector(".live-stage");
+            const skipBanner = document.querySelector(".skip-banner");
+
+            if (liveStage) {
+                liveStage.style.display = "none";
+            }
+
+            if (skipBanner) {
+                skipBanner.style.display = "none";
+            }
+
         } else {
-            document.body.classList.add("offline");
+
+            const liveStage = document.querySelector(".live-stage");
+            const skipBanner = document.querySelector(".skip-banner");
+
+            if (liveStage) {
+                liveStage.style.display = "";
+            }
+
+            if (skipBanner) {
+                skipBanner.style.display = "";
+            }
         }
 
     } catch (error) {
-        console.error("Error al comprobar estado LIVE:", error);
+
+        console.error(
+            "Error al comprobar estado LIVE:",
+            error
+        );
     }
 }
 
@@ -596,7 +636,7 @@ function iniciarPollingStage() {
 
         comprobarEstadoLive();
 
-    }, STAGE_STATUS_INTERVAL);
+        }, 5000);
 }
 
 document.addEventListener("visibilitychange", () => {
