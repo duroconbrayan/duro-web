@@ -10039,3 +10039,137 @@ body.stage-v2 .live-stage > .skip-banner button {
         flex-basis: 92px !important;
     }
 }
+
+/* =========================================================
+   DURO LIVE — SKIP BANNER FINAL
+   ========================================================= */
+
+body.stage-v2 .live-stage .skip-banner {
+    width: min(720px, 92%) !important;
+    max-width: 720px !important;
+    min-height: 76px !important;
+
+    margin: 14px auto 20px !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: stretch !important;
+
+    border: 1px solid rgba(255, 139, 55, .65) !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+
+    background: #08090b !important;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, .40),
+        0 0 30px rgba(255, 91, 25, .12) !important;
+}
+
+body.stage-v2 .live-stage .skip-banner button {
+    flex: 1 1 auto !important;
+
+    min-height: 76px !important;
+    padding: 0 30px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 18px !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    background: linear-gradient(
+        90deg,
+        #ff9b19 0%,
+        #ff7811 100%
+    ) !important;
+
+    color: #120805 !important;
+}
+
+body.stage-v2 .live-stage .skip-banner .skip-cta {
+    font-family: var(--font-display) !important;
+    font-size: clamp(25px, 2.5vw, 38px) !important;
+    font-weight: 900 !important;
+    letter-spacing: .015em !important;
+    white-space: nowrap !important;
+}
+
+body.stage-v2 .live-stage .skip-banner .skip-price {
+    font-family: var(--font-display) !important;
+    font-size: clamp(28px, 2.8vw, 40px) !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+}
+
+body.stage-v2 .live-stage .skip-paypal {
+    flex: 0 0 180px !important;
+
+    min-height: 76px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+
+    background: #08090c !important;
+    border-left: 1px solid rgba(255,255,255,.09) !important;
+}
+
+body.stage-v2 .live-stage .skip-paypal span {
+    font-size: 8px !important;
+    line-height: 1.2 !important;
+    font-weight: 800 !important;
+    letter-spacing: .05em !important;
+    text-align: right !important;
+    color: #bfc1c7 !important;
+}
+
+body.stage-v2 .live-stage .skip-paypal strong {
+    font-size: 38px !important;
+    font-weight: 900 !important;
+    color: #1687ff !important;
+}
+
+
+/* ---------- MÓVIL ---------- */
+
+@media (max-width: 700px) {
+
+    body.stage-v2 .live-stage .skip-banner {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 60px !important;
+
+        margin: 10px 0 14px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner button {
+        min-height: 60px !important;
+        padding: 0 12px !important;
+        gap: 8px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner .skip-cta {
+        font-size: 20px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-banner .skip-price {
+        font-size: 24px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal {
+        flex: 0 0 120px !important;
+        min-height: 60px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal span {
+        font-size: 6px !important;
+    }
+
+    body.stage-v2 .live-stage .skip-paypal strong {
+        font-size: 28px !important;
+    }
+}
