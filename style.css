@@ -10175,3 +10175,25 @@ body.stage-v2 .live-stage .skip-paypal strong {
         font-size: 28px !important;
     }
 }
+
+/* =========================================================
+   DURO OFFLINE — OVERRIDE DEFINITIVO
+   ========================================================= */
+
+body.stage-v2.offline .live-stage,
+body.stage-v2.offline .skip-banner {
+    display: none !important;
+}
+
+body.stage-v2.offline .offline-mode {
+    display: block !important;
+}
+
+body.stage-v2.offline .playlist-socials,
+body.stage-v2.offline .back-link {
+    display: none !important;
+}
+
+body.stage-v2.offline .offline-playlists {
+    display: grid !important;
+}
