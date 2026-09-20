@@ -9599,3 +9599,36 @@ body.stage-v2 .live-stage > .skip-banner button {
         margin: 12px auto 16px !important;
     }
 }
+
+/* =========================================================
+   DURO LIVE — CONTENEDOR DESKTOP DEFINITIVO
+   ========================================================= */
+
+@media (min-width: 701px) {
+
+    body.stage-v2 main {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+        box-sizing: border-box !important;
+    }
+
+    body.stage-v2 .page-wrap {
+        width: 100% !important;
+        max-width: 1180px !important;
+        min-width: 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    body.stage-v2 .live-stage {
+        width: 100% !important;
+        max-width: 1180px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        box-sizing: border-box !important;
+    }
+}
