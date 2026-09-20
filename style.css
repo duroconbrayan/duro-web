@@ -8038,3 +8038,431 @@ body.stage-v2 .carousel-legend {
         max-width: 560px;
     }
 }
+
+/* =========================================================
+   DURO LIVE — PREMIUM STAGE V3
+   Vertical 9:16 · Desktop + Mobile
+   ========================================================= */
+
+body.stage-v2 .live-stage{
+    width: min(500px, calc((100vh - 28px) * .5625)) !important;
+    height: min(889px, calc(100vh - 28px)) !important;
+    min-height: 0 !important;
+    max-width: 500px !important;
+    max-height: 889px !important;
+    aspect-ratio: 9 / 16 !important;
+
+    margin: 0 auto !important;
+    padding: 18px !important;
+
+    display: grid !important;
+    grid-template-rows:
+        auto
+        auto
+        minmax(0, 1fr)
+        auto
+        auto !important;
+
+    gap: 0 !important;
+
+    overflow: hidden !important;
+
+    border: 1px solid rgba(255,91,35,.55) !important;
+    border-radius: 28px !important;
+
+    background:
+        radial-gradient(
+            circle at 50% 22%,
+            rgba(255,88,25,.16),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 50% 75%,
+            rgba(255,44,12,.07),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            #100b0b 0%,
+            #080809 48%,
+            #050506 100%
+        ) !important;
+
+    box-shadow:
+        0 35px 100px rgba(0,0,0,.62),
+        0 0 55px rgba(255,67,18,.12),
+        inset 0 0 45px rgba(255,77,22,.035) !important;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+body.stage-v2 .live-stage .stage-header{
+    min-height: 58px;
+    padding: 0 2px !important;
+    margin: 0 !important;
+}
+
+body.stage-v2 .live-stage .stage-brand{
+    display: flex !important;
+    align-items: baseline;
+    gap: 8px;
+}
+
+body.stage-v2 .live-stage .stage-header .wordmark{
+    font-size: 50px !important;
+    line-height: .82 !important;
+    letter-spacing: -.055em !important;
+}
+
+body.stage-v2 .live-stage .stage-tagline{
+    max-width: 78px;
+    font-size: 8px !important;
+    line-height: 1.15 !important;
+    letter-spacing: .12em !important;
+    color: #ff9a72 !important;
+}
+
+body.stage-v2 .live-stage .live-status{
+    padding: 7px 10px !important;
+    font-size: 8px !important;
+    letter-spacing: .1em !important;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   INSTRUCCIÓN
+   ========================================================= */
+
+body.stage-v2 .live-stage .stage-instruction{
+    margin: 8px 0 10px !important;
+    padding: 0 4px !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    font-size: 8px !important;
+    line-height: 1.2 !important;
+    letter-spacing: .09em !important;
+
+    color: #74747b !important;
+}
+
+body.stage-v2 .live-stage .stage-instruction strong{
+    color: #ff8057 !important;
+}
+
+
+/* =========================================================
+   ÁREA CENTRAL
+   ========================================================= */
+
+body.stage-v2 .live-stage .unified-carousel-shell{
+    min-height: 0 !important;
+    height: 100% !important;
+
+    display: grid !important;
+    grid-template-columns: 0 minmax(0,1fr) 0 !important;
+
+    margin: 0 !important;
+}
+
+body.stage-v2 .live-stage .stage-carousel{
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: none !important;
+
+    padding: 8px 2px 12px !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,77,22,.35) transparent;
+}
+
+body.stage-v2 .live-stage .stage-carousel-track{
+    width: 100% !important;
+    min-width: 0 !important;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 12px !important;
+}
+
+
+/* =========================================================
+   TARJETA ACTUAL
+   ========================================================= */
+
+body.stage-v2 .live-stage .stage-current-card{
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    flex: 0 0 auto !important;
+
+    min-height: 245px !important;
+
+    padding: 25px 20px !important;
+
+    border-radius: 22px !important;
+
+    border: 1px solid rgba(255,94,40,.65) !important;
+
+    background:
+        radial-gradient(
+            circle at 50% 15%,
+            rgba(255,169,42,.15),
+            transparent 36%
+        ),
+        linear-gradient(
+            145deg,
+            #25120d,
+            #0d0909 72%
+        ) !important;
+
+    box-shadow:
+        0 0 0 1px rgba(255,77,22,.06),
+        0 0 35px rgba(255,69,17,.13),
+        0 20px 40px rgba(0,0,0,.32) !important;
+}
+
+body.stage-v2 .live-stage .stage-current-card .stage-card-label{
+    padding: 7px 12px !important;
+    font-size: 9px !important;
+    letter-spacing: .15em !important;
+}
+
+body.stage-v2 .live-stage .stage-current-card .stage-comment{
+    max-width: 100% !important;
+
+    font-size: clamp(30px, 7vw, 46px) !important;
+    line-height: .98 !important;
+
+    text-wrap: balance;
+
+    margin: 12px 0 !important;
+}
+
+body.stage-v2 .live-stage .stage-current-card .stage-requester{
+    font-size: 11px !important;
+}
+
+
+/* =========================================================
+   TARJETAS DE COLA
+   ========================================================= */
+
+body.stage-v2 .live-stage .stage-song-card{
+    width: 100% !important;
+    max-width: none !important;
+
+    flex: 0 0 auto !important;
+
+    min-height: 100px !important;
+
+    padding: 17px !important;
+
+    border-radius: 17px !important;
+
+    border-color: rgba(255,255,255,.10) !important;
+}
+
+body.stage-v2 .live-stage .stage-song-card .stage-comment{
+    font-size: 18px !important;
+}
+
+
+/* =========================================================
+   TAP TAPS — ELEMENTO HERO
+   ========================================================= */
+
+body.stage-v2 .live-stage .tap-player{
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 18px 17px !important;
+
+    border-radius: 22px !important;
+
+    border: 1px solid rgba(255,92,39,.62) !important;
+
+    background:
+        linear-gradient(
+            125deg,
+            rgba(47,16,10,.98),
+            rgba(12,10,11,.98) 70%
+        ) !important;
+
+    box-shadow:
+        0 0 35px rgba(255,57,17,.12),
+        inset 0 1px rgba(255,255,255,.06) !important;
+}
+
+body.stage-v2 .live-stage .tap-player-top{
+    align-items: flex-end !important;
+    gap: 12px !important;
+}
+
+body.stage-v2 .live-stage .tap-eyebrow{
+    font-size: 9px !important;
+    letter-spacing: .13em !important;
+}
+
+body.stage-v2 .live-stage .tap-callout{
+    max-width: 230px !important;
+
+    font-size: 22px !important;
+    line-height: .98 !important;
+    font-weight: 950 !important;
+}
+
+body.stage-v2 .live-stage .tap-counter{
+    gap: 4px !important;
+}
+
+body.stage-v2 .live-stage .tap-counter > strong{
+    font-size: 42px !important;
+    line-height: .85 !important;
+}
+
+body.stage-v2 .live-stage .tap-counter span{
+    font-size: 10px !important;
+}
+
+body.stage-v2 .live-stage .tap-track{
+    height: 12px !important;
+
+    margin: 15px 0 11px !important;
+
+    border: 0 !important;
+}
+
+body.stage-v2 .live-stage .tap-heart{
+    right: -2px !important;
+    font-size: 28px !important;
+}
+
+body.stage-v2 .live-stage .tap-player-bottom{
+    font-size: 8px !important;
+    line-height: 1.25 !important;
+}
+
+body.stage-v2 .live-stage .tap-total{
+    font-size: 8px !important;
+}
+
+
+/* =========================================================
+   PAYPAL / SALTAR AL #1
+   ========================================================= */
+
+body.stage-v2 .skip-banner{
+    width: 100% !important;
+    max-width: 500px !important;
+
+    min-height: 56px !important;
+
+    margin: 10px auto 0 !important;
+
+    border-radius: 15px !important;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.35),
+        0 0 22px rgba(255,83,20,.12);
+}
+
+
+/* =========================================================
+   REDES
+   ========================================================= */
+
+body.stage-v2 .playlist-socials{
+    margin-top: 10px !important;
+    opacity: .75;
+}
+
+body.stage-v2 .back-link{
+    margin-top: 8px !important;
+    opacity: .45;
+}
+
+
+/* =========================================================
+   DESKTOP GRANDE
+   ========================================================= */
+
+@media (min-width: 1000px){
+
+    body.stage-v2 .live-stage{
+        width: min(500px, calc((100vh - 28px) * .5625)) !important;
+        height: min(889px, calc(100vh - 28px)) !important;
+    }
+
+}
+
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width: 700px){
+
+    body.stage-v2 .live-stage{
+        width: 100% !important;
+        max-width: none !important;
+
+        height: auto !important;
+        min-height: calc(100dvh - 16px) !important;
+        max-height: none !important;
+
+        aspect-ratio: auto !important;
+
+        margin: 0 !important;
+
+        border-radius: 20px !important;
+
+        padding: 13px 9px 11px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-header .wordmark{
+        font-size: 43px !important;
+    }
+
+    body.stage-v2 .live-stage .stage-current-card{
+        min-height: 220px !important;
+    }
+
+    body.stage-v2 .live-stage .tap-callout{
+        font-size: 20px !important;
+    }
+
+    body.stage-v2 .live-stage .tap-counter > strong{
+        font-size: 38px !important;
+    }
+
+}
+
+
+/* =========================================================
+   ELIMINAR EL 16:9 ANTERIOR
+   ========================================================= */
+
+@media (min-width: 1200px) and (min-height: 700px){
+
+    body.stage-v2 .live-stage{
+        aspect-ratio: 9 / 16 !important;
+        min-height: 0 !important;
+    }
+
+}
