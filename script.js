@@ -26,6 +26,7 @@ let stageAvanceBloqueado = false;
 let stageCargaRequestsActiva = false;
 let stageCargaLikesActiva = false;
 let historialCargaActiva = false;
+let stageLiveActivo = false;
 let stageRequestsFirma = "";
 let stageUltimosDatos = { played: [], playing: null, queue: [] };
 
@@ -187,10 +188,19 @@ async function comprobarEstadoLive() {
             !estaEnVivo
         );
 
+        const liveStage = document.querySelector(".live-stage");
+        const skipBanner = document.querySelector(".skip-banner");
+        const offlineMode = document.getElementById("offline-mode");
+
         if (!estaEnVivo) {
 
-            const liveStage = document.querySelector(".live-stage");
-            const skipBanner = document.querySelector(".skip-banner");
+            /*
+             * =====================================================
+             * MODO OFFLINE
+             * =====================================================
+             * Cuando el directo termina NO debemos conservar
+             * visualmente ningún dato del directo anterior.
+             */
 
             if (liveStage) {
                 liveStage.style.display = "none";
@@ -200,18 +210,78 @@ async function comprobarEstadoLive() {
                 skipBanner.style.display = "none";
             }
 
-        } else {
-
-            const liveStage = document.querySelector(".live-stage");
-            const skipBanner = document.querySelector(".skip-banner");
-
-            if (liveStage) {
-                liveStage.style.display = "";
+            if (offlineMode) {
+                offlineMode.style.display = "";
             }
 
-            if (skipBanner) {
-                skipBanner.style.display = "";
+            /*
+             * Limpiar completamente el estado visual del LIVE.
+             */
+
+            const currentDisplay =
+                document.getElementById("stage-current-display");
+
+            const liveList =
+                document.getElementById("stage-live-list");
+
+            const liveListItems =
+                document.getElementById("stage-live-list-items");
+
+            if (currentDisplay) {
+                currentDisplay.innerHTML = "";
             }
+
+            if (liveListItems) {
+                liveListItems.innerHTML = "";
+            }
+
+            if (liveList) {
+                liveList.remove();
+            }
+
+            /*
+             * Limpiar datos almacenados en memoria.
+             */
+
+            colaActual = [];
+            posicionesAnteriores.clear();
+            stageRequestsAnterior.clear();
+            stageQueueAnterior.clear();
+
+            stageUltimosDatos = {
+                played: [],
+                playing: null,
+                queue: []
+            };
+
+            stagePlayingId = null;
+            stageRequestsFirma = "";
+
+            /*
+             * No seguir procesando datos antiguos
+             * mientras estamos offline.
+             */
+
+            return;
+
+        }
+
+        /*
+         * =====================================================
+         * MODO LIVE
+         * =====================================================
+         */
+
+        if (liveStage) {
+            liveStage.style.display = "";
+        }
+
+        if (skipBanner) {
+            skipBanner.style.display = "";
+        }
+
+        if (offlineMode) {
+            offlineMode.style.display = "none";
         }
 
     } catch (error) {
@@ -581,7 +651,7 @@ let stageStatusTimer = null;
 
 const STAGE_REQUESTS_INTERVAL = 15000;
 const STAGE_LIKES_INTERVAL = 10000;
-const STAGE_STATUS_INTERVAL = 60000;
+const STAGE_STATUS_INTERVAL = 50000;
 
 function detenerPollingStage() {
 
@@ -609,10 +679,8 @@ function iniciarPollingStage() {
         return;
     }
 
-    // Actualización inmediata al entrar o volver a la página.
+    // Comprobar primero si el directo está activo.
     comprobarEstadoLive();
-    cargarStageHistorial();
-    cargarStageLiveLikes();
 
     stageRequestsTimer = setInterval(() => {
 
@@ -636,22 +704,20 @@ function iniciarPollingStage() {
 
         comprobarEstadoLive();
 
-        }, 5000);
+    }, STAGE_STATUS_INTERVAL);
+
+    document.addEventListener("visibilitychange", () => {
+
+        if (document.hidden) {
+
+            detenerPollingStage();
+
+            return;
+        }
+
+        iniciarPollingStage();
+    });
 }
-
-document.addEventListener("visibilitychange", () => {
-
-    if (document.hidden) {
-
-        detenerPollingStage();
-
-        return;
-    }
-
-    iniciarPollingStage();
-});
-
-iniciarPollingStage();
 
 function seleccionarCancion(id, cancion) {
 
@@ -1882,12 +1948,25 @@ function detectarEventosRequests(requests, playing, queue) {
 }
 
 async function cargarStageHistorial() {
-    if (stageCargaRequestsActiva) return;
+
+    if (!stageLiveActivo) {
+        return;
+    }
+
+    if (stageCargaRequestsActiva) {
+        return;
+    }
+
     stageCargaRequestsActiva = true;
     try {
         const response = await fetch(requestsURL);
         if (!response.ok) return;
         const requests = await response.json();
+
+        if (!stageLiveActivo) {
+    return;
+}
+
         const played = requests.filter((item) => item.status === "played");
         const playing = requests.find((item) => item.status === "playing") || null;
         const queue = requests.filter((item) => item.status === "queue").sort((a, b) => Number(a.sort_order) - Number(b.sort_order));
@@ -2093,12 +2172,25 @@ function actualizarRankingStage(topUsers) {
 }
 
 async function cargarStageLiveLikes() {
-    if (stageCargaLikesActiva) return;
+
+    if (!stageLiveActivo) {
+        return;
+    }
+
+    if (stageCargaLikesActiva) {
+        return;
+    }
+
     stageCargaLikesActiva = true;
     try {
         const response = await fetch(liveLikesURL);
         if (!response.ok) return;
         const data = await response.json();
+
+if (!stageLiveActivo) {
+    return;
+}
+
         const goal = Number(data.goal) || 5000;
         const progress = Number(data.progress) || 0;
         const total = Number(data.total) || 0;

@@ -1922,15 +1922,17 @@ body.offline .offline-mode{
     display: block;
 }
 
-body.offline .now-playing,
-body.offline .skip-banner,
-body.offline .payment-note,
-body.offline .playlist-container{
-    display: none;
+body.offline .live-stage,
+body.offline .skip-banner{
+    display: none !important;
+}
+
+body.offline .offline-mode{
+    display: block;
 }
 
 body.offline .live-status{
-    display: none;
+    display: none !important;
 }
 
 /* ============ OFFLINE PLAYLISTS ============ */
