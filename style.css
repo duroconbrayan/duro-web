@@ -9575,3 +9575,27 @@ body.stage-v2 .live-stage {
         margin-right: 0 !important;
     }
 }
+
+/* =========================================================
+   DURO — PAYPAL DEBAJO DE AHORA SUENA
+   ========================================================= */
+
+body.stage-v2 .live-stage > .skip-banner {
+    width: min(560px, calc(100% - 40px)) !important;
+    max-width: 560px !important;
+    margin: 14px auto 18px !important;
+    box-sizing: border-box !important;
+}
+
+body.stage-v2 .live-stage > .skip-banner button {
+    width: 100%;
+}
+
+/* MOBILE */
+@media (max-width: 700px) {
+    body.stage-v2 .live-stage > .skip-banner {
+        width: calc(100% - 24px) !important;
+        max-width: none !important;
+        margin: 12px auto 16px !important;
+    }
+}
