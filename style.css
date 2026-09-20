@@ -9459,3 +9459,119 @@ body.stage-v2 .playlist-socials{
     }
 
 }
+
+/* =========================================================
+   DURO STAGE — FIX DEFINITIVO DE CENTRADO DESKTOP
+   ========================================================= */
+
+body.stage-v2 {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+body.stage-v2 main {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+body.stage-v2 .page-wrap {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+body.stage-v2 .live-stage {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* =========================================================
+   DESKTOP — ESCENARIO CENTRADO
+   ========================================================= */
+
+@media (min-width: 701px) {
+
+    body.stage-v2 .live-stage {
+        width: min(900px, calc(100vw - 48px)) !important;
+        max-width: 900px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        aspect-ratio: auto !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    body.stage-v2 .unified-carousel-shell {
+        width: 100% !important;
+    }
+
+    body.stage-v2 .stage-carousel {
+        width: 100% !important;
+    }
+
+    body.stage-v2 .stage-carousel-track {
+        width: 100% !important;
+    }
+
+    body.stage-v2 .stage-song-card {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    body.stage-v2 .stage-current-card {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    body.stage-v2 .tap-player {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    body.stage-v2 .skip-banner {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    body.stage-v2 .playlist-socials,
+    body.stage-v2 .back-link {
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+
+/* =========================================================
+   MOBILE — NO HEREDAR EL ANCHO DESKTOP
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    body.stage-v2 main {
+        width: 100% !important;
+        padding: 8px !important;
+    }
+
+    body.stage-v2 .page-wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.stage-v2 .live-stage {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        aspect-ratio: auto !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
