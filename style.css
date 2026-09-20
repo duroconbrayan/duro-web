@@ -7962,3 +7962,79 @@ body.stage-v2 .carousel-legend {
         min-height: 205px !important;
     }
 }
+
+/* =========================================================
+   DURO — STAGE VERTICAL 9:16
+   ========================================================= */
+
+@media (min-width: 701px){
+
+    body.stage-v2 main{
+        padding: 18px 20px 40px;
+    }
+
+    body.stage-v2 .page-wrap{
+        width: min(100%, 560px);
+        max-width: 560px;
+        margin: 0 auto;
+    }
+
+    body.stage-v2 .live-stage{
+        width: 100%;
+        max-width: 560px;
+        min-height: 0;
+        aspect-ratio: 9 / 16;
+        padding: 22px 18px;
+        border-radius: 28px;
+        grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+    }
+
+    body.stage-v2 .unified-carousel-shell{
+        min-height: 0;
+        margin-top: 8px;
+    }
+
+    body.stage-v2 .stage-carousel{
+        max-height: none;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 14px 8px;
+    }
+
+    body.stage-v2 .stage-carousel-track{
+        width: 100%;
+        min-width: 0;
+    }
+
+    body.stage-v2 .stage-song-card{
+        width: 100%;
+        min-height: 180px;
+        padding: 24px 20px;
+    }
+
+    body.stage-v2 .stage-current-card{
+        flex-basis: auto;
+        width: 100%;
+        min-height: 260px;
+    }
+
+    body.stage-v2 .stage-current-card .stage-comment{
+        font-size: clamp(32px, 7vw, 52px);
+    }
+
+    body.stage-v2 .tap-player{
+        width: 100%;
+        margin: 0;
+    }
+
+    body.stage-v2 .skip-banner{
+        width: 100%;
+        max-width: 560px;
+    }
+
+    body.stage-v2 .playlist-socials,
+    body.stage-v2 .back-link{
+        max-width: 560px;
+    }
+}
