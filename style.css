@@ -6996,14 +6996,14 @@ body.stage-v2 .page-wrap{
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 24px max(24px, calc(50% - min(31%, 410px)));
+    max-height: 620px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 18px 12px;
     scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    overscroll-behavior-x: contain;
-    touch-action: pan-x;
+    scrollbar-width: thin;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
     box-sizing: border-box;
 }
 
@@ -7011,16 +7011,18 @@ body.stage-v2 .page-wrap{
 
 .stage-carousel-track{
     display: flex;
-    align-items: center;
-    gap: clamp(14px, 1.6vw, 24px);
-    width: max-content;
-    min-width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
     box-sizing: border-box;
 }
 
 .stage-song-card{
     position: relative;
-    flex: 0 0 clamp(260px, 29vw, 410px);
+    flex: 0 0 auto;
+width: 100%;
     min-height: clamp(210px, 25vh, 330px);
     display: flex;
     flex-direction: column;
@@ -7029,7 +7031,7 @@ body.stage-v2 .page-wrap{
     gap: 14px;
     overflow: hidden;
     padding: clamp(22px, 2.3vw, 36px);
-    scroll-snap-align: center;
+    scroll-snap-align: none;
     border: 1px solid rgba(255,255,255,.12);
     border-radius: 26px;
     background: linear-gradient(145deg, #18181b, #0d0d0f);
@@ -7687,5 +7689,276 @@ body.offline.stage-v2 .skip-banner{ display: none; }
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
+    }
+}
+
+/* =========================================================
+   ESTADOS DE PRESENCIA — CANCIONES DE LA COLA
+   ========================================================= */
+
+.stage-queue-card.stage-presence-active {
+    border-color: #22c55e;
+    background: linear-gradient(
+        135deg,
+        rgba(34, 197, 94, 0.20),
+        rgba(0, 0, 0, 0.92)
+    );
+}
+
+.stage-queue-card.stage-presence-expiring {
+    border-color: #facc15;
+    background: linear-gradient(
+        135deg,
+        rgba(250, 204, 21, 0.22),
+        rgba(0, 0, 0, 0.92)
+    );
+}
+
+.stage-queue-card.stage-presence-inactive {
+    border-color: #666;
+    background: linear-gradient(
+        135deg,
+        rgba(80, 80, 80, 0.18),
+        rgba(0, 0, 0, 0.96)
+    );
+    opacity: 0.72;
+}
+
+.stage-queue-card.stage-presence-active
+.stage-card-label {
+    color: #22c55e;
+}
+
+.stage-queue-card.stage-presence-expiring
+.stage-card-label {
+    color: #facc15;
+}
+
+.stage-queue-card.stage-presence-inactive
+.stage-card-label {
+    color: #999;
+}
+
+.stage-queue-card.stage-presence-expiring
+.stage-card-action {
+    animation: stagePresenceWarning 1.2s ease-in-out infinite;
+}
+
+@keyframes stagePresenceWarning {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.45;
+    }
+}
+
+/* =========================================================
+   DURO — COLA VERTICAL + ESTADOS DE PRESENCIA
+   ========================================================= */
+
+body.stage-v2 .unified-carousel-shell {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+body.stage-v2 .stage-arrow {
+    display: none !important;
+}
+
+body.stage-v2 .stage-carousel {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 58vh !important;
+    min-width: 0 !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    padding: 14px 10px 18px !important;
+    box-sizing: border-box !important;
+
+    scroll-snap-type: none !important;
+}
+
+body.stage-v2 .stage-carousel-track {
+    width: 100% !important;
+    min-width: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+
+    gap: 12px !important;
+}
+
+body.stage-v2 .stage-song-card {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    min-height: 145px !important;
+    padding: 20px !important;
+
+    border-radius: 20px !important;
+
+    scroll-snap-align: none !important;
+}
+
+/* AHORA SUENA */
+body.stage-v2 .stage-current-card {
+    width: 100% !important;
+    min-height: 230px !important;
+    flex: 0 0 auto !important;
+}
+
+/* CANCIONES YA REPRODUCIDAS */
+body.stage-v2 .stage-played-card {
+    opacity: .55;
+}
+
+/* =========================================================
+   🟢 ACTIVA
+   ========================================================= */
+
+body.stage-v2 .stage-queue-card.stage-presence-active {
+    border: 2px solid #22c55e !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34, 197, 94, .20),
+            rgba(8, 12, 10, .96)
+        ) !important;
+
+    box-shadow:
+        0 0 22px rgba(34, 197, 94, .12),
+        inset 0 0 24px rgba(34, 197, 94, .04);
+}
+
+body.stage-v2 .stage-queue-card.stage-presence-active
+.stage-card-label {
+    color: #22c55e !important;
+}
+
+/* =========================================================
+   🟡 POR INACTIVARSE
+   ========================================================= */
+
+body.stage-v2 .stage-queue-card.stage-presence-expiring {
+    border: 2px solid #facc15 !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(250, 204, 21, .20),
+            rgba(14, 13, 8, .96)
+        ) !important;
+
+    box-shadow:
+        0 0 22px rgba(250, 204, 21, .12),
+        inset 0 0 24px rgba(250, 204, 21, .04);
+}
+
+body.stage-v2 .stage-queue-card.stage-presence-expiring
+.stage-card-label {
+    color: #facc15 !important;
+}
+
+body.stage-v2 .stage-queue-card.stage-presence-expiring
+.stage-card-action {
+    color: #facc15 !important;
+
+    animation:
+        stagePresenceWarning 1.2s ease-in-out infinite;
+}
+
+/* =========================================================
+   ⚫ INACTIVA
+   ========================================================= */
+
+body.stage-v2 .stage-queue-card.stage-presence-inactive {
+    border: 2px solid rgba(150, 150, 150, .35) !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(65, 65, 65, .20),
+            rgba(10, 10, 10, .97)
+        ) !important;
+
+    opacity: .65 !important;
+
+    box-shadow:
+        inset 0 0 20px rgba(255,255,255,.025);
+}
+
+body.stage-v2 .stage-queue-card.stage-presence-inactive
+.stage-card-label {
+    color: #999 !important;
+}
+
+body.stage-v2 .stage-queue-card.stage-presence-inactive
+.stage-card-action {
+    color: #aaa !important;
+}
+
+/* =========================================================
+   ACCIÓN DE LA TARJETA
+   ========================================================= */
+
+body.stage-v2 .stage-card-action {
+    margin-top: auto;
+}
+
+/* =========================================================
+   OCULTAR LEYENDA HORIZONTAL
+   ========================================================= */
+
+body.stage-v2 .carousel-legend {
+    display: none !important;
+}
+
+/* =========================================================
+   ANIMACIÓN AMARILLA
+   ========================================================= */
+
+@keyframes stagePresenceWarning {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .45;
+    }
+}
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    body.stage-v2 .stage-carousel {
+        max-height: 52vh !important;
+        padding: 10px 6px 14px !important;
+    }
+
+    body.stage-v2 .stage-carousel-track {
+        gap: 10px !important;
+    }
+
+    body.stage-v2 .stage-song-card {
+        min-height: 135px !important;
+        padding: 17px !important;
+        border-radius: 18px !important;
+    }
+
+    body.stage-v2 .stage-current-card {
+        min-height: 205px !important;
     }
 }

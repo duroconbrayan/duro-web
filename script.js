@@ -1447,62 +1447,129 @@ function claveEventoGoal(evento) {
 
 function tarjetaStage(item, tipo, posicion) {
     const card = document.createElement("article");
-    card.className = `stage-song-card stage-${tipo}-card`;
+
+    const presenceStatus =
+        tipo === "queue"
+            ? (item.presence_status || "inactive")
+            : "active";
+
+    card.className =
+        `stage-song-card stage-${tipo}-card stage-presence-${presenceStatus}`;
+
     card.dataset.requestId = String(item.id);
     card.dataset.stageKey = `${tipo}:${item.id}`;
+    card.dataset.presenceStatus = presenceStatus;
 
     const label = document.createElement("span");
     label.className = "stage-card-label";
 
     if (tipo === "current") {
         label.textContent = "⚡ AHORA SUENA ⚡";
+
     } else if (tipo === "played") {
         label.textContent = "✓ YA SONÓ";
+
+    } else if (presenceStatus === "active") {
+        label.textContent =
+            posicion === 0
+                ? "🟢 ACTIVA · SIGUIENTE"
+                : `🟢 ACTIVA · #${posicion + 1}`;
+
+    } else if (presenceStatus === "expiring") {
+        label.textContent =
+            posicion === 0
+                ? "🟡 POR INACTIVARSE · SIGUIENTE"
+                : `🟡 POR INACTIVARSE · #${posicion + 1}`;
+
     } else {
-        label.textContent = posicion === 0 ? "SIGUIENTE" : `EN COLA · #${posicion + 1}`;
+        label.textContent =
+            posicion === 0
+                ? "⚫ INACTIVA · SIGUIENTE"
+                : `⚫ INACTIVA · #${posicion + 1}`;
     }
 
     const comment = document.createElement("strong");
     const texto = textoSolicitud(item);
+
     comment.textContent = texto;
     comment.className = "stage-comment";
-    if (texto.length > 90) comment.classList.add("stage-comment-long");
-    if (texto.length > 150) comment.classList.add("stage-comment-xlong");
+
+    if (texto.length > 90) {
+        comment.classList.add("stage-comment-long");
+    }
+
+    if (texto.length > 150) {
+        comment.classList.add("stage-comment-xlong");
+    }
 
     const user = document.createElement("span");
     user.className = "stage-requester";
     user.textContent = usuarioSolicitud(item);
 
     card.append(label, comment);
-    if (user.textContent) card.appendChild(user);
+
+    if (user.textContent) {
+        card.appendChild(user);
+    }
 
     if (tipo === "queue") {
+
         const action = document.createElement("span");
         action.className = "stage-card-action";
-        action.textContent = "TOCA PARA ADELANTAR ↑";
+
+        if (presenceStatus === "active") {
+            action.textContent = "TAP TAPS ACTIVOS · MANTÉN TU CANCIÓN";
+
+        } else if (presenceStatus === "expiring") {
+            action.textContent = "⚠️ HAZ TAP TAPS PARA MANTENERLA";
+
+        } else {
+            action.textContent = "TAP TAPS PARA RECUPERAR EL TURNO";
+        }
+
         card.appendChild(action);
+
         card.tabIndex = 0;
         card.setAttribute("role", "button");
-        card.addEventListener("click", () => seleccionarCancion(item.id, texto));
-        card.addEventListener("keydown", (event) => {
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                seleccionarCancion(item.id, texto);
+
+        card.addEventListener(
+            "click",
+            () => seleccionarCancion(item.id, texto)
+        );
+
+        card.addEventListener(
+            "keydown",
+            (event) => {
+
+                if (
+                    event.key === "Enter" ||
+                    event.key === " "
+                ) {
+                    event.preventDefault();
+                    seleccionarCancion(item.id, texto);
+                }
             }
-        });
+        );
     }
 
     if (item.tap_exempt_reason === "gafas") {
+
         card.classList.add("stage-card-gift");
+
         const badge = document.createElement("span");
         badge.className = "stage-special-badge";
         badge.textContent = "😎 GAFAS";
+
         card.appendChild(badge);
+
     } else if (item.tap_exempt_reason === "paypal") {
+
         card.classList.add("stage-card-paypal");
+
         const badge = document.createElement("span");
         badge.className = "stage-special-badge";
         badge.textContent = "PAGO ✓";
+
         card.appendChild(badge);
     }
 
@@ -1566,44 +1633,99 @@ function centrarStage(key, behavior = "auto") {
 
 function renderizarCarruselStage(played, playing, queue) {
     const track = document.getElementById("stage-carousel-track");
-    if (!track) return;
 
-    const claveVisible = elementoCentradoStage();
-    const cambioActual = Boolean(stagePlayingId && playing?.id && stagePlayingId !== playing.id);
-    const playedOrdenado = [...played].sort((a, b) => new Date(a.played_at || a.created_at) - new Date(b.played_at || b.created_at));
+    if (!track) {
+        return;
+    }
+
+    const playedOrdenado = [...played].sort(
+        (a, b) =>
+            new Date(a.played_at || a.created_at) -
+            new Date(b.played_at || b.created_at)
+    );
+
     const anterioresGratis = playedOrdenado.slice(-3);
-    const anterioresVisibles = stageHistorialDesbloqueado ? playedOrdenado : anterioresGratis;
+
+    const anterioresVisibles =
+        stageHistorialDesbloqueado
+            ? playedOrdenado
+            : anterioresGratis;
 
     track.innerHTML = "";
 
-    if (!stageHistorialDesbloqueado && playedOrdenado.length > 3) {
-        track.appendChild(tarjetaBloqueoHistorial(playedOrdenado.length - 3));
+    // HISTORIAL
+    if (
+        !stageHistorialDesbloqueado &&
+        playedOrdenado.length > 3
+    ) {
+        track.appendChild(
+            tarjetaBloqueoHistorial(
+                playedOrdenado.length - 3
+            )
+        );
     }
-    anterioresVisibles.forEach((item) => track.appendChild(tarjetaStage(item, "played", 0)));
 
+    anterioresVisibles.forEach((item) => {
+        track.appendChild(
+            tarjetaStage(
+                item,
+                "played",
+                0
+            )
+        );
+    });
+
+    // AHORA SUENA
     if (playing) {
-        track.appendChild(tarjetaStage(playing, "current", 0));
+        track.appendChild(
+            tarjetaStage(
+                playing,
+                "current",
+                0
+            )
+        );
     } else {
-        const empty = document.createElement("article");
-        empty.className = "stage-song-card stage-current-card stage-loading";
-        empty.dataset.stageKey = "current:empty";
-        empty.innerHTML = '<span class="stage-card-label">AHORA SUENA</span><strong>Esperando la primera canción…</strong>';
+        const empty =
+            document.createElement("article");
+
+        empty.className =
+            "stage-song-card stage-current-card stage-loading";
+
+        empty.dataset.stageKey =
+            "current:empty";
+
+        empty.innerHTML =
+            '<span class="stage-card-label">' +
+            'AHORA SUENA' +
+            '</span>' +
+            '<strong>' +
+            'Esperando la primera canción…' +
+            '</strong>';
+
         track.appendChild(empty);
     }
 
-    queue.forEach((item, index) => track.appendChild(tarjetaStage(item, "queue", index)));
+    // COLA
+    queue.forEach((item, index) => {
+        track.appendChild(
+            tarjetaStage(
+                item,
+                "queue",
+                index
+            )
+        );
+    });
+
     colaActual = queue;
 
-    requestAnimationFrame(() => {
-        const keyActual = playing ? `current:${playing.id}` : "current:empty";
-        if (!stageCarouselInicializado || cambioActual) {
-            centrarStage(keyActual, cambioActual ? "smooth" : "auto");
-        } else if (claveVisible) {
-            centrarStage(claveVisible, "auto");
-        }
-        stageCarouselInicializado = true;
-        stagePlayingId = playing?.id || null;
-    });
+    stageUltimosDatos = {
+        played,
+        playing,
+        queue
+    };
+
+    stagePlayingId =
+        playing?.id || null;
 }
 
 function detectarEventosRequests(requests, playing, queue) {
@@ -1653,14 +1775,16 @@ async function cargarStageHistorial() {
         const playing = requests.find((item) => item.status === "playing") || null;
         const queue = requests.filter((item) => item.status === "queue").sort((a, b) => Number(a.sort_order) - Number(b.sort_order));
         const firma = JSON.stringify(requests.map((item) => [
-            item.id,
-            item.status,
-            item.sort_order,
-            item.text,
-            item.raw_comment,
-            item.username,
-            item.tap_exempt_reason
-        ]));
+    item.id,
+    item.status,
+    item.sort_order,
+    item.text,
+    item.raw_comment,
+    item.username,
+    item.tap_exempt_reason,
+    item.presence_status,
+    item.presence_remaining_seconds
+]));
 
         detectarEventosRequests(requests, playing, queue);
         stageUltimosDatos = { played, playing, queue };
@@ -1715,9 +1839,9 @@ function moverColaStage(direccion) {
     }
 
     carousel.scrollBy({
-        left: direccion * Math.min(
-            carousel.clientWidth * 0.78,
-            carousel.scrollWidth
+        top: direccion * Math.min(
+            carousel.clientHeight * 0.78,
+            carousel.scrollHeight
         ),
         behavior: "smooth"
     });
