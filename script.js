@@ -14,7 +14,7 @@ const modoLivePrivado =
 const liveEventURL =
     "https://playlist-api.bookingelbrayan.workers.dev/admin/live-event";
 
-const LIVE_EVENT_INTERVAL = 5000;
+const LIVE_EVENT_INTERVAL = 15000;
 
 let liveEventTimer = null;
 let liveEventAnteriorId = 0;
