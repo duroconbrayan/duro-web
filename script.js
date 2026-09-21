@@ -653,9 +653,9 @@ let stageRequestsTimer = null;
 let stageLikesTimer = null;
 let stageStatusTimer = null;
 
-const STAGE_REQUESTS_INTERVAL = 15000;
-const STAGE_LIKES_INTERVAL = 10000;
-const STAGE_STATUS_INTERVAL = 50000;
+const STAGE_REQUESTS_INTERVAL = 30000;
+const STAGE_LIKES_INTERVAL = 20000;
+const STAGE_STATUS_INTERVAL = 90000;
 
 function detenerPollingStage() {
 
