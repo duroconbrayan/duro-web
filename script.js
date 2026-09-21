@@ -1735,19 +1735,57 @@ function renderizarCarruselStage(played, playing, queue) {
 
     listaItems.innerHTML = "";
 
-    /*
-     * Primero mostramos TODA la cola,
-     * en orden vertical.
-     */
-    queue.forEach((item, index) => {
-        listaItems.appendChild(
-            tarjetaStage(
-                item,
-                "queue",
-                index
-            )
-        );
-    });
+/*
+ * LISTA EN VIVO
+ *
+ * Las canciones nunca se eliminan por quedar
+ * inactivas y nunca pierden su sort_order.
+ *
+ * Visualmente mostramos:
+ *
+ * 1. ACTIVAS
+ * 2. INACTIVAS
+ *
+ * Dentro de cada grupo conservamos el
+ * orden histórico mediante sort_order.
+ */
+
+const queueActivas = queue
+    .filter((item) =>
+        item.presence_status === "active" ||
+        item.presence_status === "expiring"
+    )
+    .sort(
+        (a, b) =>
+            Number(a.sort_order) -
+            Number(b.sort_order)
+    );
+
+const queueInactivas = queue
+    .filter((item) =>
+        item.presence_status !== "active" &&
+        item.presence_status !== "expiring"
+    )
+    .sort(
+        (a, b) =>
+            Number(a.sort_order) -
+            Number(b.sort_order)
+    );
+
+const queueOrdenada = [
+    ...queueActivas,
+    ...queueInactivas
+];
+
+queueOrdenada.forEach((item, index) => {
+    listaItems.appendChild(
+        tarjetaStage(
+            item,
+            "queue",
+            index
+        )
+    );
+});
 
     /*
      * Si no hay canciones esperando,
