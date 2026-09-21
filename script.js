@@ -233,7 +233,7 @@ async function comprobarEstadoLive() {
                 offlineMode.style.display = "";
             }
 
-            detenerPollingStage();
+            detenerPollingDatosStage();
 
             /*
              * Limpiar completamente el estado visual del LIVE.
@@ -303,6 +303,22 @@ async function comprobarEstadoLive() {
 
         if (offlineMode) {
             offlineMode.style.display = "none";
+        }
+
+        // =================================================
+        // DURO LIVE ACTIVO
+        // =================================================
+        // La sesión ya está activa aunque TikTok todavía
+        // no haya conectado.
+        //
+        // Por eso la playlist comienza inmediatamente.
+        // =================================================
+
+        if (
+            stageRequestsTimer === null &&
+            stageLikesTimer === null
+        ) {
+            iniciarPollingDatosStage();
         }
 
     } catch (error) {
@@ -552,9 +568,15 @@ let stageStatusTimer = null;
 
 const STAGE_REQUESTS_INTERVAL = 30000;
 const STAGE_LIKES_INTERVAL = 20000;
-const STAGE_STATUS_INTERVAL = 90000;
+const STAGE_STATUS_INTERVAL = 15000;
 
-function detenerPollingStage() {
+
+// =====================================================
+// DETENER SOLO LOS DATOS DEL LIVE
+// NO DETIENE LA COMPROBACIÓN DEL ESTADO DEL LIVE
+// =====================================================
+
+function detenerPollingDatosStage() {
 
     if (stageRequestsTimer !== null) {
         clearInterval(stageRequestsTimer);
@@ -566,29 +588,48 @@ function detenerPollingStage() {
         stageLikesTimer = null;
     }
 
+    detenerLiveEventPolling();
+}
+
+
+// =====================================================
+// DETENER TODO EL SISTEMA LIVE
+// =====================================================
+
+function detenerPollingStage() {
+
+    detenerPollingDatosStage();
+
     if (stageStatusTimer !== null) {
         clearInterval(stageStatusTimer);
         stageStatusTimer = null;
     }
-
-    detenerLiveEventPolling();
 }
-async function iniciarPollingStage() {
 
-    detenerPollingStage();
+
+// =====================================================
+// INICIAR DATOS DE LA PLAYLIST
+// =====================================================
+
+async function iniciarPollingDatosStage() {
 
     if (document.hidden) {
         return;
     }
 
-    // Comprobar primero si el directo está activo.
-    await comprobarEstadoLive();
-
     if (!stageLiveActivo) {
         return;
     }
 
-    // Cargar inmediatamente al entrar en LIVE.
+    // Evitar duplicar los timers.
+    if (
+        stageRequestsTimer !== null ||
+        stageLikesTimer !== null
+    ) {
+        return;
+    }
+
+    // Cargar inmediatamente.
     await cargarStageHistorial();
     await cargarStageLiveLikes();
 
@@ -604,7 +645,7 @@ async function iniciarPollingStage() {
     }
 
     // =================================================
-    // POLLING PÚBLICO NORMAL
+    // POLLING DE SOLICITUDES
     // =================================================
 
     stageRequestsTimer = setInterval(() => {
@@ -616,6 +657,11 @@ async function iniciarPollingStage() {
 
     }, STAGE_REQUESTS_INTERVAL);
 
+
+    // =================================================
+    // POLLING DE TAP TAPS
+    // =================================================
+
     stageLikesTimer = setInterval(() => {
 
         if (document.hidden) return;
@@ -624,14 +670,53 @@ async function iniciarPollingStage() {
         cargarStageLiveLikes();
 
     }, STAGE_LIKES_INTERVAL);
+}
+
+
+// =====================================================
+// INICIAR SISTEMA LIVE
+// =====================================================
+
+async function iniciarPollingStage() {
+
+    detenerPollingStage();
+
+    if (document.hidden) {
+        return;
+    }
+
+    // =================================================
+    // COMPROBACIÓN INICIAL
+    // =================================================
+
+    await comprobarEstadoLive();
+
+    // =================================================
+    // IMPORTANTE:
+    //
+    // SEGUIR COMPROBANDO EL ESTADO AUNQUE ESTÉ OFFLINE.
+    //
+    // Cuando DURO cambie live=false → true,
+    // comprobaremos nuevamente y activaremos la playlist.
+    // =================================================
 
     stageStatusTimer = setInterval(() => {
 
-        if (document.hidden) return;
+        if (document.hidden) {
+            return;
+        }
 
         comprobarEstadoLive();
 
     }, STAGE_STATUS_INTERVAL);
+
+    // Si ya estaba activo al cargar la página,
+    // iniciar inmediatamente los datos.
+    if (stageLiveActivo) {
+
+        await iniciarPollingDatosStage();
+
+    }
 }
 
 function seleccionarCancion(id, cancion) {
