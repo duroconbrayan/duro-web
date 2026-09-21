@@ -1,5 +1,7 @@
 const statusURL = "https://playlist-api.bookingelbrayan.workers.dev/status";
 const requestsURL = "https://playlist-api.bookingelbrayan.workers.dev/requests";
+const requestsLiveURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/requests?live";
 const liveLikesURL =
     "https://playlist-api.bookingelbrayan.workers.dev/live-likes";
 
@@ -14,7 +16,7 @@ const modoLivePrivado =
 const liveEventURL =
     "https://playlist-api.bookingelbrayan.workers.dev/admin/live-event";
 
-const LIVE_EVENT_INTERVAL = 15000;
+const LIVE_EVENT_INTERVAL = 1000;
 
 let liveEventTimer = null;
 let liveEventAnteriorId = 0;
@@ -332,15 +334,25 @@ async function comprobarEstadoLive() {
 
 async function cargarHistorial() {
     if (historialCargaActiva) return;
+
     historialCargaActiva = true;
-
-    const contenedor = document.getElementById("played-history");
-
-    if (!contenedor) return;
 
     try {
 
-        const response = await fetch(requestsURL);
+        const contenedor = document.getElementById("played-history");
+
+        if (!contenedor) {
+            return;
+        }
+
+        const response = await fetch(
+    modoLivePrivado
+        ? `${requestsLiveURL}&t=${Date.now()}`
+        : requestsURL,
+    {
+        cache: "no-store"
+    }
+);
         const requests = await response.json();
 
         const played = requests
@@ -506,6 +518,8 @@ contenedor.innerHTML = html;
 
     } catch (error) {
         console.error("Error al cargar historial:", error);
+    } finally {
+        historialCargaActiva = false;
     }
 }
 
@@ -566,7 +580,8 @@ let stageRequestsTimer = null;
 let stageLikesTimer = null;
 let stageStatusTimer = null;
 
-const STAGE_REQUESTS_INTERVAL = 30000;
+const STAGE_REQUESTS_INTERVAL_PUBLIC = 30000;
+const STAGE_REQUESTS_INTERVAL_LIVE = 5000;
 const STAGE_LIKES_INTERVAL = 20000;
 const STAGE_STATUS_INTERVAL = 15000;
 
@@ -648,6 +663,10 @@ async function iniciarPollingDatosStage() {
     // POLLING DE SOLICITUDES
     // =================================================
 
+    const requestsInterval = modoLivePrivado
+        ? STAGE_REQUESTS_INTERVAL_LIVE
+        : STAGE_REQUESTS_INTERVAL_PUBLIC;
+
     stageRequestsTimer = setInterval(() => {
 
         if (document.hidden) return;
@@ -655,7 +674,7 @@ async function iniciarPollingDatosStage() {
 
         cargarStageHistorial();
 
-    }, STAGE_REQUESTS_INTERVAL);
+    }, requestsInterval);
 
 
     // =================================================
@@ -2179,8 +2198,18 @@ async function cargarStageHistorial() {
 
     stageCargaRequestsActiva = true;
     try {
-        const response = await fetch(requestsURL);
+
+        const response = await fetch(
+            modoLivePrivado
+                ? `${requestsLiveURL}&t=${Date.now()}`
+                : requestsURL,
+            {
+                cache: "no-store"
+            }
+        );
+
         if (!response.ok) return;
+
         const requests = await response.json();
 
         if (!stageLiveActivo) {
