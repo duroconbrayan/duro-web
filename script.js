@@ -3,6 +3,23 @@ const requestsURL = "https://playlist-api.bookingelbrayan.workers.dev/requests";
 const liveLikesURL =
     "https://playlist-api.bookingelbrayan.workers.dev/live-likes";
 
+// =====================================================
+// MODO LIVE PRIVADO — ACTUALIZACIÓN RÁPIDA PARA BRAYAN
+// =====================================================
+
+const modoLivePrivado =
+    new URLSearchParams(window.location.search)
+        .has("live");
+
+const liveEventURL =
+    "https://playlist-api.bookingelbrayan.workers.dev/admin/live-event";
+
+const LIVE_EVENT_INTERVAL = 5000;
+
+let liveEventTimer = null;
+let liveEventAnteriorId = 0;
+let liveEventConsultaActiva = false;
+let liveEventInicializado = false;
 let solicitudSeleccionadaId = null;
 let colaActual = [];
 let posicionesAnteriores = new Map();
@@ -553,8 +570,9 @@ function detenerPollingStage() {
         clearInterval(stageStatusTimer);
         stageStatusTimer = null;
     }
-}
 
+    detenerLiveEventPolling();
+}
 async function iniciarPollingStage() {
 
     detenerPollingStage();
@@ -573,6 +591,21 @@ async function iniciarPollingStage() {
     // Cargar inmediatamente al entrar en LIVE.
     await cargarStageHistorial();
     await cargarStageLiveLikes();
+
+    // =================================================
+    // MODO LIVE PRIVADO
+    // =================================================
+
+    if (modoLivePrivado) {
+
+        await inicializarLiveEvent();
+
+        iniciarLiveEventPolling();
+    }
+
+    // =================================================
+    // POLLING PÚBLICO NORMAL
+    // =================================================
 
     stageRequestsTimer = setInterval(() => {
 
@@ -1865,6 +1898,188 @@ function detectarEventosRequests(requests, playing, queue) {
             }
         }
     });
+}
+
+// =====================================================
+// EVENTO RÁPIDO PARA MODO ?live
+// =====================================================
+
+async function inicializarLiveEvent() {
+
+    if (!modoLivePrivado) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${liveEventURL}?after=0`,
+            {
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            console.warn(
+                "LIVE EVENT INIT:",
+                response.status
+            );
+            return;
+        }
+
+        const data = await response.json();
+
+        const evento = data?.event;
+
+        if (evento?.id) {
+
+            liveEventAnteriorId =
+                Number(evento.id) || 0;
+        }
+
+        liveEventInicializado = true;
+
+    } catch (error) {
+
+        console.error(
+            "Error inicializando LIVE EVENT:",
+            error
+        );
+
+    }
+}
+
+
+async function comprobarLiveEvent() {
+
+    if (!modoLivePrivado) {
+        return;
+    }
+
+    if (!stageLiveActivo) {
+        return;
+    }
+
+    if (document.hidden) {
+        return;
+    }
+
+    if (!liveEventInicializado) {
+        return;
+    }
+
+    if (liveEventConsultaActiva) {
+        return;
+    }
+
+    liveEventConsultaActiva = true;
+
+    try {
+
+        const response = await fetch(
+            `${liveEventURL}?after=${encodeURIComponent(
+                liveEventAnteriorId
+            )}`,
+            {
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        const evento = data?.event;
+
+        if (!evento?.id) {
+            return;
+        }
+
+        const eventId =
+            Number(evento.id);
+
+        if (
+            !Number.isFinite(eventId) ||
+            eventId <= liveEventAnteriorId
+        ) {
+            return;
+        }
+
+        liveEventAnteriorId = eventId;
+
+        // =============================================
+        // ALERTA INMEDIATA
+        // =============================================
+
+        encolarEventoStage(
+            "added",
+            "＋",
+            "NUEVO EN LA LISTA",
+            evento.text || "Nueva canción",
+            evento.username
+                ? `@${String(evento.username).replace(/^@+/, "")}`
+                : ""
+        );
+
+        // =============================================
+        // ACTUALIZAR LA COLA REAL
+        // =============================================
+
+        await cargarStageHistorial();
+
+    } catch (error) {
+
+        console.error(
+            "Error comprobando LIVE EVENT:",
+            error
+        );
+
+    } finally {
+
+        liveEventConsultaActiva = false;
+
+    }
+}
+
+
+function iniciarLiveEventPolling() {
+
+    if (!modoLivePrivado) {
+        return;
+    }
+
+    if (liveEventTimer !== null) {
+
+        clearInterval(
+            liveEventTimer
+        );
+
+        liveEventTimer = null;
+    }
+
+    liveEventTimer = setInterval(() => {
+
+        comprobarLiveEvent();
+
+    }, LIVE_EVENT_INTERVAL);
+}
+
+
+function detenerLiveEventPolling() {
+
+    if (liveEventTimer !== null) {
+
+        clearInterval(
+            liveEventTimer
+        );
+
+        liveEventTimer = null;
+    }
+
+    liveEventInicializado = false;
+    liveEventAnteriorId = 0;
 }
 
 async function cargarStageHistorial() {
