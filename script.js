@@ -681,14 +681,13 @@ async function iniciarPollingDatosStage() {
     // POLLING DE TAP TAPS
     // =================================================
 
-    stageLikesTimer = setInterval(() => {
+stageLikesTimer = setInterval(() => {
 
-        if (document.hidden) return;
-        if (!stageLiveActivo) return;
+    if (document.hidden) return;
 
-        cargarStageLiveLikes();
+    cargarStageLiveLikes();
 
-    }, STAGE_LIKES_INTERVAL);
+}, STAGE_LIKES_INTERVAL);
 }
 
 
@@ -2212,9 +2211,9 @@ async function cargarStageHistorial() {
 
         const requests = await response.json();
 
-        if (!stageLiveActivo) {
-    return;
-}
+// Los Tap Taps se consultan independientemente
+// del estado visual de /status.
+// La fuente real es /live-likes.
 
         const played = requests.filter((item) => item.status === "played");
         const playing = requests.find((item) => item.status === "playing") || null;
@@ -2422,9 +2421,8 @@ function actualizarRankingStage(topUsers) {
 
 async function cargarStageLiveLikes() {
 
-    if (!stageLiveActivo) {
-        return;
-    }
+// Los Tap Taps se consultan independientemente
+// del estado visual de /status.
 
     if (stageCargaLikesActiva) {
         return;
@@ -2432,9 +2430,8 @@ async function cargarStageLiveLikes() {
 
     stageCargaLikesActiva = true;
     try {
-        const liveLikesRequestURL = modoLivePrivado
-    ? `${liveLikesURL}?live&t=${Date.now()}`
-    : liveLikesURL;
+        const liveLikesRequestURL =
+    `${liveLikesURL}?live&t=${Date.now()}`;
 
 const response = await fetch(
     liveLikesRequestURL,
@@ -2445,9 +2442,8 @@ const response = await fetch(
         if (!response.ok) return;
         const data = await response.json();
 
-if (!stageLiveActivo) {
-    return;
-}
+// No descartamos los datos de Tap Taps
+// por el estado visual de /status.
 
         const goal = Number(data.goal) || 5000;
 const total = Number(data.total) || 0;
