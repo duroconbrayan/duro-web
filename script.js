@@ -2432,7 +2432,16 @@ async function cargarStageLiveLikes() {
 
     stageCargaLikesActiva = true;
     try {
-        const response = await fetch(liveLikesURL);
+        const liveLikesRequestURL = modoLivePrivado
+    ? `${liveLikesURL}?live&t=${Date.now()}`
+    : liveLikesURL;
+
+const response = await fetch(
+    liveLikesRequestURL,
+    {
+        cache: "no-store"
+    }
+);
         if (!response.ok) return;
         const data = await response.json();
 
