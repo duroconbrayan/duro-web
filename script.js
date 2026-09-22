@@ -2450,11 +2450,20 @@ if (!stageLiveActivo) {
 }
 
         const goal = Number(data.goal) || 5000;
-        const progress = Number(data.progress) || 0;
-        const total = Number(data.total) || 0;
-        const base = Number(data.base) || 0;
-        const likesDelLive = Math.max(0, total - base);
-        const porcentaje = Math.min(100, progress / goal * 100);
+const total = Number(data.total) || 0;
+const base = Number(data.base) || 0;
+
+const likesDelLive = Math.max(
+    0,
+    total - base
+);
+
+const progress = likesDelLive % goal;
+
+const porcentaje = Math.min(
+    100,
+    progress / goal * 100
+);
 
         document.getElementById("live-likes-count").textContent = progress.toLocaleString("es-CO");
         document.getElementById("live-likes-goal").textContent = goal.toLocaleString("es-CO");
