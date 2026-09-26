@@ -1874,16 +1874,10 @@ function renderizarCarruselStage(played, playing, queue) {
 /*
  * LISTA EN VIVO
  *
- * Las canciones nunca se eliminan por quedar
- * inactivas y nunca pierden su sort_order.
- *
- * Visualmente mostramos:
- *
- * 1. ACTIVAS
- * 2. INACTIVAS
- *
- * Dentro de cada grupo conservamos el
- * orden histórico mediante sort_order.
+ * La experiencia pública solo muestra canciones que
+ * tienen Tap Taps activos. Las canciones inactivas
+ * permanecen guardadas en el Worker para poder volver
+ * a activarse, pero no ocupan una posición visible.
  */
 
 const queueActivas = queue
@@ -1897,23 +1891,7 @@ const queueActivas = queue
             Number(b.sort_order)
     );
 
-const queueInactivas = queue
-    .filter((item) =>
-        item.presence_status !== "active" &&
-        item.presence_status !== "expiring"
-    )
-    .sort(
-        (a, b) =>
-            Number(a.sort_order) -
-            Number(b.sort_order)
-    );
-
-const queueOrdenada = [
-    ...queueActivas,
-    ...queueInactivas
-];
-
-queueOrdenada.forEach((item, index) => {
+queueActivas.forEach((item, index) => {
     listaItems.appendChild(
         tarjetaStage(
             item,
@@ -2217,7 +2195,15 @@ async function cargarStageHistorial() {
 
         const played = requests.filter((item) => item.status === "played");
         const playing = requests.find((item) => item.status === "playing") || null;
-        const queue = requests.filter((item) => item.status === "queue").sort((a, b) => Number(a.sort_order) - Number(b.sort_order));
+        const queueCompleta = requests
+            .filter((item) => item.status === "queue")
+            .sort((a, b) => Number(a.sort_order) - Number(b.sort_order));
+
+        const queue = queueCompleta.filter((item) =>
+            item.presence_status === "active" ||
+            item.presence_status === "expiring"
+        );
+
         const firma = JSON.stringify(requests.map((item) => [
     item.id,
     item.status,
