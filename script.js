@@ -232,7 +232,7 @@ async function comprobarEstadoLive() {
             }
 
             if (offlineMode) {
-                offlineMode.style.display = "grid";
+                offlineMode.style.display = "";
             }
 
             detenerPollingDatosStage();
@@ -879,84 +879,9 @@ function contarMisionesCompletadas() {
     ).length;
 }
 
-function misionesExtraDesbloqueadas() {
-    return contarMisionesCompletadas() === MISIONES_GRATUITAS_REQUERIDAS.length;
-}
-
-async function abrirOfferwall() {
-    if (!solicitudSeleccionadaId) {
-        alert("No se encontró la canción seleccionada.");
-        return;
-    }
-
-    const button = document.getElementById("offerwall-open-btn");
-    if (button) {
-        button.disabled = true;
-        button.innerHTML = "ABRIENDO MISIONES…";
-    }
-
-    // Open the tab synchronously from the user's click so browsers do not
-    // classify the later navigation (after fetch) as a popup.
-    const offerwallWindow = window.open("about:blank", "_blank");
-
-    if (!offerwallWindow) {
-        alert("Tu navegador bloqueó la ventana de Misiones Extra. Permite ventanas emergentes para DURO.");
-        if (button) {
-            button.disabled = false;
-            button.innerHTML = "🎁 GANAR MÁS PUESTOS";
-        }
-        return;
-    }
-
-    try {
-        offerwallWindow.document.title = "DURO — Misiones Extra";
-
-        const response = await fetch(
-            `https://playlist-api.bookingelbrayan.workers.dev/offerwall/url?request_id=${encodeURIComponent(solicitudSeleccionadaId)}&visitor_id=${encodeURIComponent(visitorId)}`,
-            { method: "GET", cache: "no-store" }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok || !data.wall_url) {
-            throw new Error(data.error || "No se pudo abrir Misiones Extra.");
-        }
-
-        offerwallWindow.location.href = data.wall_url;
-
-    } catch (error) {
-        try {
-            offerwallWindow.close();
-        } catch (_) {}
-        console.error("OFFERWALL ERROR:", error);
-        alert("No pudimos abrir las Misiones Extra. Intenta de nuevo.");
-
-        if (button) {
-            button.disabled = false;
-            button.innerHTML = "🎁 GANAR MÁS PUESTOS";
-        }
-    }
-}
-
 function construirIndicadorProgreso() {
     const completadas = contarMisionesCompletadas();
     const total = MISIONES_GRATUITAS_REQUERIDAS.length;
-    const desbloqueado = completadas === total;
-
-    if (desbloqueado) {
-        return `
-            <div class="mission-progress mission-progress-unlocked">
-                <div class="mission-progress-top">
-                    <span>🚀 PASOS GRATIS</span>
-                    <strong>COMPLETADOS</strong>
-                </div>
-                <div class="mission-progress-message">
-                    🔓 Misiones Extra desbloqueadas. Ahora puedes ganar más puestos.
-                </div>
-            </div>
-        `;
-    }
-
     return `
         <div class="mission-progress">
             <div class="mission-progress-top">
@@ -969,7 +894,7 @@ function construirIndicadorProgreso() {
             <div class="mission-progress-message">
                 ${completadas === 0
                     ? "Completa los pasos y adelanta tu canción gratis."
-                    : `Te faltan ${total - completadas} para desbloquear Misiones Extra.`}
+                    : `Te faltan ${total - completadas} pasos gratis.`}
             </div>
         </div>
     `;
@@ -1046,11 +971,9 @@ function mostrarOpcionesSubir() {
 
     const completadas = contarMisionesCompletadas();
     const total = MISIONES_GRATUITAS_REQUERIDAS.length;
-    const desbloqueado = completadas === total;
-
     document.getElementById("menu-subtitle").textContent =
-        desbloqueado
-            ? "Ya completaste los pasos gratis. Ahora puedes ganar más puestos."
+        completadas === total
+            ? "Ya completaste los pasos gratis. Puedes seguir usando las acciones disponibles."
             : "Toca los pasos gratis para adelantar tu canción.";
 
     const contenido = document.getElementById("menu-contenido");
@@ -1120,21 +1043,6 @@ function mostrarOpcionesSubir() {
             <div class="action-left"><span class="action-icon">👍</span><div><div class="action-title">Seguir en Facebook</div></div></div>
             <div class="action-right"><span class="action-reward">+1</span><span class="action-arrow">›</span></div>
         </div>
-
-        ${desbloqueado ? `
-            <div class="offerwall-unlock-card">
-                <div class="offerwall-unlock-kicker">🔓 DESBLOQUEADO</div>
-                <strong>Misiones Extra</strong>
-                <span>Completa las que quieras y gana más puestos para tu canción.</span>
-                <button id="offerwall-open-btn" type="button" onclick="abrirOfferwall()">
-                    🎁 GANAR MÁS PUESTOS
-                </button>
-            </div>
-        ` : `
-            <div class="offerwall-locked-card">
-                🔒 Completa los ${total} pasos gratis para desbloquear Misiones Extra.
-            </div>
-        `}
 
         <button onclick="cerrarMenu()">✕ Cerrar</button>
     `;
