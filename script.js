@@ -1745,19 +1745,23 @@ function tarjetaStage(item, tipo, posicion) {
         const action = document.createElement("span");
         action.className = "stage-card-action";
 
+        const remaining = Number(item.presence_remaining_seconds || 0);
+        const minutos = Math.floor(remaining / 60);
+        const segundos = String(Math.max(0, remaining % 60)).padStart(2, "0");
+
         if (presenceStatus === "active") {
-            action.textContent = "TAP TAPS ACTIVOS · MANTÉN TU CANCIÓN";
+            action.textContent = "● ACTIVA · TAP TAPS MANTIENEN TU TURNO";
 
         } else if (presenceStatus === "expiring") {
-            action.textContent = "⚠️ HAZ TAP TAPS PARA MANTENERLA";
+            action.textContent = `⚠ POR INACTIVARSE · ${minutos}:${segundos} RESTANTES`;
 
         } else {
-            action.textContent = "⚫ SIN TAP TAPS · RECUPERA TU TURNO";
+            action.textContent = "○ INACTIVA · DA TAP TAPS PARA REACTIVAR";
         }
 
         const freeHint = document.createElement("span");
         freeHint.className = "stage-free-hint";
-        freeHint.textContent = "Toca para adelantarla gratis";
+        freeHint.textContent = "TOCA PARA VER CÓMO SUBIRLA";
 
         action.appendChild(document.createElement("br"));
         action.appendChild(freeHint);

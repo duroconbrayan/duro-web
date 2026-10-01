@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Playlist del Directo | DURO</title>
     <meta name="description" content="La comunidad controla la playlist del stream de DURO con Brayan.">
-    <link rel="stylesheet" href="style.css?v=22">
+    <link rel="stylesheet" href="style.css?v=23">
 </head>
 <body class="stage-v2">
 <div class="stage-glow"></div>
@@ -13,8 +13,12 @@
 <div class="page-wrap">
     <section class="live-stage" aria-label="Playlist del directo">
         <header class="stage-header">
-            <div class="stage-brand"><h1 class="wordmark">DURO</h1><span class="stage-tagline">TÚ MANDAS LA MÚSICA</span></div>
+            <div class="stage-brand">
+                <img class="duro-logo" src="duro-logo.png" alt="DURO">
+                <div class="brand-copy"><span class="brand-kicker">LIVE MUSIC CONTROL</span><span class="stage-tagline">TÚ MANDAS LA MÚSICA</span></div>
+            </div>
             <div class="playlist-header-controls">
+                <div class="live-control-badge">CONTROL DEL LIVE</div>
                 <div class="skin-switch" aria-label="Elegir apariencia">
                     <button class="skin-option" id="skin-duro-btn" type="button" onclick="aplicarSkin('duro')">🔥 DURO</button>
                     <button class="skin-option" id="skin-ice-btn" type="button" onclick="aplicarSkin('ice')">❄️ ICE</button>
@@ -23,7 +27,11 @@
             </div>
         </header>
 
-        <div class="stage-instruction"><span>DESLIZA LA LISTA</span><strong>TOCA TU CANCIÓN PARA ADELANTARLA</strong></div>
+        <div class="stage-instruction">
+            <span><b>01</b> TOCA TU CANCIÓN</span>
+            <span><b>02</b> USA TAP TAPS PARA MANTENERLA</span>
+            <span><b>03</b> SUBE PUESTOS DESDE AQUÍ</span>
+        </div>
 
         <!-- AHORA SUENA -->
         <section class="stage-now-playing" aria-label="Canción actual">
@@ -85,6 +93,6 @@
 <div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
 <div id="song-menu" class="song-menu"><h3>Adelanta tu canción</h3><div id="selected-song"></div><p id="menu-subtitle"></p><div id="menu-contenido"><button id="btn-subir" onclick="mostrarOpcionesSubir()">⚡ Adelantar canción</button><button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Pasar al #1</button><button onclick="cerrarMenu()">❌ Cancelar</button></div></div>
 
-<script src="script.js?v=21"></script>
+<script src="script.js?v=23"></script>
 </body>
 </html>
