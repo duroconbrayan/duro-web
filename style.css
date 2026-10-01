@@ -30,3 +30,97 @@ main{position:relative;z-index:1;padding:22px 22px 70px}.page-wrap{width:min(146
 @media(max-width:760px){main{padding:0 0 65px}.page-wrap{width:100%}.live-stage{grid-template-columns:1fr;grid-template-areas:"header" "guide" "now" "skip" "tap" "queue" "playlists";gap:0;padding:0 12px 18px;border-left:0;border-right:0;border-radius:0}.stage-header{min-height:88px;padding:8px 0}.stage-brand{gap:8px}.duro-logo{width:132px;max-height:67px}.brand-copy{display:none}.live-control-badge{display:none}.playlist-header-controls{gap:7px}.skin-switch{padding:3px}.skin-option{font-size:7px;padding:7px 9px}.live-status{font-size:7px;padding:8px 9px}.stage-instruction{display:flex;overflow-x:auto;gap:7px;padding:9px 0 13px;scrollbar-width:none}.stage-instruction::-webkit-scrollbar{display:none}.stage-instruction span{flex:0 0 auto;min-height:30px;font-size:6px;padding:7px 9px}.stage-instruction b{width:20px;height:20px}.stage-current-display{min-height:230px;border-radius:17px}.stage-current-display:after{display:none}.stage-current-display .stage-song-card{width:94%;min-height:205px;padding:45px 12px 18px}.stage-current-display .stage-comment{font-size:clamp(36px,11vw,52px)}.stage-current-display .stage-requester{font-size:9px}.skip-banner{height:64px;margin:10px 0 0;grid-template-columns:1fr 108px}.skip-cta{font-size:22px}.skip-price{font-size:24px}.skip-paypal{font-size:5px}.skip-paypal strong{font-size:26px}.tap-player{margin:12px 0 0;padding:17px;border-radius:18px}.tap-callout{font-size:32px;max-width:78%}.tap-counter{position:absolute;right:16px;top:20px}.tap-counter>strong{font-size:45px}.tap-counter span{font-size:7px}.tap-track{margin:22px 0 10px;height:12px}.tap-player-bottom{font-size:6px}.live-likes-ranking{margin:15px -17px -17px;padding:13px 17px 15px}.live-likes-ranking-title{font-size:17px}.live-likes-ranking-item{grid-template-columns:24px 28px minmax(0,1fr) auto;min-height:38px}.stage-live-list{margin-top:17px}.stage-live-list-header h2{font-size:37px}.stage-queue-legend{gap:6px;max-width:245px;font-size:5px}.stage-live-list-items .stage-song-card{min-height:92px;padding:15px 12px 12px 72px}.stage-position-badge{left:13px;font-size:28px}.stage-live-list-items .stage-comment{font-size:20px}.stage-live-list-items .stage-card-action{font-size:6px}.offline-mode{margin-top:18px;padding:13px}.offline-mode:before{font-size:16px}.offline-playlist-info strong{font-size:15px}.offline-playlist-info span{font-size:6px}.playlist-socials{margin-top:14px;padding:14px 0}.playlist-socials-links a{width:31px;height:31px}}
 @media(max-width:390px){.duro-logo{width:112px}.skin-option{padding:6px 7px}.live-status{padding:7px}.skip-cta{font-size:19px}.skip-banner{grid-template-columns:1fr 96px}.tap-callout{font-size:28px}.tap-counter>strong{font-size:39px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== DURO LIVE — V27 COMPOSITION ===== */
+.live-stage{
+  grid-template-columns:minmax(0,1.62fr) minmax(360px,.78fr);
+  grid-template-areas:
+    "header header"
+    "guide guide"
+    "now top"
+    "skip top"
+    "tap tap"
+    "queue queue";
+  column-gap:18px;
+  row-gap:0;
+}
+.stage-now-playing{grid-area:now;margin-top:0}
+.top-live-panel{
+  grid-area:top;
+  margin-top:0;
+  min-height:0;
+  align-self:stretch;
+  padding:18px 18px 16px;
+  border:1px solid rgba(255,91,0,.42);
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 70% 20%,rgba(255,77,0,.13),transparent 42%),
+    linear-gradient(145deg,rgba(21,12,8,.96),rgba(6,6,6,.98));
+  box-shadow:inset 0 1px rgba(255,255,255,.04),0 18px 45px rgba(0,0,0,.28);
+  overflow:hidden;
+}
+.top-live-panel .live-likes-ranking-title{
+  margin:0 0 14px;
+  color:#ff9a59;
+  font:400 25px/1 var(--display);
+  letter-spacing:.03em;
+}
+.top-live-panel #live-likes-ranking-list{display:flex;flex-direction:column;gap:7px}
+.top-live-panel .live-likes-ranking-item{
+  grid-template-columns:30px 34px minmax(0,1fr) auto;
+  min-height:43px;
+  padding:6px 9px;
+  border-color:rgba(255,255,255,.07);
+  background:rgba(255,255,255,.025);
+}
+.top-live-panel .live-likes-ranking-position{font-size:17px;color:#ffb11b}
+.top-live-panel .live-likes-ranking-avatar{width:30px;height:30px}
+.top-live-panel .live-likes-ranking-user{font-size:10px}
+.top-live-panel .live-likes-ranking-count{font-size:10px}
+.top-live-panel .live-likes-ranking-empty{padding:32px 0;font-size:10px}
+.skip-banner{grid-area:skip;margin-top:12px}
+.tap-player{grid-area:tap;margin-top:18px;cursor:default}
+.stage-live-list{grid-area:queue}
+.offline-mode{display:none!important}
+
+/* The Tap Tap module is now a full-width bar below the two upper panels. */
+.tap-player{
+  display:block;
+  padding:22px 24px 20px;
+  border-radius:19px;
+  background:
+    radial-gradient(circle at 20% 50%,rgba(255,74,0,.16),transparent 35%),
+    linear-gradient(110deg,rgba(25,12,7,.98),rgba(8,8,8,.98));
+  border-color:rgba(255,92,0,.5);
+}
+.tap-player-top{align-items:flex-end}
+.tap-callout{max-width:none}
+.tap-track{margin-top:17px}
+
+/* Queue is intentionally the final major block. */
+.stage-live-list{margin-top:18px}
+.stage-live-list-header{padding-bottom:12px}
+.stage-live-list-items{grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.stage-live-list-items .stage-song-card{min-height:96px}
+
+@media(max-width:1100px) and (min-width:761px){
+  .live-stage{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"header" "guide" "now" "top" "skip" "tap" "queue";
+  }
+  .stage-live-list-items{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:760px){
+  .live-stage{
+    grid-template-columns:1fr;
+    grid-template-areas:"header" "guide" "now" "top" "skip" "tap" "queue";
+  }
+  .top-live-panel{margin-top:12px;padding:15px;border-radius:17px}
+  .top-live-panel .live-likes-ranking-title{font-size:20px;margin-bottom:10px}
+  .top-live-panel .live-likes-ranking-item{min-height:39px}
+  .skip-banner{margin-top:10px}
+  .tap-player{margin-top:12px;padding:17px}
+  .stage-live-list{margin-top:16px}
+  .stage-live-list-items{grid-template-columns:1fr}
+}

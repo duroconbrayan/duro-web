@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Playlist del Directo | DURO</title>
     <meta name="description" content="La comunidad controla la playlist del stream de DURO con Brayan.">
-    <link rel="stylesheet" href="style.css?v=26">
+    <link rel="stylesheet" href="style.css?v=27">
 </head>
 <body class="stage-v2">
 <div class="stage-glow"></div>
@@ -19,11 +19,7 @@
             </div>
             <div class="playlist-header-controls">
                 <div class="live-control-badge">CONTROL DEL LIVE</div>
-                <div class="skin-switch" aria-label="Elegir apariencia">
-                    <button class="skin-option" id="skin-duro-btn" type="button" onclick="aplicarSkin('duro')">🔥 DURO</button>
-                    <button class="skin-option" id="skin-ice-btn" type="button" onclick="aplicarSkin('ice')">❄️ ICE</button>
-                </div>
-                <div class="live-status"><span class="live-dot"></span> EN VIVO</div>
+<div class="live-status"><span class="live-dot"></span> EN VIVO</div>
             </div>
         </header>
 
@@ -43,6 +39,9 @@
             </div>
         </section>
 
+        <!-- TOP DEL LIVE -->
+        <aside class="top-live-panel" id="live-likes-ranking" aria-label="Top del Live"><div class="live-likes-ranking-title">❤️ TOP DEL LIVE</div><div id="live-likes-ranking-list">Esperando corazones...</div></aside>
+
         <!-- SALTAR AL #1 / PAYPAL -->
         <div class="skip-banner">
             <button onclick="abrirSelectorSaltar()">
@@ -58,15 +57,14 @@
 
         <!-- TAP TAPS -->
 
-        <section class="tap-player" id="live-likes" onclick="toggleTopLikes()" aria-label="Meta de Tap Taps">
+        <section class="tap-player" id="live-likes"  aria-label="Meta de Tap Taps">
             <div class="tap-player-top">
                 <div><span class="tap-eyebrow">❤️ TAP TAPS DEL LIVE</span><strong class="tap-callout">DA CORAZÓN Y CAMBIA LA CANCIÓN</strong></div>
                 <div class="tap-counter"><strong id="live-likes-count">0</strong><span>/ <b id="live-likes-goal">5.000</b></span></div>
             </div>
             <div class="tap-track" aria-label="Progreso hacia la siguiente canción"><div class="tap-progress" id="live-likes-progress"></div><span class="tap-heart">❤</span></div>
             <div class="tap-player-bottom"><span id="live-likes-message">CADA TAP TAP LA ACERCA A LA SIGUIENTE</span><span class="tap-total">TOTAL DEL LIVE: <b id="live-likes-total">0</b> ❤️</span></div>
-            <div class="live-likes-ranking" id="live-likes-ranking"><div class="live-likes-ranking-title">❤️ TOP DEL LIVE</div><div id="live-likes-ranking-list">Esperando corazones...</div></div>
-        </section>
+</section>
 
         <div id="stage-event" class="stage-event" role="status" aria-live="assertive">
             <div class="stage-event-icon" id="stage-event-icon">⚡</div>
@@ -92,6 +90,6 @@
 <div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
 <div id="song-menu" class="song-menu"><h3>Adelanta tu canción</h3><div id="selected-song"></div><p id="menu-subtitle"></p><div id="menu-contenido"><button id="btn-subir" onclick="mostrarOpcionesSubir()">⚡ Adelantar canción</button><button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Pasar al #1</button><button onclick="cerrarMenu()">❌ Cancelar</button></div></div>
 
-<script src="script.js?v=26"></script>
+<script src="script.js?v=27"></script>
 </body>
 </html>
