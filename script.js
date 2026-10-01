@@ -1716,6 +1716,13 @@ function tarjetaStage(item, tipo, posicion) {
         label.textContent = `⚫ INACTIVA · #${posicion + 1}`;
     }
 
+    if (tipo === "queue") {
+        const positionBadge = document.createElement("span");
+        positionBadge.className = "stage-position-badge";
+        positionBadge.textContent = String(posicion + 1).padStart(2, "0");
+        card.appendChild(positionBadge);
+    }
+
     const comment = document.createElement("strong");
     const texto = textoSolicitud(item);
 
@@ -2546,12 +2553,20 @@ function actualizarRankingStage(topUsers) {
         rankingList.innerHTML = '<div class="live-likes-ranking-empty">Todavía no hay ranking.</div>';
         return;
     }
-    rankingList.innerHTML = topUsers.slice(0, 5).map((user, index) => `
+    rankingList.innerHTML = topUsers.slice(0, 5).map((user, index) => {
+        const username = String(user.username || "").replace(/^@+/, "");
+        const initials = (username || "?").slice(0, 2).toUpperCase();
+        const avatar = user.avatar_url
+            ? `<img class="live-likes-ranking-avatar" src="${escaparHTML(user.avatar_url)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
+            : `<span class="live-likes-ranking-avatar live-likes-ranking-avatar-fallback">${escaparHTML(initials)}</span>`;
+        return `
         <div class="live-likes-ranking-item">
-            <span class="live-likes-ranking-position">${["🥇", "🥈", "🥉"][index] || `${index + 1}.`}</span>
-            <strong class="live-likes-ranking-user">@${escaparHTML(String(user.username || "").replace(/^@+/, ""))}</strong>
+            <span class="live-likes-ranking-position">${["🥇", "🥈", "🥉"][index] || `${index + 1}`}</span>
+            ${avatar}
+            <strong class="live-likes-ranking-user">@${escaparHTML(username)}</strong>
             <span class="live-likes-ranking-count">${Number(user.likes || 0).toLocaleString("es-CO")} ❤️</span>
-        </div>`).join("");
+        </div>`;
+    }).join("");
 }
 
 async function cargarStageLiveLikes() {
