@@ -1710,10 +1710,10 @@ function tarjetaStage(item, tipo, posicion) {
                 : `🟡 POR INACTIVARSE · #${posicion + 1}`;
 
     } else {
-        label.textContent =
-            posicion === 0
-                ? "⚫ INACTIVA · SIGUIENTE"
-                : `⚫ INACTIVA · #${posicion + 1}`;
+        // Las inactivas siguen visibles y CONSERVAN su puesto.
+        // No pueden reproducirse mientras no recuperen presencia,
+        // pero /next tampoco renumera la cola por presencia.
+        label.textContent = `⚫ INACTIVA · #${posicion + 1}`;
     }
 
     const comment = document.createElement("strong");
@@ -1752,7 +1752,7 @@ function tarjetaStage(item, tipo, posicion) {
             action.textContent = "⚠️ HAZ TAP TAPS PARA MANTENERLA";
 
         } else {
-            action.textContent = "TAP TAPS PARA RECUPERAR EL TURNO";
+            action.textContent = "⚫ SIN TAP TAPS · RECUPERA TU TURNO";
         }
 
         const freeHint = document.createElement("span");
@@ -1932,16 +1932,20 @@ function renderizarCarruselStage(played, playing, queue) {
                     </span>
 
                     <h2>
-                        Canciones en espera
+                        Canciones en cola
                     </h2>
+
+                    <div class="stage-queue-legend" aria-label="Estados de la cola">
+                        <span><i class="legend-dot legend-active"></i> ACTIVAS AVANZAN</span>
+                        <span><i class="legend-dot legend-expiring"></i> POR INACTIVARSE</span>
+                        <span><i class="legend-dot legend-inactive"></i> INACTIVAS · NO CUENTAN</span>
+                    </div>
                 </div>
 
-                <span
-                    id="stage-live-list-count"
-                    class="stage-live-list-count"
-                >
-                    0
-                </span>
+                <div class="stage-live-list-meta">
+                    <span id="stage-live-active-count" class="stage-live-active-count">0 ACTIVAS</span>
+                    <span id="stage-live-list-count" class="stage-live-list-count">0</span>
+                </div>
             </div>
 
             <div
@@ -1984,29 +1988,59 @@ function renderizarCarruselStage(played, playing, queue) {
 /*
  * LISTA EN VIVO
  *
- * La experiencia pública solo muestra canciones que
- * tienen Tap Taps activos. Las canciones inactivas
- * permanecen guardadas en el Worker para poder volver
- * a activarse, pero no ocupan una posición visible.
+ * Ahora mostramos TODA la cola para que el usuario pueda
+ * ver qué canciones están activas, cuáles están por
+ * inactivarse y cuáles perdieron presencia.
+ *
+ * La regla de reproducción sigue estando en el Worker:
+ * /next elige únicamente la primera canción activa
+ * (active o expiring) según sort_order.
+ *
+ * Los puestos visibles pertenecen a TODA la cola. Una canción
+ * inactiva conserva su puesto, pero /next la salta hasta que
+ * vuelva a tener presencia.
  */
 
-const queueActivas = queue
-    .filter((item) =>
+const queueOrdenada = [...queue].sort(
+    (a, b) =>
+        Number(a.sort_order) -
+        Number(b.sort_order)
+);
+
+const queueActivas = queueOrdenada.filter(
+    (item) =>
         item.presence_status === "active" ||
         item.presence_status === "expiring"
-    )
-    .sort(
-        (a, b) =>
-            Number(a.sort_order) -
-            Number(b.sort_order)
-    );
+);
 
-queueActivas.forEach((item, index) => {
+if (listaCount) {
+    listaCount.textContent = String(queueOrdenada.length);
+}
+
+const activeCount = document.getElementById("stage-live-active-count");
+
+if (activeCount) {
+    activeCount.textContent = `${queueActivas.length} ACTIVAS`;
+}
+
+// Los puestos pertenecen a TODA la cola, no solamente a las
+// canciones con presencia. Una canción inactiva conserva su
+// posición y puede volver a activarse sin perderla.
+const positionById = new Map(
+    queueOrdenada.map((item, index) => [
+        String(item.id),
+        index
+    ])
+);
+
+queueOrdenada.forEach((item) => {
+    const posicion = positionById.get(String(item.id));
+
     listaItems.appendChild(
         tarjetaStage(
             item,
             "queue",
-            index
+            posicion
         )
     );
 });
@@ -2309,10 +2343,11 @@ async function cargarStageHistorial() {
             .filter((item) => item.status === "queue")
             .sort((a, b) => Number(a.sort_order) - Number(b.sort_order));
 
-        const queue = queueCompleta.filter((item) =>
-            item.presence_status === "active" ||
-            item.presence_status === "expiring"
-        );
+        // La interfaz muestra TODA la cola.
+        // La presencia solo determina si una canción está activa,
+        // por inactivarse o inactiva. /next en el Worker sigue
+        // siendo quien decide cuál puede reproducirse.
+        const queue = queueCompleta;
 
         const firma = JSON.stringify(requests.map((item) => [
     item.id,
