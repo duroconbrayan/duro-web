@@ -854,6 +854,76 @@ function seleccionarParaSaltar(id, cancion) {
     mostrarOpcionesSaltar();
 }
 
+let estadosMisiones = {};
+let cargaEstadosMisionesActiva = false;
+
+async function cargarEstadosMisiones() {
+
+    if (cargaEstadosMisionesActiva) return;
+
+    cargaEstadosMisionesActiva = true;
+
+    try {
+
+        const response = await fetch(
+            `https://playlist-api.bookingelbrayan.workers.dev/mission-status?visitor_id=${encodeURIComponent(visitorId)}`,
+            { method: "GET" }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        estadosMisiones = data.missions || {};
+
+        document
+            .querySelectorAll("[data-mission-action]")
+            .forEach(card => {
+
+                const action = card.dataset.missionAction;
+                const estado = estadosMisiones[action] || "available";
+                const reward = card.querySelector(".action-reward");
+                const arrow = card.querySelector(".action-arrow");
+
+                card.classList.remove(
+                    "mission-pending",
+                    "mission-completed"
+                );
+
+                card.style.pointerEvents = "";
+
+                if (estado === "completed") {
+
+                    card.classList.add("mission-completed");
+                    card.style.pointerEvents = "none";
+
+                    if (reward) reward.textContent = "✓ COMPLETADO";
+                    if (arrow) arrow.textContent = "✓";
+
+                } else if (estado === "pending") {
+
+                    card.classList.add("mission-pending");
+                    card.style.pointerEvents = "none";
+
+                    if (reward) reward.textContent = "EN REVISIÓN";
+                    if (arrow) arrow.textContent = "…";
+
+                }
+            });
+
+    } catch (error) {
+
+        console.warn(
+            "No se pudieron cargar los estados de las misiones:",
+            error
+        );
+
+    } finally {
+        cargaEstadosMisionesActiva = false;
+    }
+}
+
 function mostrarOpcionesSubir() {
 
     document.getElementById("menu-subtitle").textContent =
@@ -889,10 +959,10 @@ function mostrarOpcionesSubir() {
     O ADELANTA GRATIS
 </div>
 
-<div class="action-card" onclick="mostrarPrueba(
+<div class="action-card" data-mission-action="twitch_follow" onclick="mostrarPrueba(
     'twitch_follow',
     'Seguir en Twitch',
-    '+10',
+    '+5',
     'https://www.twitch.tv/duroconbrayan'
 )">
     <div class="action-left">
@@ -904,15 +974,15 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+10</span>
+    <span class="action-reward">+5</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
 
-<div class="action-card" onclick="mostrarPrueba(
+<div class="action-card" data-mission-action="uraba" onclick="mostrarPrueba(
     'uraba',
     'Guardar playlist URABÁ',
-    '+5',
+    '+3',
     'https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0'
 )">
 
@@ -930,7 +1000,7 @@ function mostrarOpcionesSubir() {
 
         <div class="action-right">
 
-        <span class="action-reward">+5</span>
+        <span class="action-reward">+3</span>
 
         <span class="action-arrow">›</span>
 
@@ -938,17 +1008,17 @@ function mostrarOpcionesSubir() {
 
 </div>
 
-<div class="action-card" onclick="mostrarPrueba(
-    'artista_destacado',
-    'Completa la misión: suscríbete, dale Me gusta y comenta',
-    '+15',
+<div class="action-card" data-mission-action="artista_angelito" onclick="mostrarPrueba(
+    'artista_angelito',
+    'Suscríbete, dale Me gusta y comenta en el video de Angelito',
+    '+7',
     'https://www.youtube.com/watch?v=O3jcOvUVdr8'
 )">
     <div class="action-left">
         <span class="action-icon">🔥</span>
 
         <div>
-            <div class="action-title">Misión del artista</div>
+            <div class="action-title">Misión del artista — Angelito</div>
             <div class="action-description">
                 Suscríbete, dale Me gusta y comenta. Luego envía una captura.
             </div>
@@ -956,15 +1026,38 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-        <span class="action-reward">+15</span>
+        <span class="action-reward">+7</span>
         <span class="action-arrow">›</span>
     </div>
 </div>
 
-<div class="action-card" onclick="mostrarPrueba(
+<div class="action-card" data-mission-action="artista_jlopez" onclick="mostrarPrueba(
+    'artista_jlopez',
+    'Suscríbete, dale Me gusta y comenta en el video de J López',
+    '+7',
+    'https://www.youtube.com/watch?v=Hmuqjha1uUk'
+)">
+    <div class="action-left">
+        <span class="action-icon">🎤</span>
+
+        <div>
+            <div class="action-title">Misión del artista — J López</div>
+            <div class="action-description">
+                Mira el video, suscríbete, dale Me gusta y comenta. Luego envía una captura.
+            </div>
+        </div>
+    </div>
+
+    <div class="action-right">
+        <span class="action-reward">+7</span>
+        <span class="action-arrow">›</span>
+    </div>
+</div>
+
+<div class="action-card" data-mission-action="gafas_club" onclick="mostrarPrueba(
     'gafas_club',
     'Guardar playlist GAFAS CLUB',
-    '+5',
+    '+3',
     'https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P'
 )">
     <div class="action-left">
@@ -976,15 +1069,15 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+5</span>
+    <span class="action-reward">+3</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
 
-<div class="action-card" onclick="mostrarPrueba(
+<div class="action-card" data-mission-action="instagram_like" onclick="mostrarPrueba(
     'instagram_like',
     'Dar like a la última publicación',
-    '+2',
+    '+1',
     'https://www.instagram.com/p/DYXjV8YkTiA/'
 )">
     <div class="action-left">
@@ -996,12 +1089,12 @@ function mostrarOpcionesSubir() {
     </div>
 
     <div class="action-right">
-    <span class="action-reward">+2</span>
+    <span class="action-reward">+1</span>
     <span class="action-arrow">›</span>
 </div>
 </div>
 
-<div class="action-card" onclick="mostrarPrueba(
+<div class="action-card" data-mission-action="instagram_follow" onclick="mostrarPrueba(
     'instagram_follow',
     'Seguir en Instagram',
     '+1',
@@ -1022,7 +1115,7 @@ function mostrarOpcionesSubir() {
 </div>
 
 
-<div class="action-card" onclick="mostrarPrueba(
+<div class="action-card" data-mission-action="facebook_follow" onclick="mostrarPrueba(
     'facebook_follow',
     'Seguir en Facebook',
     '+1',
@@ -1046,9 +1139,21 @@ function mostrarOpcionesSubir() {
 
 `;
 
+    cargarEstadosMisiones();
+
 }
 
 function mostrarPrueba(action, titulo, recompensa, urlDestino) {
+
+    if (estadosMisiones[action] === "completed") {
+        alert("✓ Ya completaste esta misión.");
+        return;
+    }
+
+    if (estadosMisiones[action] === "pending") {
+        alert("Tu prueba de esta misión ya está en revisión.");
+        return;
+    }
 
     const contenido = document.getElementById("menu-contenido");
 

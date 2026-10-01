@@ -10197,3 +10197,69 @@ body.stage-v2.offline .back-link {
 body.stage-v2.offline .offline-playlists {
     display: grid !important;
 }
+
+/* ============ ESTADOS DE MISIONES ============ */
+
+.action-card.mission-completed {
+    cursor: default;
+    pointer-events: none;
+    opacity: .72;
+    border-color: rgba(198,255,77,.28);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(198,255,77,.08),
+            rgba(18,18,20,.98)
+        );
+}
+
+.action-card.mission-completed:hover {
+    transform: none;
+    border-color: rgba(198,255,77,.28);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(198,255,77,.08),
+            rgba(18,18,20,.98)
+        );
+}
+
+.action-card.mission-completed .action-title {
+    color: var(--lime);
+}
+
+.action-card.mission-completed .action-reward {
+    min-width: auto;
+    background: rgba(198,255,77,.12);
+    color: var(--lime);
+    border: 1px solid rgba(198,255,77,.22);
+}
+
+.action-card.mission-completed .action-arrow {
+    color: var(--lime);
+}
+
+.action-card.mission-pending {
+    cursor: default;
+    pointer-events: none;
+    opacity: .76;
+    border-color: rgba(255,255,255,.12);
+}
+
+.action-card.mission-pending:hover {
+    transform: none;
+    border-color: rgba(255,255,255,.12);
+}
+
+.action-card.mission-pending .action-reward {
+    min-width: auto;
+    background: rgba(255,255,255,.06);
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,.10);
+    font-size: 11px;
+    letter-spacing: .4px;
+}
+
+.action-card.mission-pending .action-arrow {
+    color: var(--muted);
+}
