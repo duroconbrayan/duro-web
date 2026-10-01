@@ -232,7 +232,7 @@ async function comprobarEstadoLive() {
             }
 
             if (offlineMode) {
-                offlineMode.style.display = "";
+                offlineMode.style.display = "grid";
             }
 
             detenerPollingDatosStage();

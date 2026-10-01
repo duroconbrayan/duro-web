@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Playlist del Directo | DURO</title>
     <meta name="description" content="La comunidad controla la playlist del stream de DURO con Brayan.">
-    <link rel="stylesheet" href="style.css?v=27">
+    <link rel="stylesheet" href="style.css?v=28">
 </head>
 <body class="stage-v2">
 <div class="stage-glow"></div>
@@ -72,11 +72,24 @@
             <div class="stage-event-title" id="stage-event-title"></div>
             <div class="stage-event-user" id="stage-event-user"></div>
         </div>
-        <div id="offline-mode" class="offline-mode">
-        <div class="offline-playlists">
-            <a class="offline-playlist-card" href="https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P" target="_blank"><img class="offline-playlist-cover" src="gafas-club.jpeg" alt="Playlist GAFAS CLUB"><div class="offline-playlist-info"><strong>GAFAS CLUB</strong><span>Abrir en Spotify →</span></div></a>
-            <a class="offline-playlist-card" href="https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0" target="_blank"><img class="offline-playlist-cover" src="uraba.jpeg" alt="Playlist URABÁ"><div class="offline-playlist-info"><strong>URABÁ</strong><span>Abrir en Spotify →</span></div></a>
+    </section>
+
+    <!-- MODO OFFLINE: cuando no hay directo, la página se convierte en un portal de playlists. -->
+    <section id="offline-mode" class="offline-mode" aria-label="Playlists de DURO">
+        <div class="offline-heading">
+            <span class="offline-kicker">DURO SIN DIRECTO</span>
+            <h2>ESCUCHA MIS PLAYLISTS</h2>
+            <p>El directo está apagado. Mientras tanto, sigue escuchando DURO.</p>
         </div>
+        <div class="offline-playlists">
+            <a class="offline-playlist-card" href="https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P" target="_blank" rel="noopener noreferrer">
+                <img class="offline-playlist-cover" src="gafas-club.jpeg" alt="Playlist GAFAS CLUB">
+                <div class="offline-playlist-info"><strong>GAFAS CLUB</strong><span>ABRIR EN SPOTIFY <b>→</b></span></div>
+            </a>
+            <a class="offline-playlist-card" href="https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0" target="_blank" rel="noopener noreferrer">
+                <img class="offline-playlist-cover" src="uraba.jpeg" alt="Playlist URABÁ">
+                <div class="offline-playlist-info"><strong>URABÁ</strong><span>ABRIR EN SPOTIFY <b>→</b></span></div>
+            </a>
         </div>
     </section>
 
@@ -90,6 +103,6 @@
 <div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
 <div id="song-menu" class="song-menu"><h3>Adelanta tu canción</h3><div id="selected-song"></div><p id="menu-subtitle"></p><div id="menu-contenido"><button id="btn-subir" onclick="mostrarOpcionesSubir()">⚡ Adelantar canción</button><button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Pasar al #1</button><button onclick="cerrarMenu()">❌ Cancelar</button></div></div>
 
-<script src="script.js?v=27"></script>
+<script src="script.js?v=28"></script>
 </body>
 </html>
