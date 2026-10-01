@@ -3,88 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Playlist del Directo | DURO</title>
-    <meta name="description" content="La comunidad controla la playlist del stream de DURO con Brayan.">
-    <link rel="stylesheet" href="style.css?v=16">
+    <meta name="theme-color" content="#090909">
+    <meta name="description" content="DURO LIVE — la comunidad controla la música del directo.">
+    <title>DURO LIVE | Playlist del Directo</title>
+    <link rel="stylesheet" href="style.css?v=30">
 </head>
+
 <body class="stage-v2">
-<div class="stage-glow"></div>
-<main>
-<div class="page-wrap">
-    <section class="live-stage" aria-label="Playlist del directo">
-        <header class="stage-header">
-            <div class="stage-brand"><h1 class="wordmark">DURO</h1><span class="stage-tagline">TÚ MANDAS LA MÚSICA</span></div>
-            <div class="playlist-header-controls">
-                <div class="skin-switch" aria-label="Elegir apariencia">
-                    <button class="skin-option" id="skin-duro-btn" type="button" onclick="aplicarSkin('duro')">🔥 DURO</button>
-                    <button class="skin-option" id="skin-ice-btn" type="button" onclick="aplicarSkin('ice')">❄️ ICE</button>
+    <div class="stage-glow" aria-hidden="true"></div>
+    <div class="noise" aria-hidden="true"></div>
+
+    <main>
+        <div class="page-wrap">
+
+            <section class="live-stage" aria-label="DURO LIVE — Playlist del directo">
+
+                <header class="stage-header">
+                    <div class="stage-brand">
+                        <img class="duro-logo" src="duro-logo.png" alt="DURO">
+                        <div class="stage-brand-copy">
+                            <span class="stage-live-kicker">LIVE MUSIC CONTROL</span>
+                            <span class="stage-tagline">TÚ MANDAS LA MÚSICA</span>
+                        </div>
+                    </div>
+
+                    <div class="playlist-header-controls">
+                        <div class="live-status">
+                            <span class="live-dot" aria-hidden="true"></span>
+                            <span>EN VIVO</span>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="stage-instruction">
+                    <span class="instruction-left">
+                        <i class="instruction-dot"></i>
+                        PLAYLIST DEL LIVE
+                    </span>
+                    <strong>TOCA UNA CANCIÓN · ADELÁNTALA GRATIS</strong>
                 </div>
-                <div class="live-status"><span class="live-dot"></span> EN VIVO</div>
+
+                <section class="stage-now-playing" aria-label="Canción actual">
+                    <div class="hero-overline">
+                        <span class="stage-section-label">AHORA SUENA</span>
+                        <span class="hero-live-chip"><span></span> LIVE</span>
+                    </div>
+
+                    <div id="stage-current-display" class="stage-current-display">
+                        <div class="stage-current-empty">
+                            <span class="stage-card-label">AHORA SUENA</span>
+                            <strong>Esperando la primera canción...</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="tap-player" id="live-likes" onclick="toggleTopLikes()" aria-label="Meta de Tap Taps">
+                    <div class="tap-topline">
+                        <div class="tap-copy">
+                            <span class="tap-eyebrow">❤️ APOYA EL LIVE</span>
+                            <strong class="tap-callout">DA TAP TAPS Y DESBLOQUEA LA SIGUIENTE</strong>
+                        </div>
+
+                        <div class="tap-counter" aria-live="polite">
+                            <strong id="live-likes-count">0</strong>
+                            <span>/ <b id="live-likes-goal">5.000</b></span>
+                        </div>
+                    </div>
+
+                    <div class="tap-progress-meta">
+                        <span id="live-likes-message">5.000 TAP TAPS PARA LA SIGUIENTE</span>
+                        <span class="tap-total">TOTAL DEL LIVE <b id="live-likes-total">0</b> ❤️</span>
+                    </div>
+
+                    <div class="tap-track" aria-label="Progreso hacia la siguiente canción">
+                        <div class="tap-progress" id="live-likes-progress"></div>
+                        <span class="tap-heart">❤</span>
+                        <span class="tap-track-glow" aria-hidden="true"></span>
+                    </div>
+
+                    <div class="tap-footer">
+                        <span>LA COMUNIDAD DECIDE QUÉ SUENA</span>
+                        <button type="button" class="tap-ranking-trigger" onclick="event.stopPropagation(); toggleTopLikes()">
+                            VER TOP 5 <span>↗</span>
+                        </button>
+                    </div>
+
+                    <div class="live-likes-ranking" id="live-likes-ranking">
+                        <div class="live-likes-ranking-title">❤️ TOP DEL LIVE</div>
+                        <div id="live-likes-ranking-list">Esperando corazones...</div>
+                    </div>
+                </section>
+
+                <div class="skip-banner">
+                    <button type="button" onclick="abrirSelectorSaltar()">
+                        <span class="skip-icon">⚡</span>
+                        <span class="skip-copy">
+                            <span class="skip-cta">QUIERO EL #1</span>
+                            <small>Sube tu canción directamente al primer puesto</small>
+                        </span>
+                        <span class="skip-price">$2</span>
+                    </button>
+                    <div class="skip-paypal">
+                        <span>APOYO SEGURO<br>CON PAYPAL</span>
+                        <strong>P</strong>
+                    </div>
+                </div>
+
+                <div class="live-footer-note">
+                    <span class="footer-pulse"></span>
+                    CADA APOYO SE VE EN EL DIRECTO
+                </div>
+
+                <div id="stage-event" class="stage-event" role="status" aria-live="assertive">
+                    <div class="event-grid" aria-hidden="true"></div>
+                    <div class="stage-event-icon" id="stage-event-icon">⚡</div>
+                    <div class="stage-event-kicker" id="stage-event-kicker">NUEVO EN LA LISTA</div>
+                    <div class="stage-event-title" id="stage-event-title"></div>
+                    <div class="stage-event-user" id="stage-event-user"></div>
+                    <div class="event-bottom-label">DURO LIVE</div>
+                </div>
+
+            </section>
+
+            <div id="offline-mode" class="offline-mode">
+                <div class="offline-brand">
+                    <img src="duro-logo.png" alt="DURO">
+                    <span>EL LIVE TERMINÓ</span>
+                </div>
+                <div class="offline-playlists">
+                    <a class="offline-playlist-card" href="https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P" target="_blank" rel="noopener">
+                        <img class="offline-playlist-cover" src="gafas-club.jpeg" alt="Playlist GAFAS CLUB">
+                        <div class="offline-playlist-info"><strong>GAFAS CLUB</strong><span>Abrir en Spotify →</span></div>
+                    </a>
+                    <a class="offline-playlist-card" href="https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0" target="_blank" rel="noopener">
+                        <img class="offline-playlist-cover" src="uraba.jpeg" alt="Playlist URABÁ">
+                        <div class="offline-playlist-info"><strong>URABÁ</strong><span>Abrir en Spotify →</span></div>
+                    </a>
+                </div>
             </div>
-        </header>
 
-        <div class="stage-instruction"><span>DESLIZA LA LISTA</span><strong>TOCA TU CANCIÓN PARA ADELANTARLA</strong></div>
-
-        <!-- AHORA SUENA -->
-        <section class="stage-now-playing" aria-label="Canción actual">
-            <div class="stage-section-label">AHORA SUENA</div>
-
-            <div id="stage-current-display" class="stage-current-display">
-                <span class="stage-card-label">AHORA SUENA</span>
-                <strong>Esperando la primera canción...</strong>
+            <div class="playlist-socials">
+                <span class="playlist-socials-label">DURO EN TODAS PARTES</span>
+                <div class="playlist-socials-links">
+                    <a href="https://www.tiktok.com/@duroconbrayan" target="_blank" rel="noopener" aria-label="TikTok">♪</a>
+                    <a href="https://www.instagram.com/brayan_trampa" target="_blank" rel="noopener" aria-label="Instagram">◎</a>
+                    <a href="https://youtube.com/@Brayanus14" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+                    <a href="https://www.facebook.com/duroconbrayan" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+                    <a href="https://www.twitch.tv/duroconbrayan" target="_blank" rel="noopener" aria-label="Twitch">♜</a>
+                </div>
             </div>
-        </section>
 
-        <!-- SALTAR AL #1 / PAYPAL -->
-        <div class="skip-banner">
-            <button onclick="abrirSelectorSaltar()">
-                <span class="skip-cta">⚡ SALTAR AL #1</span>
-                <span class="skip-price">$2</span>
-            </button>
-
-            <div class="skip-paypal">
-                <span>PAGO SEGURO<br>CON PAYPAL</span>
-                <strong>P</strong>
-            </div>
         </div>
+    </main>
 
-        <!-- TAP TAPS -->
+    <div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
 
-        <section class="tap-player" id="live-likes" onclick="toggleTopLikes()" aria-label="Meta de Tap Taps">
-            <div class="tap-player-top">
-                <div><span class="tap-eyebrow">❤️ TAP TAPS DEL LIVE</span><strong class="tap-callout">DA CORAZÓN Y CAMBIA LA CANCIÓN</strong></div>
-                <div class="tap-counter"><strong id="live-likes-count">0</strong><span>/ <b id="live-likes-goal">5.000</b></span></div>
-            </div>
-            <div class="tap-track" aria-label="Progreso hacia la siguiente canción"><div class="tap-progress" id="live-likes-progress"></div><span class="tap-heart">❤</span></div>
-            <div class="tap-player-bottom"><span id="live-likes-message">CADA TAP TAP LA ACERCA A LA SIGUIENTE</span><span class="tap-total">TOTAL DEL LIVE: <b id="live-likes-total">0</b> ❤️</span></div>
-            <div class="live-likes-ranking" id="live-likes-ranking"><div class="live-likes-ranking-title">❤️ TOP DEL LIVE</div><div id="live-likes-ranking-list">Esperando corazones...</div></div>
-        </section>
-
-        <div id="stage-event" class="stage-event" role="status" aria-live="assertive">
-            <div class="stage-event-icon" id="stage-event-icon">⚡</div>
-            <div class="stage-event-kicker" id="stage-event-kicker">NUEVO EN LA LISTA</div>
-            <div class="stage-event-title" id="stage-event-title"></div>
-            <div class="stage-event-user" id="stage-event-user"></div>
+    <div id="song-menu" class="song-menu" role="dialog" aria-modal="true" aria-labelledby="selected-song">
+        <div class="menu-handle" aria-hidden="true"></div>
+        <div class="menu-top">
+            <span class="menu-kicker">DURO CONTROL</span>
+            <button type="button" class="menu-close" onclick="cerrarMenu()" aria-label="Cerrar">×</button>
         </div>
-    </section>
-
-    <div id="offline-mode" class="offline-mode">
-        <div class="offline-playlists">
-            <a class="offline-playlist-card" href="https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P" target="_blank"><img class="offline-playlist-cover" src="gafas-club.jpeg" alt="Playlist GAFAS CLUB"><div class="offline-playlist-info"><strong>GAFAS CLUB</strong><span>Abrir en Spotify →</span></div></a>
-            <a class="offline-playlist-card" href="https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0" target="_blank"><img class="offline-playlist-cover" src="uraba.jpeg" alt="Playlist URABÁ"><div class="offline-playlist-info"><strong>URABÁ</strong><span>Abrir en Spotify →</span></div></a>
+        <h3>Adelanta tu canción</h3>
+        <div id="selected-song"></div>
+        <p id="menu-subtitle"></p>
+        <div id="menu-contenido">
+            <button id="btn-subir" onclick="mostrarOpcionesSubir()">⚡ Adelantar canción</button>
+            <button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Pasar al #1</button>
+            <button onclick="cerrarMenu()">❌ Cancelar</button>
         </div>
     </div>
 
-    <div class="playlist-socials"><span class="playlist-socials-label">SÍGUEME EN</span><div class="playlist-socials-links">
-        <a href="https://www.tiktok.com/@duroconbrayan" target="_blank" aria-label="TikTok">♪</a><a href="https://www.instagram.com/brayan_trampa" target="_blank" aria-label="Instagram">◎</a><a href="https://youtube.com/@Brayanus14" target="_blank" aria-label="YouTube">▶</a><a href="https://www.facebook.com/duroconbrayan" target="_blank" aria-label="Facebook">f</a><a href="https://www.twitch.tv/duroconbrayan" target="_blank" aria-label="Twitch">♜</a>
-    </div></div>
-    <div class="back-link"><a href="index.html"><button type="button" class="btn-ghost">⬅️ Volver al inicio</button></a></div>
-</div>
-</main>
-
-<div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
-<div id="song-menu" class="song-menu"><h3>Opciones de la canción</h3><div id="selected-song"></div><p id="menu-subtitle"></p><div id="menu-contenido"><button id="btn-subir" onclick="mostrarOpcionesSubir()">⚡ Adelantar canción</button><button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Pasar al #1</button><button onclick="cerrarMenu()">❌ Cancelar</button></div></div>
-
-<script src="script.js?v=17"></script>
+    <script src="script.js?v=30"></script>
 </body>
 </html>

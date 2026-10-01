@@ -454,6 +454,11 @@ name.textContent = item.text;
 card.appendChild(number);
 card.appendChild(name);
 
+const freeHint = document.createElement("span");
+freeHint.className = "song-free-hint";
+freeHint.textContent = "Toca para adelantarla gratis";
+card.appendChild(freeHint);
+
 const puestosSubidos = movimientos.get(item.id);
 
 if (puestosSubidos) {
@@ -857,6 +862,119 @@ function seleccionarParaSaltar(id, cancion) {
 let estadosMisiones = {};
 let cargaEstadosMisionesActiva = false;
 
+const MISIONES_GRATUITAS_REQUERIDAS = [
+    "twitch_follow",
+    "uraba",
+    "artista_angelito",
+    "artista_jlopez",
+    "gafas_club",
+    "instagram_like",
+    "instagram_follow",
+    "facebook_follow"
+];
+
+function contarMisionesCompletadas() {
+    return MISIONES_GRATUITAS_REQUERIDAS.filter(
+        action => estadosMisiones[action] === "completed"
+    ).length;
+}
+
+function misionesExtraDesbloqueadas() {
+    return contarMisionesCompletadas() === MISIONES_GRATUITAS_REQUERIDAS.length;
+}
+
+async function abrirOfferwall() {
+    if (!solicitudSeleccionadaId) {
+        alert("No se encontró la canción seleccionada.");
+        return;
+    }
+
+    const button = document.getElementById("offerwall-open-btn");
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = "ABRIENDO MISIONES…";
+    }
+
+    // Open the tab synchronously from the user's click so browsers do not
+    // classify the later navigation (after fetch) as a popup.
+    const offerwallWindow = window.open("about:blank", "_blank");
+
+    if (!offerwallWindow) {
+        alert("Tu navegador bloqueó la ventana de Misiones Extra. Permite ventanas emergentes para DURO.");
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = "🎁 GANAR MÁS PUESTOS";
+        }
+        return;
+    }
+
+    try {
+        offerwallWindow.document.title = "DURO — Misiones Extra";
+
+        const response = await fetch(
+            `https://playlist-api.bookingelbrayan.workers.dev/offerwall/url?request_id=${encodeURIComponent(solicitudSeleccionadaId)}&visitor_id=${encodeURIComponent(visitorId)}`,
+            { method: "GET", cache: "no-store" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.wall_url) {
+            throw new Error(data.error || "No se pudo abrir Misiones Extra.");
+        }
+
+        offerwallWindow.location.href = data.wall_url;
+
+    } catch (error) {
+        try {
+            offerwallWindow.close();
+        } catch (_) {}
+        console.error("OFFERWALL ERROR:", error);
+        alert("No pudimos abrir las Misiones Extra. Intenta de nuevo.");
+
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = "🎁 GANAR MÁS PUESTOS";
+        }
+    }
+}
+
+function construirIndicadorProgreso() {
+    const completadas = contarMisionesCompletadas();
+    const total = MISIONES_GRATUITAS_REQUERIDAS.length;
+    const desbloqueado = completadas === total;
+
+    if (desbloqueado) {
+        return `
+            <div class="mission-progress mission-progress-unlocked">
+                <div class="mission-progress-top">
+                    <span>🚀 PASOS GRATIS</span>
+                    <strong>COMPLETADOS</strong>
+                </div>
+                <div class="mission-progress-message">
+                    🔓 Misiones Extra desbloqueadas. Ahora puedes ganar más puestos.
+                </div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="mission-progress">
+            <div class="mission-progress-top">
+                <span>🚀 PASOS GRATIS</span>
+                <strong>${completadas}/${total}</strong>
+            </div>
+            <div class="mission-progress-track">
+                <span style="width:${Math.round((completadas / total) * 100)}%"></span>
+            </div>
+            <div class="mission-progress-message">
+                ${completadas === 0
+                    ? "Completa los pasos y adelanta tu canción gratis."
+                    : `Te faltan ${total - completadas} para desbloquear Misiones Extra.`}
+            </div>
+        </div>
+    `;
+}
+
 async function cargarEstadosMisiones() {
 
     if (cargaEstadosMisionesActiva) return;
@@ -926,221 +1044,102 @@ async function cargarEstadosMisiones() {
 
 function mostrarOpcionesSubir() {
 
+    const completadas = contarMisionesCompletadas();
+    const total = MISIONES_GRATUITAS_REQUERIDAS.length;
+    const desbloqueado = completadas === total;
+
     document.getElementById("menu-subtitle").textContent =
-    "Elige cómo adelantar tu canción.";
+        desbloqueado
+            ? "Ya completaste los pasos gratis. Ahora puedes ganar más puestos."
+            : "Toca los pasos gratis para adelantar tu canción.";
 
     const contenido = document.getElementById("menu-contenido");
 
     contenido.innerHTML = `
+        ${construirIndicadorProgreso()}
 
-   <div class="action-card pay-action-card" onclick="mostrarOpcionesSaltar()">
-    <div class="action-left">
-        <span class="action-icon">⚡</span>
-
-        <div>
-            <div class="action-title">
-                Adelantar al #1
-                <span class="auto-badge">AUTOMÁTICO</span>
+        <div class="action-card pay-action-card" onclick="mostrarOpcionesSaltar()">
+            <div class="action-left">
+                <span class="action-icon">⚡</span>
+                <div>
+                    <div class="action-title">
+                        Adelantar al #1
+                        <span class="auto-badge">AUTOMÁTICO</span>
+                    </div>
+                    <div class="action-description">
+                        Pasa tu canción directamente al #1
+                    </div>
+                </div>
             </div>
-
-            <div class="action-description">
-                Pasa tu canción directamente al #1
-            </div>
-        </div>
-    </div>
-
-    <div class="action-right">
-        <span class="action-price">$2</span>
-        <span class="action-arrow">›</span>
-    </div>
-</div>
-
-<div class="free-actions-label">
-    O ADELANTA GRATIS
-</div>
-
-<div class="action-card" data-mission-action="twitch_follow" onclick="mostrarPrueba(
-    'twitch_follow',
-    'Seguir en Twitch',
-    '+5',
-    'https://www.twitch.tv/duroconbrayan'
-)">
-    <div class="action-left">
-        <span class="action-icon">🟣</span>
-
-        <div>
-            <div class="action-title">Seguir en Twitch</div>
-        </div>
-    </div>
-
-    <div class="action-right">
-    <span class="action-reward">+5</span>
-    <span class="action-arrow">›</span>
-</div>
-</div>
-
-<div class="action-card" data-mission-action="uraba" onclick="mostrarPrueba(
-    'uraba',
-    'Guardar playlist URABÁ',
-    '+3',
-    'https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0'
-)">
-
-    <div class="action-left">
-
-        <span class="action-icon">🌴</span>
-
-        <div>
-
-            <div class="action-title">Guardar playlist URABÁ</div>
-
-        </div>
-
-    </div>
-
-        <div class="action-right">
-
-        <span class="action-reward">+3</span>
-
-        <span class="action-arrow">›</span>
-
-    </div>
-
-</div>
-
-<div class="action-card" data-mission-action="artista_angelito" onclick="mostrarPrueba(
-    'artista_angelito',
-    'Suscríbete, dale Me gusta y comenta en el video de Angelito',
-    '+7',
-    'https://www.youtube.com/watch?v=O3jcOvUVdr8'
-)">
-    <div class="action-left">
-        <span class="action-icon">🔥</span>
-
-        <div>
-            <div class="action-title">Misión del artista — Angelito</div>
-            <div class="action-description">
-                Suscríbete, dale Me gusta y comenta. Luego envía una captura.
+            <div class="action-right">
+                <span class="action-price">$2</span>
+                <span class="action-arrow">›</span>
             </div>
         </div>
-    </div>
 
-    <div class="action-right">
-        <span class="action-reward">+7</span>
-        <span class="action-arrow">›</span>
-    </div>
-</div>
+        <div class="free-actions-label">
+            ${desbloqueado ? "PASOS GRATIS COMPLETADOS" : "ADELANTA GRATIS"}
+        </div>
 
-<div class="action-card" data-mission-action="artista_jlopez" onclick="mostrarPrueba(
-    'artista_jlopez',
-    'Suscríbete, dale Me gusta y comenta en el video de J López',
-    '+7',
-    'https://www.youtube.com/watch?v=Hmuqjha1uUk'
-)">
-    <div class="action-left">
-        <span class="action-icon">🎤</span>
+        <div class="action-card" data-mission-action="twitch_follow" onclick="mostrarPrueba('twitch_follow','Seguir en Twitch','+10','https://www.twitch.tv/duroconbrayan')">
+            <div class="action-left"><span class="action-icon">🟣</span><div><div class="action-title">Seguir en Twitch</div></div></div>
+            <div class="action-right"><span class="action-reward">+10</span><span class="action-arrow">›</span></div>
+        </div>
 
-        <div>
-            <div class="action-title">Misión del artista — J López</div>
-            <div class="action-description">
-                Mira el video, suscríbete, dale Me gusta y comenta. Luego envía una captura.
+        <div class="action-card" data-mission-action="uraba" onclick="mostrarPrueba('uraba','Guardar playlist URABÁ','+5','https://open.spotify.com/playlist/5iT5vBLVdo4AOzwEHbmYl0')">
+            <div class="action-left"><span class="action-icon">🌴</span><div><div class="action-title">Guardar playlist URABÁ</div></div></div>
+            <div class="action-right"><span class="action-reward">+5</span><span class="action-arrow">›</span></div>
+        </div>
+
+        <div class="action-card" data-mission-action="artista_angelito" onclick="mostrarPrueba('artista_angelito','Suscríbete, dale Me gusta y comenta en el video de Angelito','+15','https://www.youtube.com/watch?v=O3jcOvUVdr8')">
+            <div class="action-left"><span class="action-icon">🔥</span><div><div class="action-title">Misión del artista — Angelito</div><div class="action-description">Suscríbete, dale Me gusta y comenta. Luego envía una captura.</div></div></div>
+            <div class="action-right"><span class="action-reward">+15</span><span class="action-arrow">›</span></div>
+        </div>
+
+        <div class="action-card" data-mission-action="artista_jlopez" onclick="mostrarPrueba('artista_jlopez','Suscríbete, dale Me gusta y comenta en el video de J López','+15','https://www.youtube.com/watch?v=Hmuqjha1uUk')">
+            <div class="action-left"><span class="action-icon">🎤</span><div><div class="action-title">Misión del artista — J López</div><div class="action-description">Mira el video, suscríbete, dale Me gusta y comenta. Luego envía una captura.</div></div></div>
+            <div class="action-right"><span class="action-reward">+15</span><span class="action-arrow">›</span></div>
+        </div>
+
+        <div class="action-card" data-mission-action="gafas_club" onclick="mostrarPrueba('gafas_club','Guardar playlist GAFAS CLUB','+5','https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P')">
+            <div class="action-left"><span class="action-icon">🎵</span><div><div class="action-title">Guardar playlist GAFAS CLUB</div></div></div>
+            <div class="action-right"><span class="action-reward">+5</span><span class="action-arrow">›</span></div>
+        </div>
+
+        <div class="action-card" data-mission-action="instagram_like" onclick="mostrarPrueba('instagram_like','Dar like a la última publicación','+2','https://www.instagram.com/p/DYXjV8YkTiA/')">
+            <div class="action-left"><span class="action-icon">❤️</span><div><div class="action-title">Dar like a la última publicación</div></div></div>
+            <div class="action-right"><span class="action-reward">+2</span><span class="action-arrow">›</span></div>
+        </div>
+
+        <div class="action-card" data-mission-action="instagram_follow" onclick="mostrarPrueba('instagram_follow','Seguir en Instagram','+1','https://instagram.com/brayan_trampa')">
+            <div class="action-left"><span class="action-icon">📸</span><div><div class="action-title">Seguir en Instagram</div></div></div>
+            <div class="action-right"><span class="action-reward">+1</span><span class="action-arrow">›</span></div>
+        </div>
+
+        <div class="action-card" data-mission-action="facebook_follow" onclick="mostrarPrueba('facebook_follow','Seguir en Facebook','+1','https://www.facebook.com/duroconbrayan')">
+            <div class="action-left"><span class="action-icon">👍</span><div><div class="action-title">Seguir en Facebook</div></div></div>
+            <div class="action-right"><span class="action-reward">+1</span><span class="action-arrow">›</span></div>
+        </div>
+
+        ${desbloqueado ? `
+            <div class="offerwall-unlock-card">
+                <div class="offerwall-unlock-kicker">🔓 DESBLOQUEADO</div>
+                <strong>Misiones Extra</strong>
+                <span>Completa las que quieras y gana más puestos para tu canción.</span>
+                <button id="offerwall-open-btn" type="button" onclick="abrirOfferwall()">
+                    🎁 GANAR MÁS PUESTOS
+                </button>
             </div>
-        </div>
-    </div>
+        ` : `
+            <div class="offerwall-locked-card">
+                🔒 Completa los ${total} pasos gratis para desbloquear Misiones Extra.
+            </div>
+        `}
 
-    <div class="action-right">
-        <span class="action-reward">+7</span>
-        <span class="action-arrow">›</span>
-    </div>
-</div>
-
-<div class="action-card" data-mission-action="gafas_club" onclick="mostrarPrueba(
-    'gafas_club',
-    'Guardar playlist GAFAS CLUB',
-    '+3',
-    'https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P'
-)">
-    <div class="action-left">
-        <span class="action-icon">🎵</span>
-
-        <div>
-            <div class="action-title">Guardar playlist GAFAS CLUB</div>
-        </div>
-    </div>
-
-    <div class="action-right">
-    <span class="action-reward">+3</span>
-    <span class="action-arrow">›</span>
-</div>
-</div>
-
-<div class="action-card" data-mission-action="instagram_like" onclick="mostrarPrueba(
-    'instagram_like',
-    'Dar like a la última publicación',
-    '+1',
-    'https://www.instagram.com/p/DYXjV8YkTiA/'
-)">
-    <div class="action-left">
-        <span class="action-icon">❤️</span>
-
-        <div>
-            <div class="action-title">Dar like a la última publicación</div>
-        </div>
-    </div>
-
-    <div class="action-right">
-    <span class="action-reward">+1</span>
-    <span class="action-arrow">›</span>
-</div>
-</div>
-
-<div class="action-card" data-mission-action="instagram_follow" onclick="mostrarPrueba(
-    'instagram_follow',
-    'Seguir en Instagram',
-    '+1',
-    'https://instagram.com/brayan_trampa'
-)">
-    <div class="action-left">
-        <span class="action-icon">📸</span>
-
-        <div>
-            <div class="action-title">Seguir en Instagram</div>
-        </div>
-    </div>
-
-    <div class="action-right">
-        <span class="action-reward">+1</span>
-        <span class="action-arrow">›</span>
-    </div>
-</div>
-
-
-<div class="action-card" data-mission-action="facebook_follow" onclick="mostrarPrueba(
-    'facebook_follow',
-    'Seguir en Facebook',
-    '+1',
-    'https://www.facebook.com/duroconbrayan'
-)">
-    <div class="action-left">
-        <span class="action-icon">👍</span>
-
-        <div>
-            <div class="action-title">Seguir en Facebook</div>
-        </div>
-    </div>
-
-    <div class="action-right">
-    <span class="action-reward">+1</span>
-    <span class="action-arrow">›</span>
-</div>
-</div>
-
-<button onclick="cerrarMenu()">✕ Cerrar</button>
-
-`;
+        <button onclick="cerrarMenu()">✕ Cerrar</button>
+    `;
 
     cargarEstadosMisiones();
-
 }
 
 function mostrarPrueba(action, titulo, recompensa, urlDestino) {
@@ -1756,6 +1755,12 @@ function tarjetaStage(item, tipo, posicion) {
             action.textContent = "TAP TAPS PARA RECUPERAR EL TURNO";
         }
 
+        const freeHint = document.createElement("span");
+        freeHint.className = "stage-free-hint";
+        freeHint.textContent = "Toca para adelantarla gratis";
+
+        action.appendChild(document.createElement("br"));
+        action.appendChild(freeHint);
         card.appendChild(action);
 
         card.tabIndex = 0;
