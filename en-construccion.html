@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DURO — En construcción</title>
+<link rel="stylesheet" href="home.css?v=1">
+</head>
+<body>
+<div class="site-bg"></div>
+<main style="min-height:100vh;display:grid;place-items:center;padding:30px">
+  <section style="width:min(720px,100%);text-align:center;padding:55px 25px;border:1px solid rgba(255,255,255,.1);background:#101010">
+    <a class="footer-brand" href="/" style="font-size:62px">DURO</a>
+    <p style="color:#ff5a1f;font-size:10px;font-weight:900;letter-spacing:.18em;margin:28px 0 8px" id="sectionName">PRÓXIMAMENTE</p>
+    <h1 style="font-family:Anton,Impact,sans-serif;font-size:clamp(52px,10vw,100px);line-height:.85;text-transform:uppercase;margin:0">EN CONSTRUCCIÓN</h1>
+    <p style="max-width:500px;margin:20px auto;color:#999;line-height:1.6">Estamos preparando esta sección para que forme parte del nuevo ecosistema DURO.</p>
+    <a href="/" class="cta-button" style="margin-top:10px">VOLVER A DURO <span>→</span></a>
+  </section>
+</main>
+<script>
+const p = new URLSearchParams(location.search);
+const section = p.get("seccion");
+if(section) document.getElementById("sectionName").textContent = section.toUpperCase();
+</script>
+</body>
+</html>
