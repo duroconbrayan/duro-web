@@ -1001,7 +1001,7 @@ function mostrarOpcionesSubir() {
         </div>
 
         <div class="free-actions-label">
-            ${desbloqueado ? "PASOS GRATIS COMPLETADOS" : "ADELANTA GRATIS"}
+            ${completadas === total ? "PASOS GRATIS COMPLETADOS" : "ADELANTA GRATIS"}
         </div>
 
         <div class="action-card" data-mission-action="twitch_follow" onclick="mostrarPrueba('twitch_follow','Seguir en Twitch','+10','https://www.twitch.tv/duroconbrayan')">
