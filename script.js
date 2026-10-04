@@ -37,6 +37,8 @@ let stagePlayingId = null;
 let stageHistorialDesbloqueado = false;
 let stageEventoActivo = false;
 let stageEventosPendientes = [];
+let stageLiveEventIds = new Set();
+let stagePendingRequestAlerts = new Map();
 let stageGoalEventKey = null;
 let stageGoalInicializado = false;
 let stageCarouselInicializado = false;
@@ -2017,16 +2019,38 @@ function detectarEventosRequests(requests, playing, queue) {
             if (item.source === "tiktok_gift") {
                 encolarEventoStage("gift", "😎", item.status === "playing" ? "ENTRÓ A SONAR" : "ENTRÓ DE SIGUIENTE", textoSolicitud(item), usuarioSolicitud(item));
             } else if (
-    item.status === "queue" &&
-    item.source === "tiktok_comment"
-) {
-    encolarEventoStage(
-        "added",
-        "＋",
-        "NUEVO EN LA LISTA",
-        textoSolicitud(item),
-        usuarioSolicitud(item)
-    );
+                item.status === "queue" &&
+                item.source === "tiktok_comment"
+            ) {
+                const requestId = String(item.id);
+
+                // /admin/live-event es la vía rápida.
+                // Si ya anunció esta solicitud, /requests no debe repetirla.
+                if (stageLiveEventIds.has(requestId)) {
+                    return;
+                }
+
+                // Esperamos un instante para darle prioridad al evento rápido.
+                // Así evitamos duplicados aunque /requests responda primero.
+                if (!stagePendingRequestAlerts.has(requestId)) {
+                    const timer = setTimeout(() => {
+                        stagePendingRequestAlerts.delete(requestId);
+
+                        if (stageLiveEventIds.has(requestId)) {
+                            return;
+                        }
+
+                        encolarEventoStage(
+                            "added",
+                            "＋",
+                            "NUEVO EN LA LISTA",
+                            textoSolicitud(item),
+                            usuarioSolicitud(item)
+                        );
+                    }, 1500);
+
+                    stagePendingRequestAlerts.set(requestId, timer);
+                }
 }
         }
     });
@@ -2153,8 +2177,19 @@ async function comprobarLiveEvent() {
 
         liveEventAnteriorId = eventId;
 
+        const requestId = String(eventId);
+        stageLiveEventIds.add(requestId);
+
+        // Cancelamos cualquier alerta que /requests haya programado
+        // para esta misma solicitud. El evento rápido ya la mostrará.
+        const pendingTimer = stagePendingRequestAlerts.get(requestId);
+        if (pendingTimer) {
+            clearTimeout(pendingTimer);
+            stagePendingRequestAlerts.delete(requestId);
+        }
+
         // =============================================
-        // ALERTA INMEDIATA
+        // ALERTA INMEDIATA — UNA SOLA VEZ
         // =============================================
 
         encolarEventoStage(
@@ -2224,6 +2259,12 @@ function detenerLiveEventPolling() {
 
     liveEventInicializado = false;
     liveEventAnteriorId = 0;
+
+    for (const timer of stagePendingRequestAlerts.values()) {
+        clearTimeout(timer);
+    }
+    stagePendingRequestAlerts.clear();
+    stageLiveEventIds.clear();
 }
 
 async function cargarStageHistorial() {
