@@ -259,6 +259,7 @@ body.offline .playlist-socials{margin-top:18px}
 }
 
 .song-menu{
+    display:none;
     position:fixed!important;
     left:50%!important;
     top:50%!important;
