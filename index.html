@@ -1,173 +1,94 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-CO">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DURO — Noticias, música y cultura urbana</title>
-  <meta name="description" content="DURO: noticias, música, artistas, videos e historias de la cultura urbana.">
+  <title>DURO — Noticias, música y entretenimiento urbano</title>
+  <meta name="description" content="DURO es un medio de entretenimiento y cultura urbana: noticias, música, artistas, historias, tendencias y experiencias. Desde Urabá para el mundo.">
   <meta name="theme-color" content="#090909">
-  <link rel="stylesheet" href="home.css?v=1">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <link rel="canonical" href="https://duroconbrayan.com/">
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="home.css?v=20261006-1">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DURO">
+  <meta property="og:title" content="DURO — Noticias, música y entretenimiento urbano">
+  <meta property="og:description" content="Noticias, música, artistas, historias y cultura urbana."
+  <meta property="og:url" content="https://duroconbrayan.com/">
+  <meta property="og:image" content="https://duroconbrayan.com/assets/brayan-laptop.jpeg">
+  <meta property="og:image:alt" content="DURO — medio de entretenimiento urbano">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@graph":[
+      {"@type":"Organization","@id":"https://duroconbrayan.com/#organization","name":"DURO","url":"https://duroconbrayan.com/","logo":"https://duroconbrayan.com/assets/duro-logo.png","sameAs":["https://www.youtube.com/@Brayanus14","https://www.instagram.com/brayan_trampa","https://www.tiktok.com/@duroconbrayan","https://www.twitch.tv/duroconbrayan"]},
+      {"@type":"WebSite","@id":"https://duroconbrayan.com/#website","name":"DURO","url":"https://duroconbrayan.com/","inLanguage":"es-CO","publisher":{"@id":"https://duroconbrayan.com/#organization"},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://duroconbrayan.com/noticias?buscar={search_term_string}"},"query-input":"required name=search_term_string"}},
+      {"@type":"WebPage","@id":"https://duroconbrayan.com/#webpage","url":"https://duroconbrayan.com/","name":"DURO — Noticias, música y entretenimiento urbano","isPartOf":{"@id":"https://duroconbrayan.com/#website"},"about":{"@id":"https://duroconbrayan.com/#organization"}}
+    ]
+  }
+  </script>
 </head>
 <body>
   <div class="site-bg" aria-hidden="true"></div>
-
   <header class="site-header">
     <div class="header-shell">
-      <a class="brand" href="/" aria-label="DURO inicio">DURO</a>
-
+      <a class="brand-logo" href="/" aria-label="DURO inicio"><img src="/assets/duro-logo.png" alt="DURO" width="170" height="92"></a>
       <nav class="main-nav" aria-label="Navegación principal">
         <a class="active" href="/">NOTICIAS</a>
-        <a href="/playlist">PLAYLIST</a>
-        <a href="/en-construccion.html?seccion=MINIJUEGOS">MINIJUEGOS</a>
-        <a href="/en-construccion.html?seccion=QUIÉNES%20SOMOS">QUIÉNES SOMOS</a>
-        <a href="/en-construccion.html?seccion=PUBLICIDAD">PUBLICIDAD</a>
-        <a href="/en-construccion.html?seccion=CONTACTO">CONTACTO</a>
+        <a href="/noticias">EXPLORAR</a>
+        <a href="/playlist.html">PLAYLIST</a>
+        <a href="/quienes-somos.html">DURO</a>
+        <a href="/publicidad.html">MARCAS</a>
       </nav>
-
       <div class="header-actions">
-        <button class="search-button" id="searchToggle" type="button" aria-label="Buscar">⌕</button>
-        <a class="promote-button" href="/en-construccion.html?seccion=PROMOCIONA">PROMOCIONA <span>→</span></a>
+        <button class="search-button" id="searchToggle" type="button" aria-label="Buscar en DURO">⌕</button>
+        <a class="promote-button" href="/publicidad.html">PROMOCIONA <span>→</span></a>
         <button class="menu-button" id="menuToggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
       </div>
     </div>
-
     <div class="mobile-nav" id="mobileNav">
-      <a href="/">NOTICIAS</a>
-      <a href="/playlist">PLAYLIST</a>
-      <a href="/en-construccion.html?seccion=MINIJUEGOS">MINIJUEGOS</a>
-      <a href="/en-construccion.html?seccion=QUIÉNES%20SOMOS">QUIÉNES SOMOS</a>
-      <a href="/en-construccion.html?seccion=PUBLICIDAD">PUBLICIDAD</a>
-      <a href="/en-construccion.html?seccion=CONTACTO">CONTACTO</a>
-      <a class="mobile-promote" href="/en-construccion.html?seccion=PROMOCIONA">PROMOCIONA →</a>
+      <a href="/">NOTICIAS</a><a href="/noticias">EXPLORAR</a><a href="/playlist.html">PLAYLIST</a><a href="/quienes-somos.html">DURO</a><a href="/publicidad.html">MARCAS</a><a href="/contacto.html">CONTACTO</a>
     </div>
-
     <div class="search-panel" id="searchPanel" hidden>
-      <input id="searchInput" type="search" placeholder="Buscar en DURO..." autocomplete="off">
+      <form id="searchForm" action="/noticias" method="get"><input id="searchInput" name="buscar" type="search" placeholder="Buscar noticias, artistas, historias..." autocomplete="off"><button type="submit">BUSCAR</button></form>
       <span>ESC para cerrar</span>
     </div>
   </header>
 
-  <div class="trend-bar">
-    <div class="page-shell trend-inner">
-      <span class="trend-label">EN TENDENCIA</span>
-      <div class="trend-items" id="trendItems">
-        <span>DURO</span><span>MÚSICA</span><span>ARTISTAS</span><span>URABÁ</span>
-      </div>
-      <a href="/playlist" class="live-link"><i></i> PLAYLIST DEL DIRECTO →</a>
-    </div>
-  </div>
+  <div class="trend-bar"><div class="page-shell trend-inner"><span class="trend-label">EN TENDENCIA</span><div class="trend-items" id="trendItems"><span>MÚSICA</span><span>ARTISTAS</span><span>URABÁ</span><span>CULTURA</span></div><a href="/playlist.html" class="live-link"><i></i> PLAYLIST DEL DIRECTO →</a></div></div>
 
   <main>
-    <section class="hero page-shell" id="heroSection">
-      <div class="hero-main skeleton">
-        <div class="hero-copy">
-          <span class="eyebrow">DURO · NOTICIAS</span>
-          <h1>Las historias que están moviendo la cultura urbana.</h1>
-          <p>Noticias, música, artistas y entretenimiento desde una perspectiva propia.</p>
-        </div>
-      </div>
+    <section class="hero page-shell" id="heroSection" aria-label="Noticias destacadas">
+      <div class="hero-main skeleton"><div class="hero-copy"><span class="eyebrow">DURO · ENTRETENIMIENTO</span><h1>La cultura urbana tiene una nueva casa.</h1><p>Noticias, música, artistas, historias y tendencias con una perspectiva propia.</p></div></div>
       <div class="hero-side" id="heroSide"></div>
     </section>
 
+    <section class="page-shell trust-strip" aria-label="Propuesta editorial"><div><b>MEDIO DE ENTRETENIMIENTO</b><span>Noticias + música + cultura urbana</span></div><div><b>DESDE URABÁ</b><span>Historias locales con alcance global</span></div><div><b>HECHO PARA LA AUDIENCIA</b><span>Contenido para descubrir y quedarse</span></div></section>
+
     <section class="page-shell section-block" id="ultimas">
-      <div class="section-head">
-        <div>
-          <span class="section-kicker">AL DÍA</span>
-          <h2>Últimas noticias</h2>
-        </div>
-        <span class="section-note" id="articleCount">Cargando...</span>
-      </div>
-
-      <div class="news-layout">
-        <div class="news-grid" id="newsGrid"></div>
-        <aside class="ranking">
-          <div class="ranking-head">
-            <span class="section-kicker">AHORA EN DURO</span>
-            <h3>Lo que está pasando</h3>
-          </div>
-          <div id="rankingList" class="ranking-list"></div>
-        </aside>
-      </div>
+      <div class="section-head"><div><span class="section-kicker">AL DÍA</span><h2>Últimas noticias</h2></div><a class="section-link" href="/noticias">VER TODAS →</a></div>
+      <div class="news-layout"><div class="news-grid" id="newsGrid"></div><aside class="ranking"><div class="ranking-head"><span class="section-kicker">AHORA EN DURO</span><h3>Lo que está pasando</h3></div><div id="rankingList" class="ranking-list"></div></aside></div>
     </section>
 
-    <section class="page-shell section-block">
-      <div class="section-head">
-        <div>
-          <span class="section-kicker">DESCUBRE</span>
-          <h2>El universo DURO</h2>
-        </div>
-      </div>
+    <section class="page-shell section-block category-section"><div class="section-head"><div><span class="section-kicker">EXPLORA</span><h2>Entra por donde quieras</h2></div></div><div class="category-grid">
+      <a href="/noticias?categoria=Música"><span>01</span><strong>MÚSICA</strong><small>Lanzamientos, canciones y movimientos.</small><b>↗</b></a>
+      <a href="/noticias?categoria=Artistas"><span>02</span><strong>ARTISTAS</strong><small>Historias, perfiles y protagonistas.</small><b>↗</b></a>
+      <a href="/noticias?categoria=Urabá"><span>03</span><strong>URABÁ</strong><small>Lo que nace, pasa y transforma la región.</small><b>↗</b></a>
+      <a href="/noticias?categoria=Cultura"><span>04</span><strong>CULTURA</strong><small>La conversación más allá de la música.</small><b>↗</b></a>
+    </div></section>
 
-      <div class="ecosystem-grid">
-        <a class="eco-card eco-playlist" href="/playlist">
-          <span class="eco-number">01</span>
-          <div>
-            <span class="eco-kicker">MÚSICA EN VIVO</span>
-            <h3>Playlist</h3>
-            <p>Mira qué está sonando, descubre música y participa durante los directos.</p>
-          </div>
-          <b>→</b>
-        </a>
+    <section class="page-shell feature-panel"><div class="feature-image"><img src="/assets/brayan-laptop.jpeg" alt="DURO y su visión de entretenimiento digital" loading="lazy"></div><div class="feature-copy"><span class="section-kicker">LA VISIÓN</span><h2>Más que noticias.<br><em>Un ecosistema.</em></h2><p>DURO conecta contenido, música, directos, artistas, comunidad y marcas en un mismo universo de entretenimiento.</p><div class="feature-actions"><a class="cta-button" href="/quienes-somos.html">CONOCER DURO <span>→</span></a><a class="text-link" href="/publicidad.html">QUIERO APARECER EN DURO →</a></div></div></section>
 
-        <a class="eco-card" href="/en-construccion.html?seccion=MINIJUEGOS">
-          <span class="eco-number">02</span>
-          <div>
-            <span class="eco-kicker">PRÓXIMAMENTE</span>
-            <h3>Minijuegos</h3>
-            <p>Experiencias rápidas para quedarse un rato más dentro de DURO.</p>
-          </div>
-          <b>→</b>
-        </a>
+    <section class="page-shell section-block"><div class="section-head"><div><span class="section-kicker">DESCUBRE</span><h2>El universo DURO</h2></div></div><div class="ecosystem-grid"><a class="eco-card eco-playlist" href="/playlist.html"><span class="eco-number">01</span><div><span class="eco-kicker">MÚSICA EN VIVO</span><h3>Playlist</h3><p>Mira qué está sonando, descubre música y participa durante los directos.</p></div><b>→</b></a><a class="eco-card" href="/publicidad.html"><span class="eco-number">02</span><div><span class="eco-kicker">PARA MARCAS</span><h3>Publicidad</h3><p>Conecta tu marca con la audiencia y el ecosistema de DURO.</p></div><b>→</b></a><a class="eco-card" href="/contacto.html"><span class="eco-number">03</span><div><span class="eco-kicker">CONVERSEMOS</span><h3>Contacto</h3><p>Prensa, colaboraciones, artistas, marcas y oportunidades.</p></div><b>→</b></a></div></section>
 
-        <a class="eco-card" href="/en-construccion.html?seccion=PUBLICIDAD">
-          <span class="eco-number">03</span>
-          <div>
-            <span class="eco-kicker">PARA MARCAS</span>
-            <h3>Publicidad</h3>
-            <p>Conecta tu marca con la audiencia y el ecosistema de DURO.</p>
-          </div>
-          <b>→</b>
-        </a>
-      </div>
-    </section>
-
-    <section class="page-shell section-block editorial-cta">
-      <div>
-        <span class="section-kicker">PARA ARTISTAS</span>
-        <h2>¿Tienes algo que decir?</h2>
-        <p>Presenta tu música, tu lanzamiento o tu proyecto a la audiencia de DURO.</p>
-      </div>
-      <a class="cta-button" href="/en-construccion.html?seccion=PROMOCIONA">PROMOCIONA CON DURO <span>→</span></a>
-    </section>
+    <section class="page-shell editorial-cta"><div><span class="section-kicker">PARA ARTISTAS Y MARCAS</span><h2>¿Quieres ser parte de DURO?</h2><p>Presenta tu proyecto, lanzamiento, marca o propuesta a nuestra audiencia.</p></div><a class="cta-button" href="/publicidad.html">HABLEMOS <span>→</span></a></section>
   </main>
 
-  <footer class="site-footer">
-    <div class="page-shell footer-grid">
-      <div>
-        <a class="footer-brand" href="/">DURO</a>
-        <p>Noticias. Música. Entretenimiento.</p>
-      </div>
-      <div class="footer-nav">
-        <a href="/">Noticias</a>
-        <a href="/playlist">Playlist</a>
-        <a href="/en-construccion.html?seccion=MINIJUEGOS">Minijuegos</a>
-        <a href="/en-construccion.html?seccion=QUIÉNES%20SOMOS">Quiénes somos</a>
-        <a href="/en-construccion.html?seccion=PUBLICIDAD">Publicidad</a>
-        <a href="/en-construccion.html?seccion=CONTACTO">Contacto</a>
-      </div>
-      <div class="footer-socials">
-        <span>SÍGUENOS</span>
-        <a href="https://www.youtube.com/@Brayanus14" target="_blank" rel="noopener">YouTube</a>
-        <a href="https://www.instagram.com/brayan_trampa" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.tiktok.com/@duroconbrayan" target="_blank" rel="noopener">TikTok</a>
-      </div>
-    </div>
-    <div class="page-shell footer-bottom">
-      <span>© 2026 DURO</span>
-      <span>Hecho para la cultura urbana.</span>
-    </div>
-  </footer>
-
-  <script src="home.js?v=1"></script>
+  <footer class="site-footer"><div class="page-shell footer-grid"><div><a class="footer-brand" href="/"><img src="/assets/duro-logo.png" alt="DURO" width="150" height="80"></a><p>Noticias. Música. Entretenimiento.</p></div><div class="footer-nav"><strong>NAVEGA</strong><a href="/">Noticias</a><a href="/noticias">Explorar</a><a href="/playlist.html">Playlist</a><a href="/quienes-somos.html">Quiénes somos</a><a href="/publicidad.html">Publicidad</a><a href="/contacto.html">Contacto</a></div><div class="footer-nav"><strong>LEGAL</strong><a href="/privacidad.html">Privacidad</a><a href="/cookies.html">Cookies</a><a href="/terminos.html">Términos</a><a href="mailto:contacto@duroconbrayan.com">contacto@duroconbrayan.com</a></div><div class="footer-socials"><strong>SÍGUENOS</strong><a href="https://www.youtube.com/@Brayanus14" target="_blank" rel="noopener">YouTube</a><a href="https://www.instagram.com/brayan_trampa" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@duroconbrayan" target="_blank" rel="noopener">TikTok</a><a href="https://www.twitch.tv/duroconbrayan" target="_blank" rel="noopener">Twitch</a></div></div><div class="page-shell footer-bottom"><span>© 2026 DURO</span><span>Hecho para la cultura urbana.</span></div></footer>
+  <script src="home.js?v=20261006-1" defer></script>
 </body>
 </html>

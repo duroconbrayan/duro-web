@@ -1,0 +1,18 @@
+DURO — ADSENSE SETUP
+
+No colocar un publisher ID inventado.
+
+Cuando Google entregue el ID real, por ejemplo:
+ca-pub-XXXXXXXXXXXXXXXX
+
+usar el código oficial que aparezca en AdSense.
+
+Revisar antes de solicitar:
+1. Contenido original suficiente.
+2. Navegación completa.
+3. Privacidad/Cookies/Términos.
+4. Contacto y quiénes somos.
+5. Sin enlaces rotos.
+6. Sin páginas vacías o en construcción.
+7. Experiencia móvil correcta.
+8. Publicidad claramente diferenciada del contenido.

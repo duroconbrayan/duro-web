@@ -1,0 +1,47 @@
+DURO 2.0 — ORDEN DE REEMPLAZO
+
+1. BACKUP
+   Guarda una copia completa de tu sitio actual antes de reemplazar nada.
+
+2. WEB ROOT
+   Sube el contenido de este paquete a la raíz pública de duroconbrayan.com.
+
+3. ARCHIVOS WEB
+   index.html
+   home.css
+   home.js
+   noticias.html
+   news.css
+   news.js
+   playlist.html
+   style.css
+   script.js
+   quienes-somos.html
+   publicidad.html
+   contacto.html
+   privacidad.html
+   cookies.html
+   terminos.html
+   static.css
+   assets/*
+   robots.txt
+   sitemap.xml
+   site.webmanifest
+
+4. WORKER
+   El archivo playlistapi.js es la versión del Worker/D1 incluida para esta entrega.
+   Si el Worker actual ya está desplegado y estable, no lo reemplaces a ciegas:
+   compara y despliega esta versión en una publicación separada.
+
+5. RUTAS SEO
+   El Worker ya contiene las rutas HTML de /noticias y /noticias/:slug.
+   Esas rutas son importantes porque el artículo se entrega como HTML al crawler,
+   con canonical, Open Graph, breadcrumbs y NewsArticle JSON-LD.
+
+6. SEARCH CONSOLE
+   Después de comprobar el sitio en producción:
+   https://duroconbrayan.com/sitemap.xml
+
+7. ADSENSE
+   No actives código hasta tener el publisher ID real de Google.
+   Primero publica suficiente contenido original y revisa todo el sitio.
