@@ -144,10 +144,22 @@ function geometriaStream(s, Lmin) {
   const yPiso = Math.max(3.6, yG0 + filasG.length * hG + 1.2);
   // La sala deja libres las cuatro esquinas: palco (fondo), sala de máquinas y bóveda (lados), entrada (frente)
   const Bc = 8;                                     // sala de máquinas y bóveda: más grandes que el palco
-  const mitad = Math.max(rFin + 2.2, (rFin + 0.8) / Math.SQRT2 + Bc);
+  // Parque de DURO LIVE: adentro, en la esquina de adelante, a los dos lados del camino que llega a la entrada
+  // (en espejo respecto al eje de la arena). Tres pares: ruedas, carruseles y puestos.
+  const dEnt = rFin + 1.2, rA = 2.1, lado = 3.8, pasos = [dEnt + 3.4, dEnt + 7.9, dEnt + 12.2];
+  const mitad = Math.max(rFin + 2.2, (rFin + 0.8) / Math.SQRT2 + Bc, (pasos[2] + lado) / Math.SQRT2 + rA + 0.8);
   const L = Math.max(Lmin, Math.ceil(mitad * 4) / 2);
   const X0 = -L / 2, Z0 = -L / 2;
-  const entrada = {x: C.x + Math.cos(frente) * (rFin + 1.2), z: C.z + Math.sin(frente) * (rFin + 1.2)};
+  const entrada = {x: C.x + Math.cos(frente) * dEnt, z: C.z + Math.sin(frente) * dEnt};
+  // Punto sobre el eje, en la esquina de adelante: por ahí entra el paseo que viene de TikTok
+  const dEsq = (L / 2) * Math.SQRT2 - 0.5;
+  const eje = d => ({x: C.x + Math.cos(frente) * d, z: C.z + Math.sin(frente) * d});
+  const perp = {x: -Math.sin(frente), z: Math.cos(frente)};
+  const atracciones = [];
+  [['rueda', pasos[0]], ['carrusel', pasos[1]], ['puesto', pasos[2]]].forEach(([tipo, d]) => {
+    for (const sg of [-1, 1]) { const e = eje(d); atracciones.push({tipo, r: rA, x: e.x + perp.x * lado * sg, z: e.z + perp.z * lado * sg}); }
+  });
+  const parque = {esquina: eje(dEsq), dEnt, dEsq, atracciones, ancho: 2.4};
   // Palco: 2 columnas × 3 filas de escritorios y un pasillo a la derecha
   const escritorio = i => ({x: X0 + 0.3 + (i % 2) * 1.9, z: Z0 + 0.4 + Math.floor(i / 2) * 1.85});
   const carril = X0 + 4.4;
@@ -161,7 +173,7 @@ function geometriaStream(s, Lmin) {
     ventana: {x: carril, z: Z0 + 5.3, tag: 'live'},
     stream: {B, C, radioEscenario: RE, k, yJ, yT, anchoJ: 2.0 * k, anillos, asientos, orden, entrada, frente, pasillo: PASILLO, aforo: cupo,
       gradas: {filas: filasG, posiciones: posGradas, pasillo: PAS_G, alto: yG0 + filasG.length * hG, rFin},
-      maquinas: {x: X0 + Bc / 2, z: -Z0 - Bc / 2, B: Bc}, boveda: {x: -X0 - Bc / 2, z: Z0 + Bc / 2, B: Bc}},
+      maquinas: {x: X0 + Bc / 2, z: -Z0 - Bc / 2, B: Bc}, boveda: {x: -X0 - Bc / 2, z: Z0 + Bc / 2, B: Bc}, parque},
   };
 }
 
@@ -169,49 +181,67 @@ function geometriaStream(s, Lmin) {
 // la comunidad (los seguidores) lo mira desde el piso y el equipo trabaja aparte en un mezzanine al fondo.
 // La comunidad es tan real como se pueda: 1 a 1 hasta MAX_PERSONAS, y la sala crece lo que haga falta.
 function geometriaRed(s, L) {
-  for (let intento = 0; intento < 8; intento++) {
+  for (let intento = 0; intento < 40; intento++) {
     const X0 = -L / 2, Z0 = -L / 2, yPiso = 2.8;
     const cols = Math.floor((L - 2.6) / 2.8) + 1;
     const filas = Math.max(1, Math.min(2, Math.ceil(s.agentes.length / cols)));
     const nAg = Math.min(s.agentes.length, cols * filas);
     const ox = (cols - Math.max(1, Math.min(cols, nAg))) * 1.4;
     const D = filas * 1.85 + 0.75;            // fondo del mezzanine del equipo
-    // Cuánto piso necesita la comunidad (y el escenario de Brayan, que crece con la sala)
     const n = personasRed(s);
     const k = Math.min(4, Math.max(1, L / 12));
-    // Zona «viendo ahora»: media luna frente al escenario, aparte de la comunidad, con lugar para un 30 % más
+    // Adentro: el escenario de Brayan y el mirador (media luna) de los que lo están viendo, con lugar para un 30 % más
     const rIn = 1.5 * k, cupoAhora = Math.ceil(viendoAhora(s) * 1.3);
     const rZ = Math.max(rIn + 1.4, Math.sqrt(rIn * rIn + 2 * cupoAhora * PASO * PASO * 0.87 * 1.2 / Math.PI));
-    const area = n * PASO * PASO * 0.87 * 1.15 + 20 * k * k + Math.PI * rZ * rZ / 2;
-    const libre = (L - 0.8) * (L - D - 0.8);
-    if (L - D < 4.6 || libre < area || L - D - 0.8 < 2 * rZ + 1) {
-      // Despejar L de (L - 0.8)(L - D - 0.8) = área
-      const b = D + 1.6, c = 0.8 * (D + 0.8) - area;
-      L = Math.max(L + 0.5, Math.ceil((b + Math.sqrt(b * b - 4 * c)) / 2 * 2) / 2, Math.ceil((D + 5.5) * 2) / 2);
+    const z0 = Z0 + D + 0.45, z1 = Z0 + L - 0.35;
+    const zc = (z0 + z1) / 2;
+    const escenario = {x: X0 + 1.25 * k, z: zc, r: 0.75 * k};
+    // Muro con la entrada: separa la sala (adentro) del parque de diversiones (afuera) donde están los seguidores
+    const xMuro = escenario.x + rZ + 2.6;
+    const px0 = xMuro + 0.6, px1 = X0 + L - 0.4;
+    // El parque: tantas atracciones como quepan (1 cada ~150 m²) y la gente alrededor, distraída
+    const kr = Math.min(2, Math.sqrt(k)), rAtr = 2.1 * kr;
+    const areaGente = n * PASO * PASO * 0.87 * 1.15;
+    const nAtr = Math.max(1, Math.min(6, Math.round(areaGente / 150) + 1));
+    const area = areaGente + nAtr * Math.PI * (rAtr + 0.5) ** 2;
+    const libre = Math.max(0, px1 - px0) * (z1 - z0);
+    if (z1 - z0 < 2 * rZ + 1.2 || px1 - px0 < 2 * rAtr + 1.5 || libre < area) {
+      // Crece de a poco: lo que le falta al lado del cuadrado que necesita el parque
+      L = Math.ceil((L + Math.max(1, Math.sqrt(area) - Math.sqrt(libre))) * 2) / 2;
       continue;
+    }
+    // Atracciones repartidas en una grilla dentro del parque
+    const atracciones = [];
+    const colsA = Math.max(1, Math.round(Math.sqrt(nAtr * (px1 - px0) / (z1 - z0))));
+    const filasA = Math.ceil(nAtr / colsA);
+    for (let i = 0; i < nAtr; i++) {
+      const c = i % colsA, f = Math.floor(i / colsA);
+      atracciones.push({x: px0 + (c + 0.5) * (px1 - px0) / colsA, z: z0 + (f + 0.5) * (z1 - z0) / filasA, r: rAtr,
+        tipo: ['rueda', 'carrusel', 'puesto', 'rueda', 'puesto', 'carrusel'][i]});
     }
     const escritorio = i => ({x: X0 + ox + 0.7 + (i % cols) * 2.8, z: Z0 + 0.8 + Math.floor(i / cols) * 1.85});
     const carril = X0 + ox + 2.9;
-    const z0 = Z0 + D + 0.45, z1 = Z0 + L - 0.35, x0 = X0 + 0.4, x1 = X0 + L - 0.4;
-    const zc = (z0 + z1) / 2;
-    const escenario = {x: X0 + 1.25 * k, z: zc, r: 0.75 * k};
     const equipo = {x: X0 + 2.55 * k, z: zc + 0.6 * k};
+    const entrada = {x: xMuro, z: zc, ancho: 1.8};
     const posiciones = [], enVivo = [];
     for (let z = z0, fila = 0; z <= z1; z += PASO, fila++) {
-      for (let x = x0 + (fila % 2) * PASO / 2; x <= x1; x += PASO) {
+      for (let x = X0 + 0.4 + (fila % 2) * PASO / 2; x <= px1; x += PASO) {
         const dE = Math.hypot(x - escenario.x, z - escenario.z);
-        if (dE < rIn) continue;                                                               // escenario de Brayan
-        if (dE < rZ - 0.2) { if (x > escenario.x) enVivo.push({x, z}); continue; }            // viendo ahora
-        if (dE < rZ + 0.45) continue;                                                         // baranda entre las dos zonas
-        if (Math.abs(z - zc) < 0.9 && x > escenario.x + rZ && x < escenario.x + rZ + 2.2) continue;   // escalera del mirador
-        if (Math.hypot(x - equipo.x, z - equipo.z) < 0.65 * k) continue;                      // cámara / celular
-        if (Math.hypot(x - (X0 + L - 0.5), z - (Z0 + L - 0.5)) < 0.6) continue;               // planta
+        if (x < xMuro) {
+          // Adentro solo está el mirador
+          if (dE >= rIn && dE < rZ - 0.2 && x > escenario.x) enVivo.push({x, z});
+          continue;
+        }
+        if (x < px0) continue;                                                                // el muro
+        if (Math.abs(z - zc) < 1.2 && x < px0 + 1.4) continue;                                 // frente a la entrada
+        if (atracciones.some(a => Math.hypot(x - a.x, z - a.z) < a.r + 0.45)) continue;        // las atracciones
         posiciones.push({x, z});
       }
     }
-    // Se llena desde Brayan hacia afuera, parejo a ambos lados
+    // Los que primero entran a ver son los que están más cerca de la entrada
+    const aEntrada = p => Math.round(Math.hypot(p.x - entrada.x, p.z - entrada.z) / PASO);
+    posiciones.sort((a, b) => aEntrada(a) - aEntrada(b) || a.z - b.z);
     const dist = p => Math.round(Math.hypot(p.x - escenario.x, p.z - escenario.z) / PASO);
-    posiciones.sort((a, b) => dist(a) - dist(b) || Math.abs(a.z - zc) - Math.abs(b.z - zc) || a.z - b.z);
     enVivo.sort((a, b) => dist(a) - dist(b) || Math.abs(a.z - zc) - Math.abs(b.z - zc) || a.z - b.z);
     return {
       L, X0, Z0, cols, filas, cap: cols * filas, carril, escritorio, yPiso,
@@ -222,7 +252,8 @@ function geometriaRed(s, L) {
       ventana: {x: carril, z: Z0 + D - 0.35, tag: 'live'},
       mezz: {D},
       fans: {posiciones, z0, z1, zc, escenario, equipo, k, ahora: {posiciones: enVivo, rIn, rZ},
-        puerta: {x: X0 + L * 0.72, z: Z0 + L + 0.05},
+        parque: {x0: px0, x1: px1, xMuro, entrada, atracciones},
+        puerta: {x: (px0 + px1) / 2, z: Z0 + L + 0.05},
         pantalla: {x: X0 + 0.04, z: zc, ancho: Math.min(z1 - z0 - 0.2, Math.max(3, L * 0.35))}},
     };
   }
@@ -314,15 +345,23 @@ export function seguidoresPorPersona(s) { return s?.escala === 'real' ? escalaRe
 // Si lo sabes directo (por ejemplo, los espectadores de un directo de Twitch) va en `ahora`; si no, se estima
 // con la ley de Little: vistas por hora × minutos que dura en promedio cada vista ÷ 60.
 // Lo automático (s.auto, de recolector.py) manda sobre lo que se carga a mano.
+// Las visitas reales (automáticas) mandan sobre la simulación; la simulación solo se usa si no hay datos reales.
+export function flujoVisitas(s) {
+  const a = s?.auto?.ok ? s.auto : {}, t = s?.tiempoReal || {};
+  if (!(a.ahora > 0) && a.vistasHora > 0) return {vistasHora: a.vistasHora, minutos: a.minutos > 0 ? a.minutos : t.minutos > 0 ? t.minutos : 1, real: true};
+  return s?.simulacion?.activa ? {...s.simulacion, real: false} : null;
+}
 export function viendoAhora(s) {
-  // Simulación (solo en la oficina personal): visitas por hora × minutos por visita ÷ 60
-  const sim = s?.simulacion;
-  if (sim?.activa) return Math.min(MAX_PERSONAS, Math.round((sim.vistasHora || 0) * (sim.minutos || 0) / 60));
   const t = s?.tiempoReal || {}, a = s?.auto?.ok ? s.auto : {};
   if (a.ahora > 0) return Math.min(MAX_PERSONAS, Math.round(a.ahora));
+  // Visitas por hora × minutos que se queda cada una ÷ 60
+  const f = flujoVisitas(s);
+  if (f) return Math.min(MAX_PERSONAS, Math.round((f.vistasHora || 0) * (f.minutos || 0) / 60));
   if (t.ahora > 0) return Math.min(MAX_PERSONAS, Math.round(t.ahora));
   const porHora = a.vistasHora > 0 ? a.vistasHora : t.vistas60 > 0 ? t.vistas60 : t.vistas24 > 0 ? t.vistas24 / 24 : 0;
-  return t.minutos > 0 ? Math.min(MAX_PERSONAS, Math.round(porHora * t.minutos / 60)) : 0;
+  // La duración media automática (YouTube Analytics) manda sobre la que se carga a mano
+  const minutos = a.minutos > 0 ? a.minutos : t.minutos;
+  return minutos > 0 ? Math.min(MAX_PERSONAS, Math.round(porHora * minutos / 60)) : 0;
 }
 export function personasRed(s, cupo = Infinity) { return Math.min(cupo, Math.round((s.seguidores || 0) / seguidoresPorPersona(s))); }
 

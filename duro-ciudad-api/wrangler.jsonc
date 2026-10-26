@@ -1,0 +1,19 @@
+{
+  // Worker de DURO CITY: números públicos en GET /publico. Aparte de playlist-api (no lo toca).
+  "name": "duro-ciudad",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-18",
+  "observability": {"enabled": true},
+  // Una vez por hora consulta las redes: ~600 de las 10.000 unidades diarias de YouTube y 24 escrituras de KV
+  "triggers": {"crons": ["0 * * * *"]},
+  "kv_namespaces": [
+    // Solo lectura: la clave "live" de DURO LIVE
+    {"binding": "DURO_STATE", "id": "4a3e5ac0520144d8a2233dabef2681a8"},
+    // Propio de DURO CITY: el estado de la recolección. (namespace duro-ciudad)
+    {"binding": "CIUDAD", "id": "f2ecda68e5904fb4873c7605e93aa527"}
+  ],
+  "d1_databases": [
+    // Solo lectura (el código solo hace SELECT): las muestras de espectadores de la app DURO Live
+    {"binding": "DB", "database_name": "duro-playlist", "database_id": "5d426ae7-5af3-42e8-b4c2-4b2bcb5da972"}
+  ]
+}

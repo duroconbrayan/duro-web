@@ -6,8 +6,11 @@
 !.env.example
 
 # Nunca subir: el Worker de los pagos (no va en git) y basura del Mac
-playlistapi.js
-wrangler.jsonc
+/playlistapi.js
+/wrangler.jsonc
 .DS_Store
 **/.DS_Store
 node_modules/
+
+# Credenciales de Google (nunca a git)
+client_secret*.json
