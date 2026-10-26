@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DURO CITY</title>
+<meta name="description" content="El universo de Brayan Trampa en vivo: quién está viendo ahora, el estadio de DURO LIVE y su música.">
+<meta name="theme-color" content="#060818">
+<script type="importmap">
+{"imports": {"three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/"}}
+</script>
+<style>
+:root{--bg:#060818;--glass:rgba(12,15,38,.86);--line:rgba(120,135,220,.22);--text:#e8ecff;--muted:#8d95c4;--rosa:#ff3d6e;--rojo:#ff4d4d;--mono:ui-monospace,"SF Mono",Menlo,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+button{font:inherit;color:var(--text);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer}
+
+/* Barra superior */
+header{position:fixed;top:0;left:0;right:0;height:56px;z-index:20;display:flex;align-items:center;gap:10px;padding:0 16px;padding-top:env(safe-area-inset-top);background:linear-gradient(180deg,rgba(6,8,24,.96),rgba(6,8,24,.6));border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.marca{font:800 16px var(--mono);letter-spacing:.08em;white-space:nowrap}
+.marca span{color:var(--rosa)}
+.vivo{margin-left:auto;font:700 12px var(--mono);padding:7px 12px;border-radius:20px;border:1px solid var(--line);color:var(--muted);text-decoration:none;white-space:nowrap}
+.vivo.on{color:#fff;background:var(--rojo);border-color:var(--rojo)}
+.vivo.on::before{content:"● ";animation:lat 1s infinite}
+@keyframes lat{50%{opacity:.3}}
+
+/* Escena y etiquetas */
+#escena{position:fixed;inset:56px 0 0 0}
+#escena canvas{display:block;width:100%!important;height:100%!important;touch-action:none}
+#capa{position:fixed;inset:56px 0 0 0;pointer-events:none;overflow:hidden;z-index:5}
+.etq{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;background:rgba(10,12,32,.86);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font:600 12px var(--mono);backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.etq .pt{width:9px;height:9px;border-radius:2px;background:#4b5390}
+.etq small{font:400 11px var(--mono);color:var(--muted)}
+.etq .vivo,.etq .rojo{display:none;font:700 10px var(--mono);font-style:normal;letter-spacing:.08em}
+.etq .rojo{color:var(--rojo)}
+.etq.envivo{border-color:#ff4d4d88}
+.etq.envivo .rojo{display:inline;animation:lat 1s infinite}
+.etq.mini{padding:3px 7px;font-size:10.5px;gap:5px;background:rgba(10,12,32,.72)}
+.etq.mini .rojo{display:inline;animation:lat 1s infinite}
+.etq.mini small{font-size:10px}
+.etq.centro{border-color:#ff3d6e66}
+.burbuja{position:absolute;left:0;top:0;display:none;background:#fff;color:#11131f;font:600 10px var(--mono);padding:3px 7px;border-radius:6px;white-space:nowrap}
+.burbuja.on{display:block}
+.burbuja.mini{font-size:13px;padding:1px 5px}
+
+/* Tarjeta de una sala: abajo en el celular, a la derecha en pantallas anchas */
+#tarjeta{position:fixed;z-index:15;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px;backdrop-filter:blur(12px);box-shadow:0 18px 40px rgba(0,0,0,.45)}
+#tarjeta[hidden]{display:none}
+@media (min-width:760px){#tarjeta{left:auto;right:16px;top:72px;bottom:auto;width:340px}}
+#tarjeta h2{margin:0 0 4px;font:800 20px var(--mono);display:flex;align-items:center;gap:8px}
+#tarjeta h2 i{width:12px;height:12px;border-radius:3px;display:inline-block}
+#tarjeta .cerrar{position:absolute;top:10px;right:10px;padding:4px 10px}
+.cifras{display:flex;gap:10px;margin:12px 0}
+.cifras div{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:10px}
+.cifras b{display:block;font:800 22px var(--mono)}
+.cifras span{font-size:12px;color:var(--muted)}
+.cifras .ahora b{color:var(--rojo)}
+.nota{font-size:12px;color:var(--muted);margin:0 0 12px}
+.ir{display:block;text-align:center;text-decoration:none;font-weight:700;padding:11px;border-radius:12px;background:var(--c,#ff3d6e);color:#fff;margin-top:8px}
+.lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.lista a{display:flex;justify-content:space-between;gap:8px;text-decoration:none;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.lista small{color:var(--muted)}
+
+/* Abajo: vista general y lo que viene */
+.abajo{position:fixed;z-index:10;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center;pointer-events:none}
+.abajo>*{pointer-events:auto}
+.pronto{font:600 12px var(--mono);color:var(--muted);background:var(--glass);border:1px dashed var(--line);border-radius:10px;padding:8px 12px}
+.pronto b{color:var(--text)}
+.ayuda{margin-left:auto;font-size:12px;color:var(--muted);background:var(--glass);border-radius:10px;padding:8px 12px}
+@media (max-width:759px){.ayuda{display:none}.abajo.oculto{display:none}.etq small{display:none}.etq{padding:4px 8px;font-size:11px}}
+#general{white-space:nowrap}
+#cargando{position:fixed;inset:0;display:grid;place-items:center;font:700 14px var(--mono);color:var(--muted);z-index:30;background:var(--bg)}
+/* Entrada privada (mientras DURO CITY sea solo para Brayan) */
+#entrada{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:var(--bg);padding:16px}
+#entrada[hidden]{display:none}
+#entrada form{width:min(340px,100%);display:flex;flex-direction:column;gap:12px;background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:22px}
+#entrada h1{margin:0;font:800 20px var(--mono)}
+#entrada h1 span{color:var(--rosa)}
+#entrada input{font:inherit;color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+#entrada button{background:var(--rosa);border-color:var(--rosa);color:#fff;font-weight:700;padding:11px}
+#entrada p{margin:0;font-size:13px;color:var(--muted);min-height:1em}
+</style>
+</head>
+<body>
+<header>
+  <div class="marca">DURO <span>CITY</span></div>
+  <a class="vivo" id="vivo" href="https://www.tiktok.com/@duroconbrayan/live" target="_blank" rel="noopener noreferrer">fuera del aire</a>
+</header>
+<div id="escena"></div>
+<div id="capa"></div>
+<section id="tarjeta" hidden aria-live="polite"></section>
+<div class="abajo" id="abajo">
+  <button id="general">Vista general</button>
+  <div class="pronto">Muy pronto: <b>tu cuenta en DURO CITY</b> y minijuegos</div>
+  <div class="ayuda">Arrastra para mirar · toca una sala</div>
+</div>
+<div id="cargando">Entrando a DURO CITY…</div>
+<div id="entrada" hidden>
+  <form id="formEntrada">
+    <h1>DURO <span>CITY</span></h1>
+    <p>Por ahora es privada.</p>
+    <input type="password" id="clave" placeholder="Clave de administrador" autocomplete="current-password" required>
+    <button>Entrar</button>
+    <p id="errorEntrada" role="alert"></p>
+  </form>
+</div>
+<script>window.DURO_CITY = {"datos": "salas.json", "vivo": null, "estadoLive": "https://playlist-api.bookingelbrayan.workers.dev/status", "login": "https://playlist-api.bookingelbrayan.workers.dev/live-metrics"};</script>
+<script type="module" src="ciudad.js"></script>
+</body>
+</html>
