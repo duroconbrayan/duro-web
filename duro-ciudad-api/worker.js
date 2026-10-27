@@ -30,7 +30,9 @@ export default {
     if (url.pathname === '/privado' && request.method === 'GET') {
       if (!env.OFICINA_TOKEN || request.headers.get('Authorization') !== `Bearer ${env.OFICINA_TOKEN}`) return new Response('No autorizado', {status: 401});
       const e = (await env.CIUDAD.get('estado', 'json')) || {};
-      return Response.json({ytTipos: e.ytTipos || null, ytTipos28: e.ytTipos28 || null}, {headers: {'Cache-Control': 'no-store'}});
+      const [live, app, extra] = await Promise.all([estadisticasLive(env).catch(() => null), estadisticasApp(env).catch(() => null),
+        estructurasLive(env).catch(() => null)]);
+      return Response.json({ytTipos: e.ytTipos || null, ytTipos28: e.ytTipos28 || null, live, app, extra}, {headers: {'Cache-Control': 'no-store'}});
     }
     if (url.pathname !== '/publico' || request.method !== 'GET') return new Response('No encontrado', {status: 404, headers: cors});
 
@@ -74,6 +76,95 @@ export async function duroLive(env) {
     }
   }
   return {ok: true, enVivo, conectados, ...audiencia, actualizado: ahora()};
+}
+
+// Estadísticas de los directos para la oficina privada (la bóveda «FUENTE #1 DE INGRESOS» y la pantalla de DURO LIVE):
+// las mismas sesiones que guarda la app DURO Live. Ingresos = regalos de TikTok + PayPal + otros. Solo va por /privado.
+async function estadisticasLive(env) {
+  const filas = (await env.DB.prepare(`SELECT id, started_at, ended_at, status, tiktok_gifts_usd, paypal_revenue, other_revenue_usd,
+    tiktok_diamonds, tiktok_donors, new_followers, peak_viewers, unique_viewers, tiktok_views, tiktok_likes, tiktok_comments,
+    tiktok_shares, songs_processed FROM live_sessions ORDER BY started_at DESC, id DESC LIMIT 500`).all()).results || [];
+  const n = v => Number(v) || 0;
+  const fecha = t => t ? Date.parse(String(t).replace(' ', 'T') + (/[zZ+]/.test(String(t).slice(10)) ? '' : 'Z')) : NaN;
+  const sesion = (f, i) => {
+    const ini = fecha(f.started_at), fin = f.ended_at ? fecha(f.ended_at) : Date.now();
+    return {numero: filas.length - i, enCurso: f.status === 'active' && !f.ended_at, inicio: f.started_at,
+      usd: Math.round((n(f.tiktok_gifts_usd) + n(f.paypal_revenue) + n(f.other_revenue_usd)) * 100) / 100,
+      regalosUsd: n(f.tiktok_gifts_usd), paypalUsd: n(f.paypal_revenue), diamantes: n(f.tiktok_diamonds), donadores: n(f.tiktok_donors),
+      seguidores: n(f.new_followers), pico: n(f.peak_viewers), espectadores: n(f.unique_viewers) || n(f.tiktok_views),
+      likes: n(f.tiktok_likes), comentarios: n(f.tiktok_comments), compartidos: n(f.tiktok_shares), canciones: n(f.songs_processed),
+      minutos: Number.isFinite(ini) ? Math.max(0, Math.round((fin - ini) / 60000)) : 0, t: ini};
+  };
+  const sesiones = filas.map(sesion);
+  const r2 = v => Math.round(v * 100) / 100;
+  const suma = lista => ({directos: lista.length,
+    usd: r2(lista.reduce((a, x) => a + x.usd, 0)),
+    regalosUsd: r2(lista.reduce((a, x) => a + x.regalosUsd, 0)), paypalUsd: r2(lista.reduce((a, x) => a + x.paypalUsd, 0)),
+    diamantes: lista.reduce((a, x) => a + x.diamantes, 0), donadores: lista.reduce((a, x) => a + x.donadores, 0),
+    seguidores: lista.reduce((a, x) => a + x.seguidores, 0), minutos: lista.reduce((a, x) => a + x.minutos, 0),
+    likes: lista.reduce((a, x) => a + x.likes, 0)});
+  // Semana: últimos 7 días. Mes: el mes en curso en hora de Colombia (UTC-5)
+  const co = new Date(Date.now() - 5 * 3600 * 1000), inicioMes = Date.UTC(co.getUTCFullYear(), co.getUTCMonth(), 1) + 5 * 3600 * 1000;
+  const semana = suma(sesiones.filter(x => x.t >= Date.now() - 7 * 86400 * 1000));
+  const mes = suma(sesiones.filter(x => x.t >= inicioMes));
+  const quitar = ({t, ...x}) => x;
+  return {total: sesiones.length, ultimo: sesiones[0] ? quitar(sesiones[0]) : null, semana, mes,
+    ultimos: sesiones.slice(0, 8).map(x => ({numero: x.numero, usd: x.usd}))};
+}
+
+// Lo que la app guarda y la oficina muestra como estructuras (todo privado, por /privado):
+// salón de la fama (top de Gafas del mes y top de tap taps del directo), misiones del mes y las aprobadas hace poco
+// (caminan a la sala de esa red), rocola (canciones más sonadas del mes y la que suena), meta de tap taps,
+// capturas por revisar y, para la Casa, las tareas de hoy y los hábitos de la semana.
+async function estructurasLive(env) {
+  const co = new Date(Date.now() - 5 * 3600 * 1000), hoy = co.toISOString().slice(0, 10);
+  // Inicio del mes y de la semana (lunes) en Colombia, como texto UTC comparable con CURRENT_TIMESTAMP
+  const utc = t => new Date(t).toISOString().slice(0, 19).replace('T', ' ');
+  const mesIni = utc(Date.UTC(co.getUTCFullYear(), co.getUTCMonth(), 1) + 5 * 3600 * 1000);
+  const dow = (co.getUTCDay() + 6) % 7, lunes = new Date(Date.UTC(co.getUTCFullYear(), co.getUTCMonth(), co.getUTCDate() - dow)).toISOString().slice(0, 10);
+  const q = (sql, ...a) => env.DB.prepare(sql).bind(...a).all().then(r => r.results || []).catch(() => []);
+  const uno = (sql, ...a) => env.DB.prepare(sql).bind(...a).first().catch(() => null);
+  const [gafas, likes, misiones, recientes, canciones, sonando, pendientes, tareas, habitos] = await Promise.all([
+    q(`SELECT username AS usuario, SUM(coin_value * repeat_count) AS monedas, SUM(repeat_count) AS veces FROM gift_alerts
+       WHERE created_at >= ? GROUP BY lower(username) ORDER BY monedas DESC LIMIT 5`, mesIni),
+    uno(`SELECT total, base, top_users FROM live_likes WHERE id = 1`),
+    q(`SELECT action AS accion, SUM(approved_count) AS aprobadas, SUM(submitted_count) AS enviadas FROM session_action_stats
+       WHERE session_id IN (SELECT id FROM live_sessions WHERE started_at >= ?) GROUP BY action`, mesIni),
+    q(`SELECT id, action AS accion, reviewed_at AS t FROM proofs WHERE status = 'approved' AND reviewed_at >= ? ORDER BY reviewed_at DESC LIMIT 30`,
+      utc(Date.now() - 2 * 3600 * 1000)),
+    q(`SELECT MIN(text) AS cancion, COUNT(*) AS veces FROM session_songs WHERE created_at >= ? GROUP BY lower(text) ORDER BY veces DESC LIMIT 5`, mesIni),
+    uno(`SELECT text FROM requests WHERE status = 'playing' ORDER BY id DESC LIMIT 1`),
+    uno(`SELECT COUNT(*) AS n FROM proofs WHERE status = 'pending'`),
+    q(`SELECT title AS titulo, status AS estado, planned_time AS hora FROM daily_tasks WHERE task_date = ? ORDER BY sort_order, id`, hoy),
+    q(`SELECT h.id, h.name AS nombre, h.target_per_week AS meta,
+         (SELECT COUNT(*) FROM habit_logs l WHERE l.habit_id = h.id AND l.completed = 1 AND l.log_date >= ?) AS semana,
+         (SELECT COUNT(*) FROM habit_logs l WHERE l.habit_id = h.id AND l.completed = 1 AND l.log_date = ?) AS hoy
+       FROM habits h WHERE h.active = 1 ORDER BY h.sort_order, h.id`, lunes, hoy),
+  ]);
+  let top = [];
+  try { top = JSON.parse(likes?.top_users || '[]').slice(0, 5).map(u => ({usuario: u.username, likes: Number(u.likes) || 0})); } catch {}
+  const META = 5000, nuevos = Math.max(0, (Number(likes?.total) || 0) - (Number(likes?.base) || 0));
+  return {
+    fama: {gafas: gafas.map(x => ({usuario: x.usuario, monedas: Number(x.monedas) || 0, veces: Number(x.veces) || 0})), taptap: top},
+    meta: {meta: META, progreso: nuevos % META, completadas: Math.floor(nuevos / META), likes: nuevos},
+    misiones: misiones.map(x => ({accion: x.accion, aprobadas: Number(x.aprobadas) || 0, enviadas: Number(x.enviadas) || 0})),
+    recientes: recientes.map(x => ({id: x.id, accion: x.accion, t: x.t})),
+    rocola: {top: canciones.map(x => ({cancion: x.cancion, veces: Number(x.veces) || 0})), sonando: sonando?.text || null},
+    bandeja: Number(pendientes?.n) || 0,
+    casa: {fecha: hoy, tareas: tareas.map(x => ({titulo: x.titulo, hecha: x.estado === 'done' || x.estado === 'completed', hora: x.hora})),
+      habitos: habitos.map(x => ({nombre: x.nombre, meta: Number(x.meta) || 7, semana: Number(x.semana) || 0, hoy: Number(x.hoy) > 0}))},
+  };
+}
+
+// La pantalla de estadísticas de la app DURO Live, tal cual: GET /admin/monthly-stats de playlist-api (por el enlace
+// interno), con la misma clave de administrador que usa la app. Mes en hora de Colombia. Sin la clave, no hay datos.
+async function estadisticasApp(env) {
+  if (!env.PLAYLIST || !env.DURO_ADMIN_KEY) return null;
+  const co = new Date(Date.now() - 5 * 3600 * 1000), mes = co.toISOString().slice(0, 7);
+  const r = await env.PLAYLIST.fetch(`https://playlist-api/admin/monthly-stats?month=${mes}`, {headers: {Authorization: `Bearer ${env.DURO_ADMIN_KEY}`}});
+  if (!r.ok) return null;
+  const d = await r.json();
+  return {mes, actual: d.current || null, meses: d.months || []};
 }
 
 // La fila en orden (la que suena primero), una entrada por persona con el estado de su tap tap:

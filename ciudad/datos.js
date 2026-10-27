@@ -42,7 +42,8 @@ export const pick = a => a[Math.floor(Math.random() * a.length)];
 export function pesoProyecto(s) { return s.agentes.length * 1.5 + s.tareas.length * 0.5; }
 export function ladoSala(s) {
   const porProyecto = Math.min(9.5, Math.max(4.5, 4 + pesoProyecto(s) * 0.3));
-  return Math.round(Math.max(porProyecto, ladoPorAudiencia(s)) * 2) / 2;
+  // ladoMin: pegada a otra sala, la iguala en tamaño (DURO LIVE detrás de TikTok, para que queden simétricas)
+  return Math.round(Math.max(porProyecto, ladoPorAudiencia(s), s.ladoMin || 0) * 2) / 2;
 }
 // Las salas de redes crecen con su audiencia: 40 mil ≈ 6,5 · 210 mil ≈ 8 · 1,2 millones ≈ 9,5
 export function ladoPorAudiencia(s) {
@@ -56,11 +57,28 @@ export function cifra(n) {
   return n.toLocaleString('es-CO');
 }
 
+// Súper oficina (TikTok y DURO LIVE): cada equipo trabaja en su módulo, afuera de su sala, pegado a su costado derecho.
+// zo: dónde empieza el módulo (de atrás hacia adelante). 2 filas × 3 escritorios, con su pasillo, café, planta y ventana.
+export const OFICINA = {ancho: 6.6, fondo: 4.6};
+// xo, zo: esquina del módulo (la de atrás a la izquierda) en las coordenadas de la sala; rz: centro de la sala de
+// reuniones que comparten los dos equipos (ahí van los que no están haciendo nada en el momento)
+export function moduloOficina(xo, zo, rz) {
+  const carril = xo + 6.2;
+  const escritorio = i => ({x: xo + 0.4 + (i % 3) * 1.9, z: zo + 0.4 + Math.floor(i / 3) * 1.85});
+  return {cols: 3, filas: 2, cap: 6, carril, escritorio,
+    silla: i => { const d = escritorio(i); return {x: d.x + 0.8, z: d.z + 1.2}; },
+    cafe: {x: carril, z: zo + 0.95, tag: 'cafe', mz: zo + 0.25},
+    planta: {x: carril, z: zo + 3.9, tag: 'planta'},
+    ventana: {x: carril, z: zo + 4.2, tag: 'live'},
+    reunion: rz == null ? null : [-1, 0, 1].flatMap(dx => [-1, 1].map(sz => ({x: xo + OFICINA.ancho / 2 + dx * 0.9, z: rz + sz * 0.95,
+      tag: 'reunion', mira: {x: xo + OFICINA.ancho / 2, z: rz}})))};
+}
+
 // Geometría del piso de una sala de lado L (x hacia la derecha, z hacia el frente; paredes en x=-L/2 y z=-L/2).
 // Se guarda en memoria: las salas grandes generan miles de posiciones y no hace falta repetirlas si nada cambió.
 const cacheGeo = new Map();
 export function geometria(s, L = ladoSala(s)) {
-  const clave = JSON.stringify([s.id, s.tipo, L, s.seguidores, s.tipo === 'red' ? [seguidoresPorPersona(s), viendoAhora(s)] : 0, s.aforo, s.agentes.length,
+  const clave = JSON.stringify([s.id, s.tipo, L, s.oficina, s.entradaAlFrente, s.seguidores, s.tipo === 'red' ? [seguidoresPorPersona(s), viendoAhora(s)] : 0, s.aforo, s.agentes.length,
     s.playlists?.map(p => p.guardados), s.tipo === 'stream' ? [s.stats?.conectadosPorHora, gradasArena(s)] : 0]);
   if (!cacheGeo.has(clave)) {
     if (cacheGeo.size > 200) cacheGeo.clear();
@@ -97,7 +115,8 @@ function geometriaStream(s, Lmin) {
   const B = 5.6;                                     // palco: lado
   const cupo = sillasArena(s), paso = 0.55, dR = 0.8;
   const PASILLO = 1.1;                               // ancho del pasillo de entrada (al frente, hacia la cámara)
-  const frente = Math.PI / 4;
+  // La entrada mira a la esquina de adelante; pegada a TikTok mira de frente a TikTok (la escalera llega por el medio)
+  const alFrente = !!s.entradaAlFrente, frente = alFrente ? Math.PI / 2 : Math.PI / 4;
   // Un estadio: el escenario, la pantalla y el truss crecen con la gente de las gradas
   const gente = gradasArena(s), k = Math.min(2.2, 1 + gente / 8000);
   const RE = 2.2 * k, R0 = RE + 1.0;
@@ -139,27 +158,42 @@ function geometriaStream(s, Lmin) {
   const filasG = repartir(radiosG, gente, PAS_G).map((f, i) => ({...f, y: yG0 + i * hG}));
   const enGradas = sentar(filasG, f => yG0 + f * hG);
   const posGradas = ordenar(enGradas).map(i => enGradas[i]);
-  const rFin = (radiosG.at(-1) ?? rMax) + 0.6;
+  // Sin gradas el muro de la arena encierra también el pasillo de atrás, donde se quedan de pie los de paso
+  const rFin = radiosG.length ? radiosG.at(-1) + 0.6 : rMax + 1.8;
   // El palco de producción queda por encima de la última fila, para ver el escenario por encima del público
-  const yPiso = Math.max(3.6, yG0 + filasG.length * hG + 1.2);
+  // Sin gradas la oficina queda en el piso de la sala (al nivel del mezzanine de TikTok, con el que la comparte)
+  // Con la oficina en el penthouse, el piso del equipo es el del penthouse (s.oficina.y, en coordenadas de la sala)
+  const yPiso = s.oficina ? s.oficina.y ?? 0 : gente > 0 ? Math.max(3.6, yG0 + filasG.length * hG + 1.2) : 0;
   // La sala deja libres las cuatro esquinas: palco (fondo), sala de máquinas y bóveda (lados), entrada (frente)
-  const Bc = 8;                                     // sala de máquinas y bóveda: más grandes que el palco
+  // Sala de máquinas y bóveda (las dos iguales, simetría). Pegada a TikTok la sala es compacta: un poco más chicas
+  const Bc = alFrente ? 4.8 : B;
   // Parque de DURO LIVE: adentro, en la esquina de adelante, a los dos lados del camino que llega a la entrada
-  // (en espejo respecto al eje de la arena). Tres pares: ruedas, carruseles y puestos.
-  const dEnt = rFin + 1.2, rA = 2.1, lado = 3.8, pasos = [dEnt + 3.4, dEnt + 7.9, dEnt + 12.2];
-  const mitad = Math.max(rFin + 2.2, (rFin + 0.8) / Math.SQRT2 + Bc, (pasos[2] + lado) / Math.SQRT2 + rA + 0.8);
-  const L = Math.max(Lmin, Math.ceil(mitad * 4) / 2);
+  // (en espejo respecto al eje de la arena). Un par de ruedas de la fortuna: la sala es compacta, para 100 personas.
+  const dEnt = rFin + 1.2, rA = 2.1, lado = 3.3, pasos = [dEnt + 3.0];
+  // De frente (pegada a TikTok) las dos ruedas van a los costados de la arena, en espejo, y no delante: la sala queda
+  // compacta. aR: ángulo desde el eje de la entrada; rR: distancia al centro
+  const aR = 0.95, rR = rFin + rA + 0.4;
+  // Justo lo que ocupa lo de adentro
+  const mitad = alFrente
+    ? Math.max(rFin + 1.0, (rFin + 0.3) / Math.SQRT2 + Bc, rR * Math.sin(aR) + rA + 0.3, rR * Math.cos(aR) + rA + 0.3, dEnt + 1.8)
+    : Math.max(rFin + 2.2, (rFin + 0.8) / Math.SQRT2 + Bc, (pasos.at(-1) + lado) / Math.SQRT2 + rA + 0.3);
+  const L = Math.max(Lmin, Math.ceil(mitad * 8) / 4);
   const X0 = -L / 2, Z0 = -L / 2;
   const entrada = {x: C.x + Math.cos(frente) * dEnt, z: C.z + Math.sin(frente) * dEnt};
   // Punto sobre el eje, en la esquina de adelante: por ahí entra el paseo que viene de TikTok
-  const dEsq = (L / 2) * Math.SQRT2 - 0.5;
+  const dEsq = alFrente ? L / 2 - 0.3 : (L / 2) * Math.SQRT2 - 0.5;
   const eje = d => ({x: C.x + Math.cos(frente) * d, z: C.z + Math.sin(frente) * d});
   const perp = {x: -Math.sin(frente), z: Math.cos(frente)};
   const atracciones = [];
-  [['rueda', pasos[0]], ['carrusel', pasos[1]], ['puesto', pasos[2]]].forEach(([tipo, d]) => {
+  if (alFrente) for (const sg of [-1, 1]) atracciones.push({tipo: 'rueda', r: rA, x: C.x + Math.cos(frente + sg * aR) * rR, z: C.z + Math.sin(frente + sg * aR) * rR});
+  // Y dos carruseles pequeños en espejo entre los portales y las ruedas (también son para jugar)
+  if (alFrente) for (const sg of [-1, 1]) atracciones.push({tipo: 'carrusel', r: 1.0, color: sg < 0 ? '#ff7ab6' : '#38e8ff', x: C.x + sg * 4.4, z: C.z + Math.sin(frente) * (rFin + 1.6)});
+  else [['rueda', pasos[0]]].forEach(([tipo, d]) => {
     for (const sg of [-1, 1]) { const e = eje(d); atracciones.push({tipo, r: rA, x: e.x + perp.x * lado * sg, z: e.z + perp.z * lado * sg}); }
   });
-  const parque = {esquina: eje(dEsq), dEnt, dEsq, atracciones, ancho: 2.4,
+  // El camino del parque llega hasta la esquina de adelante: por ahí sube la escalera desde TikTok, sobre el mismo eje
+  const fin = alFrente ? L / 2 - 1.0 : dEsq - 0.3;
+  const parque = {esquina: eje(dEsq), dEnt, dEsq, fin, atracciones, ancho: 2.4,
     // Dos portales a los lados del camino, pegados a la puerta de la arena: por uno salen los nuevos (y los de paso), por el otro se van
     portales: {nuevos: (e => ({x: e.x - perp.x * 1.9, z: e.z - perp.z * 1.9}))(eje(dEnt - 0.5)),
       salida: (e => ({x: e.x + perp.x * 1.9, z: e.z + perp.z * 1.9}))(eje(dEnt - 0.5))}};
@@ -170,25 +204,32 @@ function geometriaStream(s, Lmin) {
     const hueco = (PASILLO + 0.4) / (2 * r), arco = 2 * Math.PI - 2 * hueco, n = Math.floor(arco * r / 0.5);
     for (let j = Math.ceil(n / 2); j < n; j++) { const phi = frente + hueco + (j + 0.5) * arco / n; dePaso.push({x: C.x + Math.cos(phi) * r, z: C.z + Math.sin(phi) * r, phi, r, cerca: n - 1 - j}); }
   }
-  // La fila de canciones (solo seguidores): una fila de verdad por el pasillo, del escenario hacia la entrada;
-  // si es muy larga sigue afuera por el camino del parque. El #1 queda pegado al escenario.
+  // La fila de canciones (solo seguidores): de dos en dos por el pasillo, del escenario hacia la entrada, dejando
+  // libre el medio para los que entran. El #1 y el #2 quedan pegados al escenario; caben unas 22 personas.
   const filaCanciones = [];
-  for (let d = RE + 0.7; d < dEsq - 0.8 && filaCanciones.length < 200; d += 0.6) filaCanciones.push(eje(d));
+  for (let d = RE + 0.7; d < fin - 0.3 && filaCanciones.length < 200; d += 0.55) for (const sg of [-1, 1]) {
+    const e = eje(d); filaCanciones.push({x: e.x + perp.x * 0.3 * sg, z: e.z + perp.z * 0.3 * sg});
+  }
   dePaso.sort((a, b) => a.cerca - b.cerca);
-  // Palco: 2 columnas × 3 filas de escritorios y un pasillo a la derecha
-  const escritorio = i => ({x: X0 + 0.3 + (i % 2) * 1.9, z: Z0 + 0.4 + Math.floor(i / 2) * 1.85});
+  // Oficina del equipo (palco): 2 columnas × 3 filas de escritorios y un pasillo a la derecha. Va en la esquina de
+  // adelante a la izquierda, la que toca la pared del equipo de TikTok (la comparten como una sola oficina)
+  const PZ = -Z0 - B;
+  const escritorio = i => ({x: X0 + 0.3 + (i % 2) * 1.9, z: PZ + 0.4 + Math.floor(i / 2) * 1.85});
   const carril = X0 + 4.4;
   const yJ = 4.5 + (k - 1) * 3, yT = 5.6 + (k - 1) * 3.4;
-  return {
-    L, X0, Z0, cols: 2, filas: 3, cap: 6, carril, escritorio, yPiso,
+  // Con la súper oficina el equipo trabaja en su módulo (adelante, pegado a TikTok); si no, en el palco de la esquina
+  const oficina = s.oficina ? moduloOficina(s.oficina.xo, s.oficina.zo, s.oficina.rz) : {
+    cols: 2, filas: 3, cap: 6, carril, escritorio,
     silla: i => { const d = escritorio(i); return {x: d.x + 0.8, z: d.z + 1.2}; },
-    cafe: {x: carril, z: Z0 + 0.95, tag: 'cafe'},
-    planta: {x: X0 + 4.95, z: Z0 + 5.3, tag: 'planta'},
-    // Desde el vidrio del palco miran el LIVE
-    ventana: {x: carril, z: Z0 + 5.3, tag: 'live'},
-    stream: {B, C, radioEscenario: RE, k, yJ, yT, anchoJ: 2.0 * k, anillos, asientos, orden, entrada, frente, pasillo: PASILLO, aforo: cupo,
+    cafe: {x: carril, z: PZ + B - 0.6, tag: 'cafe'},
+    planta: {x: X0 + 4.95, z: PZ + 0.3, tag: 'planta'},
+    // Desde el vidrio de la oficina miran el LIVE
+    ventana: {x: carril, z: PZ + 0.3, tag: 'live'}};
+  return {
+    L, X0, Z0, yPiso, ...oficina,
+    stream: {B, PZ, C, radioEscenario: RE, k, yJ, yT, anchoJ: 2.0 * k, anillos, asientos, orden, entrada, frente, pasillo: PASILLO, aforo: cupo,
       dePaso, filaCanciones, gradas: {filas: filasG, posiciones: posGradas, pasillo: PAS_G, alto: yG0 + filasG.length * hG, rFin},
-      maquinas: {x: X0 + Bc / 2, z: -Z0 - Bc / 2, B: Bc}, boveda: {x: -X0 - Bc / 2, z: Z0 + Bc / 2, B: Bc}, parque},
+      maquinas: s.oficina && !alFrente ? {x: X0 + Bc / 2, z: -Z0 - Bc / 2, B: Bc} : {x: X0 + Bc / 2, z: Z0 + Bc / 2, B: Bc}, boveda: {x: -X0 - Bc / 2, z: Z0 + Bc / 2, B: Bc}, parque},
   };
 }
 
@@ -197,7 +238,7 @@ function geometriaStream(s, Lmin) {
 // La comunidad es tan real como se pueda: 1 a 1 hasta MAX_PERSONAS, y la sala crece lo que haga falta.
 function geometriaRed(s, L) {
   for (let intento = 0; intento < 40; intento++) {
-    const X0 = -L / 2, Z0 = -L / 2, yPiso = 2.8;
+    const X0 = -L / 2, Z0 = -L / 2, yPiso = s.oficina?.y ?? 2.8;
     const cols = Math.floor((L - 2.6) / 2.8) + 1;
     const filas = Math.max(1, Math.min(2, Math.ceil(s.agentes.length / cols)));
     const nAg = Math.min(s.agentes.length, cols * filas);
@@ -258,13 +299,15 @@ function geometriaRed(s, L) {
     posiciones.sort((a, b) => aEntrada(a) - aEntrada(b) || a.z - b.z);
     const dist = p => Math.round(Math.hypot(p.x - escenario.x, p.z - escenario.z) / PASO);
     enVivo.sort((a, b) => dist(a) - dist(b) || Math.abs(a.z - zc) - Math.abs(b.z - zc) || a.z - b.z);
-    return {
-      L, X0, Z0, cols, filas, cap: cols * filas, carril, escritorio, yPiso,
+    const oficina = s.oficina ? moduloOficina(s.oficina.xo, s.oficina.zo, s.oficina.rz) : {
+      cols, filas, cap: cols * filas, carril, escritorio,
       silla: i => { const d = escritorio(i); return {x: d.x + 0.8, z: d.z + 1.2}; },
       cafe: {x: carril, z: Z0 + 1.0, tag: 'cafe'},
       planta: {x: X0 + L - 0.85, z: Z0 + 2.0 + (filas - 1) * 1.85, tag: 'planta'},
       // Desde la baranda del mezzanine miran a Brayan
-      ventana: {x: carril, z: Z0 + D - 0.35, tag: 'live'},
+      ventana: {x: carril, z: Z0 + D - 0.35, tag: 'live'}};
+    return {
+      L, X0, Z0, yPiso, ...oficina,
       mezz: {D},
       fans: {posiciones, z0, z1, zc, escenario, equipo, k, ahora: {posiciones: enVivo, rIn, rZ},
         parque: {x0: px0, x1: px1, xMuro, entrada, atracciones},
@@ -310,28 +353,41 @@ function geometriaFestival(s) {
     festival: {escenarios, porPersona, personas: pl => Math.min(cupo, Math.round((pl.guardados || 0) / porPersona))}};
 }
 
-// Palacio: zonas, los lugares por donde se mueve Brayan y dónde está cada sueño (para marcarlo cuando sea real)
+// Edificio DURO: 6 pisos y rooftop. 1 centro comercial (tiendas, escenario, skatepark), 2 oficinas, 3 estudios de
+// música, 4 video y streaming, 5 hotel, 6 penthouse de Brayan y arriba el rooftop. Se sube y baja en ascensor.
+export const EDIFICIO = {pisos: 6, alto: 3.2, nombres: ['Centro DURO', 'Oficinas', 'Estudios de música', 'Video y streaming', 'Hotel DURO', 'Penthouse', 'Rooftop']};
 function geometriaCasa() {
-  const L = 15, X0 = -L / 2, Z0 = -L / 2;
+  const L = 16, X0 = -L / 2, Z0 = -L / 2, PH = EDIFICIO.alto;
   const P = (x, z) => ({x: X0 + x, z: Z0 + z});
   const nada = () => ({x: 0, z: 0});
+  // Cada lugar dice en qué piso está (7 = rooftop) y, si hace falta, por dónde se llega (para no atravesar paredes)
+  const lugar = (id, piso, x, z, rot, emoji, texto, via = [], dy = 0) => ({id, piso, y: (piso - 1) * PH, dy, ...P(x, z), rot, emoji, texto, via: via.map(([vx, vz]) => P(vx, vz))});
   const lugares = [
-    {id: 'estudio', ...P(3.0, 1.6), rot: Math.PI, emoji: '🎤', texto: 'grabando en el estudio'},
-    {id: 'compu', ...P(1.4, 1.7), rot: Math.PI, emoji: '🎛️', texto: 'produciendo'},
-    {id: 'misiones', ...P(7.5, 1.9), rot: Math.PI, emoji: '🎯', texto: 'revisando sus misiones'},
-    {id: 'cama', ...P(12.5, 2.9), rot: 0, emoji: '😴', texto: 'descansando en su cuarto'},
-    {id: 'gym', ...P(12.3, 5.6), rot: Math.PI / 2, emoji: '💪', texto: 'entrenando'},
-    {id: 'moto', ...P(1.6, 5.8), rot: 0, emoji: '🏍️', texto: 'en su XTZ'},
-    {id: 'sofa', ...P(6.0, 7.7), rot: Math.PI, emoji: '📺', texto: 'en el salón'},
-    {id: 'cocina', ...P(5.4, 10.6), rot: Math.PI, emoji: '🍳', texto: 'cocinando'},
-    {id: 'fuente', ...P(3.6, 12.2), rot: 0, emoji: '⛲', texto: 'en el jardín'},
-    {id: 'piscina', ...P(11.2, 13.6), rot: Math.PI, emoji: '🌴', texto: 'en la piscina'},
+    lugar('sofa', 6, 5.0, 8.6, -Math.PI / 2, '📺', 'en su penthouse'),
+    lugar('cocina', 6, 12.0, 2.3, Math.PI, '🍳', 'cocinando', [[7.5, 4.6], [9.6, 2.3]]),
+    lugar('cama', 6, 12.5, 10.8, 0, '😴', 'descansando en su cuarto', [[8.0, 5.0], [8.8, 12.6], [12.5, 12.6]], 0.5),
+    lugar('gym', 6, 4.4, 2.3, Math.PI / 2, '💪', 'entrenando'),
+    lugar('piscina', 7, 7.4, 13.0, Math.PI / 2, '🌴', 'en la piscina del rooftop', [[0.9, 10.0]], 0.3),
+    lugar('fuente', 7, 4.5, 7.4, Math.PI, '🌱', 'cuidando sus hábitos en el rooftop'),
+    lugar('estudio', 3, 4.8, 2.1, Math.PI, '🎤', 'grabando en el estudio', [[1.4, 7.8], [4.8, 7.8], [6.2, 5.2], [6.2, 2.8]]),
+    lugar('compu', 3, 4.8, 5.3, Math.PI, '🎛️', 'produciendo', [[1.4, 7.8], [4.8, 7.8]]),
+    lugar('stream', 4, 12.5, 1.9, Math.PI, '🎥', 'preparando contenido'),
+    lugar('misiones', 2, 6.5, 1.4, Math.PI, '🎯', 'revisando sus misiones'),
+    lugar('moto', 1, 2.2, 14.2, Math.PI / 2, '🏍️', 'en su XTZ', [[3.9, 5.0], [3.9, 11.4]]),
+    lugar('tienda', 1, 4.8, 4.0, Math.PI, '👕', 'en la tienda DURO WEAR'),
+    lugar('skate', 1, 8.7, 12.4, Math.PI / 2, '🛹', 'viendo el skatepark', [[3.9, 5.0], [8.0, 5.0], [8.6, 9.0]]),
+    lugar('show', 1, 2.0, 9.4, Math.PI / 2, '🎙️', 'ensayando en el escenario', [[3.9, 5.0], [3.9, 9.4]], 0.5),
   ];
-  // Dónde aparece la estrella de cada sueño cuando ya es real
-  const suenos = {moto: P(1.6, 5.8), casa: P(7.5, 14.2), estudio: P(2.2, 1.2), gym: P(12.3, 5.0), piscina: P(11.7, 10.8), cuarto: P(12.5, 1.4), cocina: P(5.6, 9.8)};
+  // Dónde aparece la estrella de cada sueño cuando ya es real (y = altura)
+  const sueno = (piso, x, z, dy = 2.3) => ({...P(x, z), y: (piso - 1) * PH + dy});
+  const suenos = {moto: sueno(1, 2.2, 14.2), casa: sueno(7, 9, 0.6, 4.6), estudio: sueno(3, 4.9, 1.2), gym: sueno(6, 4.4, 1.6),
+    piscina: sueno(7, 12, 11.5), cuarto: sueno(6, 12.5, 10.4), cocina: sueno(6, 12, 1.0)};
   return {L, X0, Z0, cols: 0, filas: 0, cap: 0, carril: 0, escritorio: nada, silla: nada, cafe: null,
     planta: {x: X0 + L - 0.85, z: Z0 + L - 0.85, tag: 'planta'}, ventana: {x: X0 + 0.45, z: Z0 + 2, tag: 'ventana'},
-    casa: {lugares, moto: {...P(1.6, 5.8), rot: 0}, suenos, P}};
+    casa: {lugares, moto: {...P(2.2, 14.2), rot: Math.PI / 2}, suenos, P, PH,
+      ascensor: {puerta: P(1.1, 2.8), adentro: P(1.1, 1.1)},
+      // Por donde pasea la gente del centro comercial (primer piso)
+      paseo: [[4.8, 4.2], [9.4, 4.2], [13.9, 4.2], [8.0, 4.6], [5.4, 6.4], [5.4, 9.8], [3.4, 12.8], [6.2, 13.2], [8.0, 15.0], [8.6, 9.2], [8.6, 6.2]].map(([x, z]) => P(x, z))}};
 }
 
 // Escala del público: 1 a 1 siempre que se pueda. Solo si una sala pasaría del máximo,
