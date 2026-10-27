@@ -420,6 +420,8 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
     const holo = materialHolograma(res);
     const brayan = crearPersona({nombre: 'Brayan IA', estado: 'activo'}, {gafas: true, audifonos: true, material: holo});
     if (s.red === 'youtube') construirEstudio(g, s, res, E, hP, hE, geo.fans.k, c);
+    // Bóvedas de Videos y Shorts (solo en la oficina personal: son estadísticas privadas)
+    const bovedas = s.red === 'youtube' && !publico && geo.fans?.ahora ? construirBovedasYT(g, geo, res, c) : null;
     brayan.raiz.position.set(E.x, hP + hE, E.z); brayan.raiz.rotation.y = Math.PI / 2; brayan.raiz.scale.setScalar(geo.fans.k); g.add(brayan.raiz);
 
     // Zona de la comunidad: su propia pantalla en la pared izquierda (detrás de Brayan), baranda y puerta
@@ -497,7 +499,7 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
         M2.alSalir = p => { if (p.origen != null) { multitud.ocultos.delete(p.origen); multitud.sucio = true; } };
       }
     }
-    return {logo, multitud, ahora, parque, brayan, holo, mirar: new THREE.Vector3(E.x, 1, E.z)};
+    return {logo, multitud, ahora, parque, bovedas, brayan, holo, mirar: new THREE.Vector3(E.x, 1, E.z)};
   }
 
   // La comunidad de una red: se mueve un poco y salta cuando el equipo de la sala trabaja
@@ -535,6 +537,12 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       Z.cT -= dt;
       if (Z.cT <= 0) { const base = viendoAhora(room.s); Z.n = Math.min(Z.M.gente.length, base ? Math.max(1, Math.round(base * rand(0.85, 1.15))) : 0); Z.cT = rand(5, 10); }
       moverMultitud(Z.M, Z.n, dt, room.s.id, animada);
+    }
+    // Bóvedas de Videos y Shorts: se redibujan cuando llegan datos nuevos
+    if (room.red.bovedas) {
+      const clave = JSON.stringify(room.s.ytPriv || null);
+      if (room.red.bovedas.clave !== clave) { room.red.bovedas.clave = clave; dibujarBovedasYT(room.red.bovedas, room.s.ytPriv); }
+      for (const l of room.red.bovedas.leds) l.m.color.copy(l.base).multiplyScalar(0.55 + 0.45 * Math.abs(Math.sin(rt.t * l.vel + l.fase)));
     }
     // Atracciones del parque: la rueda gira despacio y el carrusel da vueltas
     for (const a of room.red.parque?.anim || []) a.obj.rotation[a.eje] += dt * a.vel;
@@ -664,6 +672,67 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       at.position.set(a.x, 0, a.z); at.scale.setScalar(kr); g.add(at);
     });
     return {anim};
+  }
+
+  // ---------- Bóvedas de YouTube: base de datos de Videos y de Shorts ----------
+  // Dos gabinetes iguales a los dos lados de la escalera del mirador (en espejo), con un tablero encima.
+  function construirBovedasYT(g, geo, res, c) {
+    const F = geo.fans, P = F.parque, E = F.escenario, kv = Math.min(2, Math.sqrt(F.k));
+    const leds = [], tableros = [];
+    [['videos', -1, c], ['shorts', 1, '#ffffff']].forEach(([tipo, lado, col]) => {
+      const b = new THREE.Group(); b.position.set(P.xMuro - 1.5 * kv, 0, F.zc + lado * F.ahora.rZ * 0.85); b.scale.setScalar(kv); g.add(b);
+      // Gabinete con luces (como los racks de DURO LIVE)
+      b.add(caja(1.4, 1.9, 1.0, mat('#14141c', {metalness: 0.6, roughness: 0.35}), 0, 0.95, 0));
+      const cv = document.createElement('canvas'); cv.width = 64; cv.height = 128;
+      const x = cv.getContext('2d'); x.fillStyle = '#05060a'; x.fillRect(0, 0, 64, 128);
+      for (let r = 0; r < 12; r++) for (let k = 0; k < 6; k++) { x.fillStyle = (r + k) % 4 ? col : '#ff0033'; x.fillRect(6 + k * 9, 6 + r * 10, 5, 3); }
+      const t = new THREE.CanvasTexture(cv); res.push(t);
+      const m = new THREE.MeshBasicMaterial({map: t, toneMapped: false}); res.push(m);
+      leds.push({m, base: m.color.clone(), vel: 2 + tableros.length, fase: tableros.length * 1.3});
+      for (const sx of [-1, 1]) { const f = new THREE.Mesh(GEO.plane, m); f.scale.set(1.2, 1.7, 1); f.position.set(sx * 0.701, 0.95, 0); f.rotation.y = sx * Math.PI / 2; b.add(f); }
+      const fr = new THREE.Mesh(GEO.plane, m); fr.scale.set(1.2, 1.7, 1); fr.position.set(0, 0.95, 0.501); b.add(fr);
+      const neon = new THREE.MeshBasicMaterial({color: new THREE.Color(col === '#ffffff' ? '#ff4d6d' : col).multiplyScalar(1.5), toneMapped: false}); res.push(neon);
+      b.add(caja(1.44, 0.05, 1.04, neon, 0, 1.92, 0, false));
+      // Tablero flotante, mirando a la cámara
+      const cvT = document.createElement('canvas'); cvT.width = 640; cvT.height = 400;
+      const tT = new THREE.CanvasTexture(cvT); tT.colorSpace = THREE.SRGBColorSpace; tT.anisotropy = 4; res.push(tT);
+      const mT = new THREE.MeshBasicMaterial({map: tT, toneMapped: false, transparent: true, side: THREE.DoubleSide}); res.push(mT);
+      const tab = new THREE.Mesh(GEO.plane, mT); tab.scale.set(4.4, 2.75, 1); tab.position.set(0, 3.6, 0); tab.rotation.y = Math.PI / 4; b.add(tab);
+      tableros.push({tipo, cv: cvT, t: tT, col});
+    });
+    return {leds, tableros, clave: null};
+  }
+  function dibujarBovedasYT(B, datos) {
+    const num = n => Number(n || 0).toLocaleString('es-CO');
+    const mil = n => n >= 1e6 ? `${(n / 1e6).toLocaleString('es-CO', {maximumFractionDigits: 1})} M` : n >= 1e3 ? `${Math.round(n / 1e3).toLocaleString('es-CO')} mil` : num(n);
+    for (const T of B.tableros) {
+      const x = T.cv.getContext('2d'), w = T.cv.width, h = T.cv.height;
+      x.clearRect(0, 0, w, h);
+      x.fillStyle = 'rgba(10,8,16,.88)'; x.fillRect(0, 0, w, h);
+      x.strokeStyle = T.tipo === 'videos' ? '#ff0033' : '#ffffff'; x.lineWidth = 6; x.strokeRect(3, 3, w - 6, h - 6);
+      x.textBaseline = 'top'; x.fillStyle = x.strokeStyle; x.font = '800 44px ui-monospace, Menlo, monospace';
+      x.fillText(T.tipo === 'videos' ? '▶ VIDEOS' : '⚡ SHORTS', 24, 18);
+      // Analytics nombra los tipos «videoOnDemand» y «shorts» (se aceptan también en mayúsculas)
+      const t28 = datos?.ytTipos28 || {};
+      const d = datos?.ytTipos?.[T.tipo], a = T.tipo === 'videos' ? (t28.videoOnDemand || t28.VIDEO_ON_DEMAND) : (t28.shorts || t28.SHORTS);
+      x.fillStyle = '#fff'; x.font = '600 26px ui-monospace, Menlo, monospace';
+      if (!d && !a) {
+        x.fillStyle = 'rgba(255,255,255,.7)'; x.font = '24px ui-monospace, Menlo, monospace';
+        x.fillText(datos?.error ? 'Falta conectar tu oficina:' : 'Esperando datos del Worker…', 24, 100);
+        if (datos?.error) x.fillText('python3 conectar_oficina.py', 24, 136);
+        T.t.needsUpdate = true; continue;
+      }
+      let y = 84;
+      const linea = (txt, col = '#fff', f = '600 26px') => { x.fillStyle = col; x.font = `${f} ui-monospace, Menlo, monospace`; x.fillText(txt, 24, y); y += 36; };
+      if (d) linea(`${num(d.n)} ${T.tipo === 'videos' ? 'videos' : 'shorts'} · ${mil(d.vistas)} vistas`, '#fff', '700 28px');
+      if (a) {
+        linea(`28 días: ${mil(a.vistas)} vistas · +${num(a.suscriptores)} subs`, '#ffd166');
+        linea(`${mil(a.minutos)} min vistos · ${Math.floor(a.duracion / 60)}:${String(Math.round(a.duracion % 60)).padStart(2, '0')} por vista`, '#ffd166');
+      }
+      y += 6;
+      for (const v of d?.top || []) linea(`${mil(v.v).padStart(7)}  ${v.t.length > 30 ? v.t.slice(0, 29) + '…' : v.t}`, 'rgba(255,255,255,.75)', '22px');
+      T.t.needsUpdate = true;
+    }
   }
 
   // ---------- Estudio ideal de YouTube ----------
@@ -1213,7 +1282,7 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
     M.cPuerta = (M.cPuerta ?? 0) - dt;
     if (M.cPuerta <= 0 && presentes !== n && Math.abs(n - presentes) <= 40) {
       if (presentes < n) { const p = {k: presentes, estado: 'entrando', u: 0}; M.alEntrar?.(p); M.personas.push(p); contarEntrada(salaId); }
-      else { const p = [...M.personas].reverse().find(p => p.estado !== 'saliendo'); if (p) p.estado = 'saliendo'; }
+      else { const p = [...M.personas].reverse().find(p => p.estado !== 'saliendo'); if (p) { p.estado = 'saliendo'; M.alIrse?.(p); } }
       M.cPuerta = 0.18;
     }
     // Las multitudes grandes no se mecen: solo se redibujan cuando alguien entra o sale
@@ -1227,14 +1296,19 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       // Cada persona camina desde la puerta o, si se despertó entre tus seguidores, desde su lugar
       const o = p.desde || M.puerta;
       const largo = p.ruta ? p.ruta.largo : Math.max(0.5, Math.hypot(g_.x - o.x, g_.z - o.z));
-      if (p.estado === 'entrando') { p.u += dt * 1.8 / largo; if (p.u >= 1) { p.u = 1; p.estado = 'quieto'; } }
-      else if (p.estado === 'saliendo') { p.u -= dt * 2.2 / largo; if (p.u <= 0) { M.alSalir?.(p); return false; } }
+      // Los trayectos largos (desde el parque de TikTok) se caminan más rápido: nadie tarda más de ~15 s
+      // Al llegar se queda quieto en su lugar, o hace lo que diga alLlegar (por ejemplo, ponerse a jugar en el parque)
+      if (p.estado === 'entrando') { p.u += dt * Math.max(1.8, largo / 15) / largo; if (p.u >= 1) { p.u = 1; p.estado = p.alLlegar || 'quieto'; p.alLlegar = null; } }
+      else if (p.estado === 'saliendo') { p.u -= dt * Math.max(2.2, largo / 12) / largo; if (p.u <= 0) { M.alSalir?.(p); return false; } }
       // Los que se despertaron y se fueron a mirar no se dibujan en su lugar de dormir
       if (M.ocultos.has(p.k)) return true;
-      const r_ = p.ruta ? enRuta(p.ruta, p.u) : null;
-      const x = r_ ? r_.x : o.x + (g_.x - o.x) * p.u, z = r_ ? r_.z : o.z + (g_.z - o.z) * p.u, e = g_.esc, y0 = r_ ? r_.y : g_.y * p.u;
+      // Jugando: M.jugar dice dónde está (da vueltas alrededor de una atracción)
+      const jg = p.estado === 'jugando' ? M.jugar(p, t) : null;
+      const r_ = jg ? null : p.ruta ? enRuta(p.ruta, p.u) : null;
+      const x = jg ? jg.x : r_ ? r_.x : o.x + (g_.x - o.x) * p.u, z = jg ? jg.z : r_ ? r_.z : o.z + (g_.z - o.z) * p.u, e = g_.esc, y0 = jg ? 0 : r_ ? r_.y : g_.y * p.u;
+      p.px = x; p.pz = z;
       const camina = p.estado !== 'quieto';
-      const rot = camina ? (r_ ? Math.atan2(r_.dx, r_.dz) : Math.atan2(g_.x - o.x, g_.z - o.z)) + (p.estado === 'saliendo' ? Math.PI : 0) : g_.rot;
+      const rot = jg ? jg.rot : camina ? (r_ ? Math.atan2(r_.dx, r_.dz) : Math.atan2(g_.x - o.x, g_.z - o.z)) + (p.estado === 'saliendo' ? Math.PI : 0) : g_.rot;
       q.setFromAxisAngle(ARRIBA, rot);
       const y = y0 + (camina ? Math.abs(Math.sin(t * 9 + g_.fase)) * 0.05 : quietos || M.dormida ? 0
         : animada && (p.k % 3 === Math.floor(t * 2.2) % 3) ? Math.abs(Math.sin(t * 6.9 + g_.fase)) * 0.12 : Math.abs(Math.sin(t * 1.4 + g_.fase)) * 0.02);
@@ -1252,7 +1326,7 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
         M.pelos.setMatrixAt(j, m4.compose(v.set(x, y + 1.155 * e, z), q, sc.setScalar(0.2 * e)));
       }
       const [cC, cCa, cP, cPi] = g_.colores;
-      M.cuerpos.setColorAt(j, cC); M.cabezas.setColorAt(j, cCa); M.pelos.setColorAt(j, cP); M.piernas.setColorAt(j, cPi);
+      M.cuerpos.setColorAt(j, p.camiseta || cC); M.cabezas.setColorAt(j, cCa); M.pelos.setColorAt(j, cP); M.piernas.setColorAt(j, cPi);
       j++;
       return true;
     });
@@ -1488,7 +1562,8 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
 
     // --- Público (instancias): cada persona entra por la puerta, sube por el pasillo y camina hasta su silla ---
     const N = asientos.length;
-    const mCojin = mat('#' + tono(c, 0.45).getHexString(), {roughness: 0.9});
+    // Cojines blancos: cada lado se pinta con su color (rosado: seguidores · azul grisáceo: los que no te siguen)
+    const mCojin = mat('#ffffff', {roughness: 0.9});
     const cojines = new THREE.InstancedMesh(GEO.box, mCojin, N);
     const blanco = (brillo = 0) => { const m = new THREE.MeshStandardMaterial({color: '#ffffff', roughness: 0.7, emissive: '#ffffff', emissiveIntensity: brillo}); res.push(m); return m; };
     const piernas = new THREE.InstancedMesh(GEO.box, blanco(), N);
@@ -1512,10 +1587,14 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       for (let k = 1; k <= pasos; k++) { const ph = frente + dphi * k / pasos; pts.push(new THREE.Vector3(C.x + Math.cos(ph) * a.r, base, C.z + Math.sin(ph) * a.r)); }
       const largos = [0]; for (let k = 1; k < pts.length; k++) largos.push(largos[k - 1] + pts[k].distanceTo(pts[k - 1]));
       return {x: a.x, z: a.z, base, hacia, q: q.clone(), pts, largos, fase: (h % 100) / 16,
-        cuerpo: new THREE.Color().setHSL((h % 360) / 360, 0.75, 0.58), piel: new THREE.Color(['#8d5a3b', '#6b4128', '#b07a52', '#4a2f1f'][h % 4]),
+        cuerpo: new THREE.Color().setHSL((h % 360) / 360, 0.75, 0.58),
+        // Camiseta según quién es: seguidores en rosados DURO, los que no te siguen en blancos y grises
+        cuerpoSeg: new THREE.Color().setHSL(0.93 + (h % 9) / 100, 0.85, 0.52 + (h % 7) / 50), cuerpoNo: new THREE.Color().setHSL(0.6, 0.1, 0.62 + (h % 8) / 30), piel: new THREE.Color(['#8d5a3b', '#6b4128', '#b07a52', '#4a2f1f'][h % 4]),
         pelo: new THREE.Color(['#15110f', '#2b1a10', '#d9b26a'][h % 3]), pantalon: new THREE.Color(['#1f2235', '#2b3a55', '#3a2a22'][h % 3])};
     });
     for (const im of [cojines, piernas, cuerpos, cabezas, pelos, celulares]) { im.instanceMatrix.setUsage(THREE.DynamicDrawUsage); g.add(im); }
+    const colLado = [new THREE.Color(c).multiplyScalar(0.75), new THREE.Color('#4f5d7c')];
+    for (let i = 0; i < N; i++) cojines.setColorAt(i, colLado[asientos[i].lado]);
     // Colores iniciales (se reescriben por persona al dibujar)
     for (let i = 0; i < N; i++) { cuerpos.setColorAt(i, lugares[i].cuerpo); cabezas.setColorAt(i, lugares[i].piel); pelos.setColorAt(i, lugares[i].pelo); piernas.setColorAt(i, lugares[i].pantalon); }
     piernas.count = cuerpos.count = cabezas.count = pelos.count = celulares.count = 0;
@@ -1531,6 +1610,13 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
     const matCorazon = sprite('❤', '#ff3d6e'), matGafas = sprite('😎');
 
     const estadio = construirEstadio(g, geo, s, res, {nRosa, nCian, nMorado, mGrada});
+    // Destellos dorados: cuando alguien nuevo te empieza a seguir y salta al lado de los seguidores
+    const geoDest = nuevo(new THREE.SphereGeometry(1, 16, 12));
+    const destellos = Array.from({length: 6}, () => {
+      const m = new THREE.MeshBasicMaterial({color: '#ffd76a', transparent: true, opacity: 0, toneMapped: false, blending: THREE.AdditiveBlending, depthWrite: false}); res.push(m);
+      const o = new THREE.Mesh(geoDest, m); o.visible = false; g.add(o);
+      return {o, t: 1};
+    });
 
     set.updateMatrix();
     const enSala = p => p.applyMatrix4(set.matrix);
@@ -1541,8 +1627,17 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       m4, v, sc, q2: new THREE.Quaternion(),
       neones: [nRosa, nCian, nMorado], pads, woofers, conos, ondas, onAir, beat: -1, objetivoLuz: new THREE.Vector3(C.x, alto, C.z),
       marcas: {brayan: enSala(new THREE.Vector3(0, 1.4, -0.27)), etqBrayan: enSala(new THREE.Vector3(-0.2, 2.15, -0.27)),
-        clon: enSala(new THREE.Vector3(1.05, 2.25, 0.75)), publico: new THREE.Vector3(C.x + Math.SQRT1_2 * (rMax + 0.6), 1.6, C.z + Math.SQRT1_2 * (rMax + 0.6))},
-      mirar: new THREE.Vector3(C.x, 1, C.z), gradas: estadio.M, gradasN: geo.stream.gradas.posiciones.length, leds: estadio.leds, parqueAnim: estadio.parqueAnim};
+        clon: enSala(new THREE.Vector3(1.05, 2.25, 0.75)),
+        zonaSeg: new THREE.Vector3(C.x + Math.cos(geo.stream.frente + Math.PI / 2) * rMax * 0.75, 2.4, C.z + Math.sin(geo.stream.frente + Math.PI / 2) * rMax * 0.75),
+        zonaNo: new THREE.Vector3(C.x + Math.cos(geo.stream.frente - Math.PI / 2) * rMax * 0.75, 2.4, C.z + Math.sin(geo.stream.frente - Math.PI / 2) * rMax * 0.75),
+        zonaFila: new THREE.Vector3(geo.stream.entrada.x, 2.2, geo.stream.entrada.z), publico: new THREE.Vector3(C.x - Math.cos(geo.stream.frente) * (rMax + 0.6), 3.2, C.z - Math.sin(geo.stream.frente) * (rMax + 0.6))},
+      mirar: new THREE.Vector3(C.x, 1, C.z), gradas: estadio.M, gradasN: geo.stream.gradas.posiciones.length, leds: estadio.leds, parqueAnim: estadio.parqueAnim,
+      portales: estadio.portales, paso: estadio.paso, fila: estadio.fila, destellos,
+      // Del portal a la entrada de la arena (los nuevos entran por el cian; los que se van, salen por el morado)
+      rutaNuevos: () => rutaPortal(geo, 'nuevos'), rutaSalida: () => rutaPortal(geo, 'salida'),
+      // Lado de cada silla (0: seguidores · 1: nuevos) y orden de llenado de cada lado
+      ordenLado: [0, 1].map(l => ordenLlenado.filter(i => geo.stream.asientos[i].lado === l)),
+      mezcla: {seg: 0, nue: 0, paso: 0, conv: null}, convVistos: null, convSim: 0, cConv: 20};
   }
 
   // Lo que hace del set un estadio: gradas con los espectadores del último LIVE (1 a 1),
@@ -1689,14 +1784,25 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
     }
     // --- Parque de DURO LIVE (adentro, en la esquina de adelante): pasto, el camino por el eje y atracciones en espejo ---
     const PQ = geo.stream.parque, parqueAnim = [];
+    const neon = c_ => { const m = new THREE.MeshBasicMaterial({color: new THREE.Color(c_).multiplyScalar(1.5), toneMapped: false}); res.push(m); return m; };
     if (PQ) {
       const largo = PQ.dEsq - PQ.dEnt, ang = Math.PI / 2 - frente;   // grupo alineado con el eje de la arena
       const zona = new THREE.Group(); zona.position.set(C.x, 0, C.z); zona.rotation.y = ang; g.add(zona);
       // El pasto es un cuadrado en la esquina de adelante de la sala (encaja justo con los bordes del piso)
       const desde = Math.min(...PQ.atracciones.map(a => Math.min(a.x, a.z) - a.r - 0.6)), hasta = L / 2;
-      const pasto = new THREE.Mesh(GEO.plane, mat('#24563a', {roughness: 0.95})); pasto.rotation.x = -Math.PI / 2; pasto.receiveShadow = true;
-      pasto.scale.set(hasta - desde, hasta - desde, 1); pasto.position.set((desde + hasta) / 2, 0.008, (desde + hasta) / 2); g.add(pasto);
-      const neon = c_ => { const m = new THREE.MeshBasicMaterial({color: new THREE.Color(c_).multiplyScalar(1.5), toneMapped: false}); res.push(m); return m; };
+      // Piso del parque con los colores de la sala: vino oscuro con brillo y bordes de neón rosado
+      const lado_ = hasta - desde, medio = (desde + hasta) / 2;
+      const pasto = new THREE.Mesh(GEO.plane, mat('#' + new THREE.Color(s.color).multiplyScalar(0.22).getHexString(), {roughness: 0.35, metalness: 0.45}));
+      pasto.rotation.x = -Math.PI / 2; pasto.receiveShadow = true;
+      pasto.scale.set(lado_, lado_, 1); pasto.position.set(medio, 0.008, medio); g.add(pasto);
+      const borde = neon(s.color);
+      g.add(caja(lado_, 0.04, 0.06, borde, medio, 0.03, desde, false));
+      g.add(caja(0.06, 0.04, lado_, borde, desde, 0.03, medio, false));
+      // Círculos de luz morada bajo cada atracción
+      for (const a of PQ.atracciones) {
+        const aro = new THREE.Mesh(new THREE.RingGeometry(a.r * 0.95, a.r, 48), neon('#a855f7')); res.push(aro.geometry);
+        aro.rotation.x = -Math.PI / 2; aro.position.set(a.x, 0.02, a.z); g.add(aro);
+      }
       zona.add(caja(PQ.ancho, 0.04, largo, mat('#1a1530', {roughness: 0.4, metalness: 0.3}), 0, 0.02, PQ.dEnt + largo / 2, false));
       for (const sx of [-1, 1]) zona.add(caja(0.06, 0.04, largo, neon('#ff3d6e'), sx * PQ.ancho / 2, 0.05, PQ.dEnt + largo / 2, false));
       // Faroles en espejo a los dos lados del camino
@@ -1710,7 +1816,53 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
         at.position.set(a.x, 0, a.z); g.add(at);
       });
     }
-    return {M, leds, parqueAnim};
+    // --- Portales: por el cian salen los nuevos (y los de paso); por el morado se van los que nunca te siguieron ---
+    const portales = [];
+    const ent = geo.stream.entrada;
+    if (PQ?.portales) for (const [P_, col, txt] of [[PQ.portales.nuevos, '#38e8ff', 'NUEVOS'], [PQ.portales.salida, '#a855f7', 'SALIDA']]) {
+      const pg = new THREE.Group(); pg.position.set(P_.x, 0, P_.z); pg.rotation.y = Math.atan2(ent.x - P_.x, ent.z - P_.z); g.add(pg);
+      const aro = new THREE.Mesh(nuevo(new THREE.TorusGeometry(0.72, 0.08, 12, 48)), neon(col)); aro.position.y = 0.9; pg.add(aro);
+      const mDisco = new THREE.MeshBasicMaterial({color: new THREE.Color(col).multiplyScalar(1.3), transparent: true, opacity: 0.35, toneMapped: false,
+        blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide}); res.push(mDisco);
+      const disco = new THREE.Mesh(nuevo(new THREE.CircleGeometry(0.68, 40)), mDisco); disco.position.y = 0.9; pg.add(disco);
+      const base_ = new THREE.Mesh(nuevo(new THREE.RingGeometry(0.45, 0.8, 40)), neon(col)); base_.rotation.x = -Math.PI / 2; base_.position.y = 0.03; pg.add(base_);
+      const mL = lienzo(256, 64, (x, w, h) => { x.font = '800 40px ui-monospace,Menlo,monospace'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = col; x.fillText(txt, w / 2, h / 2); });
+      mL.transparent = true; mL.side = THREE.DoubleSide;
+      const letrero = new THREE.Mesh(GEO.plane, mL);
+      letrero.scale.set(1.6, 0.4, 1); letrero.position.y = 1.95; pg.add(letrero);
+      const luz = new THREE.PointLight(col, 3, 4, 1.8); luz.position.y = 1.05; pg.add(luz);
+      portales.push({disco: mDisco, aro, luz, pos: new THREE.Vector3(P_.x, 0, P_.z)});
+    }
+    // Los de paso: de pie en el pasillo de atrás de la pista, apagaditos (te ven pero nunca interactúan)
+    let paso = null;
+    if (geo.stream.dePaso?.length && PQ?.portales) {
+      paso = crearMultitud(g, res, {posiciones: geo.stream.dePaso, color: '#7a7f92', mira: C, puerta: PQ.portales.nuevos, semilla: 'de-paso'});
+      const gris = new THREE.Color('#59607a');
+      for (const p of paso.gente) p.colores.forEach(c_ => c_.lerp(gris, 0.6));
+      // Camino: portal → entrada de la arena → pasillo de atrás → su lugar (y al irse, lo mismo pero hasta el portal de salida)
+      const rPas = Math.min(...geo.stream.dePaso.map(d => d.r));
+      const camino = (portal, d) => {
+        const pts = [{x: portal.x, y: 0, z: portal.z}, {x: ent.x, y: 0, z: ent.z}];
+        let dphi = d.phi - frente; dphi = Math.atan2(Math.sin(dphi), Math.cos(dphi));
+        const pasos_ = Math.max(1, Math.ceil(Math.abs(dphi) / 0.2));
+        for (let k = 0; k <= pasos_; k++) { const ph = frente + dphi * k / pasos_, r = k ? d.r : rPas; pts.push({x: C.x + Math.cos(ph) * r, y: 0, z: C.z + Math.sin(ph) * r}); }
+        return ruta3D(pts);
+      };
+      paso.alEntrar = q => { q.ruta = camino(PQ.portales.nuevos, geo.stream.dePaso[q.k]); };
+      paso.alIrse = q => { q.ruta = camino(PQ.portales.salida, geo.stream.dePaso[q.k]); };
+    }
+    // La fila de canciones: camisetas doradas, mirando al escenario
+    let fila = null;
+    if (geo.stream.filaCanciones?.length) {
+      fila = crearMultitud(g, res, {posiciones: geo.stream.filaCanciones, color: '#ffc21a', mira: C, puerta: geo.stream.entrada, semilla: 'fila'});
+      for (const p of fila.gente) { p.colores[0].set('#ffc21a'); p.colores[3].set('#7a5a12'); }
+      // Alfombra dorada por el pasillo: del escenario a la entrada, para que se note dónde es la fila
+      const alf = new THREE.Group(); alf.position.set(C.x, 0, C.z); alf.rotation.y = Math.PI / 2 - frente; g.add(alf);
+      const d0 = geo.stream.radioEscenario + 0.3, d1 = Math.hypot(geo.stream.entrada.x - C.x, geo.stream.entrada.z - C.z);
+      alf.add(caja(0.62, 0.02, d1 - d0, mat('#6b4d0c', {roughness: 0.5, metalness: 0.4}), 0, 0.012, (d0 + d1) / 2, false));
+      for (const sx of [-1, 1]) alf.add(caja(0.04, 0.03, d1 - d0, neon('#ffc21a'), sx * 0.33, 0.02, (d0 + d1) / 2, false));
+    }
+    return {M, leds, parqueAnim, portales, paso, fila};
   }
 
   // Personaje
@@ -1966,7 +2118,7 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       }
       if (room.stream) {
         const mini = () => { const d = document.createElement('div'); d.className = 'etq mini'; d.dataset.sala = s.id; capa.appendChild(d); return d; };
-        room.etqSet = {brayan: mini(), clon: mini(), publico: mini(), clave: ''};
+        room.etqSet = {brayan: mini(), clon: mini(), publico: mini(), zSeg: mini(), zNo: mini(), zFila: mini(), clave: ''};
       }
       room.agentes.forEach(A => {
         const b = document.createElement('div'); b.className = 'burbuja'; capa.appendChild(b); A.bub = b; A.bubMsg = '';
@@ -2322,39 +2474,88 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       const esperado = real ?? (publico ? 0 : conectadosEsperados(room.s, horaColombia()) + rand(-1.5, 1.5));
       S.objetivo = vivo ? Math.round(THREE.MathUtils.clamp(esperado, real == null ? 1 : 0, S.aforo + S.gradasN)) : 0;
       S.cAforo = vivo ? rand(6, 12) : 1;
+      // Simulado: 30 % seguidores, 20 % nuevos y el resto de paso
+      if (room.s.auto?.ok == null) {
+        const fila = Math.min(Math.round(S.objetivo * 0.3), 2 + Math.round(rand(0, 4)));
+        const seg = Math.round(S.objetivo * 0.3) - fila, nue = Math.round(S.objetivo * 0.2);
+        S.mezcla = {seg, nue, paso: Math.max(0, S.objetivo - seg - nue - fila), conv: S.convSim, fila, filaMeta: fila, canciones: fila + Math.round(rand(0, 2))};
+      }
     }
-    const enSala = S.personas.filter(p => p.estado !== 'saliendo').length;
+    // Quiénes son de verdad (app DURO Live): seguidores (vienen del parque de TikTok), nuevos que interactúan (salen del portal) y los de paso
+    const A = room.s.auto;
+    if (A?.ok && A.seguidoresVivo != null) S.mezcla = {seg: A.seguidoresVivo, nue: A.nuevosVivo || 0, paso: A.dePaso || 0, conv: A.nuevosSeguidores ?? null};
+    else if (A?.ok) S.mezcla = {seg: S.objetivo, nue: 0, paso: 0, conv: null};   // app vieja: sin el desglose
+    if (A?.ok) Object.assign(S.mezcla, {fila: A.enFila || 0, canciones: A.cancionesFila || 0, filaLista: A.filaLista || null});
+    if (!vivo) S.mezcla = {seg: 0, nue: 0, paso: 0, conv: S.mezcla.conv, fila: 0, canciones: 0};
+    // Los de la fila son seguidores, pero la app ya los descuenta (persona por persona): seg son solo los de la pista
+    const enFila = Math.min(S.mezcla.fila || 0, S.fila ? S.fila.gente.length : 0);
+    const segPista = S.mezcla.seg;
+    // Simulación: de vez en cuando alguien nuevo te empieza a seguir
+    if (vivo && room.s.auto?.ok == null && !publico) {
+      S.cConv -= dt;
+      if (S.cConv <= 0) { S.cConv = rand(18, 40); if (S.personas.some(p => p.tipo === 'nue' && p.estado === 'sentado')) S.mezcla.conv = ++S.convSim; }
+    }
+    // Te empezaron a seguir: los nuevos saltan al lado de los seguidores con un destello
+    const conv = S.mezcla.conv;
+    if (conv == null || S.convVistos == null || conv < S.convVistos) S.convVistos = conv;
+    else if (conv > S.convVistos) {
+      const p = S.personas.find(p => p.tipo === 'nue' && p.estado === 'sentado');
+      if (p) {
+        S.convVistos++;
+        p.tipo = 'seg'; p.pre = S.rutaSalida(); p.origen = null;
+        const nueva = S.ordenLado[0].find(i => !S.ocupadas.has(i));
+        destello(S, S.lugares[p.asiento]);
+        if (nueva !== undefined) { S.ocupadas.delete(p.asiento); S.ocupadas.add(nueva); p.de = p.asiento; p.asiento = nueva; p.u = 0; p.estado = 'cambiando'; }
+        else p.d = S.lugares[p.asiento].largos.at(-1) + (p.pre?.largo || 0);
+      } else S.convVistos = conv;   // no hay nuevos sentados para animar
+    }
+    const capLado = l => S.ordenLado[l].length;
     S.cEntrada = (S.cEntrada ?? 0) - dt;
     if (S.cEntrada <= 0) {
-      if (enSala < Math.min(S.objetivo, S.aforo)) {
-        // La siguiente silla libre en el orden simétrico
-        const asiento = S.ordenLlenado.find(i => !S.ocupadas.has(i));
-        if (asiento !== undefined) {
-          const p = {asiento, d: 0, estado: 'entrando'};
-          // Si hay parque de TikTok al lado, la persona sale de ahí y camina hasta la entrada de la arena
-          const pre = vivo ? caminoDesdeTikTok(room, S.lugares[asiento].pts[0]) : null;
-          if (pre) Object.assign(p, {pre: pre.ruta, origen: pre.origen});
+      S.cEntrada = vivo ? 0.3 : 0.06;
+      for (const [tipo, lado] of [['seg', 0], ['nue', 1]]) {
+        const quiero = Math.min(tipo === 'seg' ? segPista : S.mezcla.nue, capLado(lado));
+        const hay = S.personas.filter(p => (p.tipo || 'seg') === tipo && p.estado !== 'saliendo').length;
+        if (hay < quiero) {
+          // La siguiente silla libre de su lado, en el orden simétrico
+          const asiento = S.ordenLado[lado].find(i => !S.ocupadas.has(i));
+          if (asiento === undefined) continue;
+          const p = {asiento, c: asiento, d: 0, estado: 'entrando', tipo};
+          if (tipo === 'seg') {
+            // Tus seguidores salen del parque de TikTok (que queda al lado) y caminan hasta la entrada de la arena
+            const pre = vivo ? caminoDesdeTikTok(room, S.lugares[asiento].pts[0]) : null;
+            if (pre) Object.assign(p, {pre: pre.ruta, origen: pre.origen});
+          } else p.pre = S.rutaNuevos();
           S.ocupadas.add(asiento); S.personas.push(p); S.entradas++; contarEntrada(room.s.id);
+        } else if (hay > quiero) {
+          // Sale el último que entró de ese tipo (así cada lado se vacía parejo)
+          const p = [...S.personas].reverse().find(p => (p.tipo || 'seg') === tipo && p.estado !== 'saliendo' && p.estado !== 'cambiando');
+          if (!p) continue;
+          const largoSilla = S.lugares[p.asiento].largos.at(-1), pre0 = p.pre?.largo || 0;
+          // Los nuevos que nunca te siguieron se van por el portal de salida
+          if (tipo === 'nue' && p.d >= pre0) { p.pre = S.rutaSalida(); p.d = p.d - pre0 + p.pre.largo; }
+          p.estado = 'saliendo'; p.d = Math.min(p.d, largoSilla + (p.pre?.largo || 0));
         }
-        S.cEntrada = vivo ? 0.35 : 0.1;
-      } else if (enSala > Math.min(S.objetivo, S.aforo)) {
-        // Sale el último que entró (así el graderío se vacía también parejo)
-        const p = [...S.personas].reverse().find(p => p.estado !== 'saliendo');
-        if (p) { p.estado = 'saliendo'; p.d = Math.min(p.d, S.lugares[p.asiento].largos.at(-1) + (p.pre?.largo || 0)); }
-        S.cEntrada = vivo ? 0.35 : 0.06;
       }
     }
     const {piernas, cuerpos, cabezas, pelos, celulares} = S.inst, m4 = S.m4, v = S.v, sc = S.sc, q2 = S.q2;
     let j = 0, nCel = 0;
     S.personas = S.personas.filter(p => {
-      const L_ = S.lugares[p.asiento], pre = p.pre?.largo || 0, total = pre + L_.largos.at(-1);
+      const L_ = S.lugares[p.asiento], pre = p.pre?.largo || 0, total = pre + L_.largos.at(-1), col = S.lugares[p.c ?? p.asiento];
       // Los que vienen desde TikTok caminan más rápido (el trayecto es largo)
       const vel = p.d < pre ? 4.5 : 2.2;
       if (p.estado === 'entrando') { p.d += dt * vel; if (p.d >= total) { p.d = total; p.estado = 'sentado'; } }
       else if (p.estado === 'saliendo') { p.d -= dt * (p.d < pre ? 4.5 : 2.6); if (p.d <= 0) { S.ocupadas.delete(p.asiento); devolverATikTok(p); return false; } }
       // Posición sobre el camino: primero el trayecto desde TikTok, luego el de la arena
       let a, b;
-      if (p.d < pre) { const r_ = enRuta(p.pre, p.d / pre); v.set(r_.x, r_.y, r_.z); a = {x: 0, z: 0}; b = {x: r_.dx, z: r_.dz}; }
+      if (p.estado === 'cambiando') {
+        // Salta por el aire desde su silla de nuevo hasta su silla de seguidor
+        p.u = Math.min(1, p.u + dt / 1.5);
+        const D = S.lugares[p.de], e_ = p.u * p.u * (3 - 2 * p.u);
+        v.set(D.x + (L_.x - D.x) * e_, D.base + (L_.base - D.base) * e_ + Math.sin(Math.PI * p.u) * 2.4, D.z + (L_.z - D.z) * e_);
+        a = D; b = L_;
+        if (p.u >= 1) { p.estado = 'sentado'; p.d = total; destello(S, L_); }
+      } else if (p.d < pre) { const r_ = enRuta(p.pre, p.d / pre); v.set(r_.x, r_.y, r_.z); a = {x: 0, z: 0}; b = {x: r_.dx, z: r_.dz}; }
       else {
         const d_ = p.d - pre;
         let k = 1; while (k < L_.largos.length - 1 && L_.largos[k] < d_) k++;
@@ -2378,7 +2579,7 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       cuerpos.setMatrixAt(j, m4.compose(v.set(x, y + 0.6, z), q2, sc.set(0.7, 0.6, 0.66)));
       cabezas.setMatrixAt(j, m4.compose(v.set(x, y + 0.93, z), q2, sc.setScalar(0.15)));
       pelos.setMatrixAt(j, m4.compose(v.set(x, y + 0.945, z), q2, sc.setScalar(0.16)));
-      piernas.setColorAt(j, L_.pantalon); cuerpos.setColorAt(j, L_.cuerpo); cabezas.setColorAt(j, L_.piel); pelos.setColorAt(j, L_.pelo);
+      piernas.setColorAt(j, col.pantalon); cuerpos.setColorAt(j, p.tipo === 'nue' ? col.cuerpoNo : col.cuerpoSeg); cabezas.setColorAt(j, col.piel); pelos.setColorAt(j, col.pelo);
       if (sentado && vivo) {
         // Celular levantado frente a la cara, hacia el escenario
         const dx = Math.sin(rot), dz = Math.cos(rot);
@@ -2399,9 +2600,26 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       };
       S.gradas.alSalir = devolverATikTok;
     }
-    if (S.gradas) moverMultitud(S.gradas, vivo ? Math.max(0, S.objetivo - S.aforo) : 0, dt, room.s.id, false);
+    const capPaso = S.paso ? S.paso.gente.length : 0;
+    const sobran = Math.max(0, segPista - capLado(0)) + Math.max(0, (S.mezcla.fila || 0) - enFila) + Math.max(0, S.mezcla.nue - capLado(1)) + Math.max(0, S.mezcla.paso - capPaso);
+    if (S.gradas) moverMultitud(S.gradas, vivo ? Math.min(sobran, S.gradasN) : 0, dt, room.s.id, false);
     S.enGradas = S.gradas ? S.gradas.personas.filter(p => p.estado === 'quieto').length : 0;
-    S.conectados = S.sentados + S.enGradas;
+    if (S.paso) moverMultitud(S.paso, vivo ? Math.min(S.mezcla.paso, capPaso) : 0, dt, room.s.id, false);
+    S.dePaso = S.paso ? S.paso.personas.filter(p => p.estado === 'quieto').length : 0;
+    // La fila: llegan desde el parque de TikTok y hacen fila por el pasillo hasta el escenario
+    if (S.fila) actualizarFila(room, S, vivo, dt, t);
+    S.enFila = S.fila ? S.fila.personas.filter(p => p.estado !== 'saliendo').length : 0;
+    S.conectados = S.sentados + S.enGradas + S.dePaso + S.enFila;
+    // Portales: laten mientras estás en vivo
+    for (const [i, P_] of (S.portales || []).entries()) {
+      P_.disco.opacity = vivo ? 0.3 + Math.sin(t * 3 + i * 2) * 0.12 : 0.08;
+      P_.aro.rotation.z += dt * (vivo ? 0.8 : 0.15) * (i ? -1 : 1); P_.luz.intensity = vivo ? 3 : 0.4;
+    }
+    for (const d of S.destellos) {
+      if (d.t >= 1) { d.o.visible = false; continue; }
+      d.t = Math.min(1, d.t + dt / 0.9);
+      d.o.visible = true; d.o.scale.setScalar(0.2 + d.t * 1.6); d.o.material.opacity = (1 - d.t) * 0.9;
+    }
     // Luces de los racks y de la bóveda
     for (const a of S.parqueAnim || []) a.obj.rotation[a.eje] += dt * a.vel;   // atracciones del parque de DURO LIVE
     for (const l of S.leds) l.m.color.copy(l.m.userData.base).multiplyScalar(0.55 + 0.45 * Math.abs(Math.sin(t * l.vel + l.fase)));
@@ -2435,23 +2653,134 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
     const e = room.etqSet;
     if (e) {
       const stats = room.s.stats || {};
-      const clave = `${vivo}|${st.clon}|${S.conectados}|${S.entradas}`;
+      const M_ = S.mezcla, clave = `${vivo}|${st.clon}|${S.conectados}|${S.entradas}|${M_.seg}|${M_.nue}|${M_.paso}|${M_.conv}|${M_.fila}|${M_.canciones}|${JSON.stringify(S.filaCuenta || {})}`;
       if (e.clave !== clave) {
         e.clave = clave;
         e.brayan.innerHTML = `<b>Brayan Trampa</b>${vivo ? '<em class="rojo">● EN VIVO</em>' : '<small>en su casa</small>'}`;
         e.clon.innerHTML = `<b>Brayan IA</b><small>${{planeado: 'planeado', desarrollo: 'en desarrollo', activo: 'activo'}[st.clon || 'planeado']}</small>`;
         e.publico.innerHTML = vivo
-          ? `<b>👥 ${S.conectados.toLocaleString('es-CO')} conectados ahora</b><small>pista ${S.sentados}/${S.aforo} · gradas ${S.enGradas.toLocaleString('es-CO')} · ${S.entradas} entradas</small>`
+          ? `<b>👥 ${S.conectados.toLocaleString('es-CO')} conectados ahora</b><small>💗 ${M_.seg} te siguen · 🎵 ${M_.fila || 0} en la fila · 👀 ${M_.nue + M_.paso} no te siguen${M_.conv ? ` · +${M_.conv} te siguieron` : ''}</small><small>pista ${S.sentados}/${S.aforo} · gradas ${S.enGradas.toLocaleString('es-CO')} · ${S.entradas} entradas</small>`
           : `<b>🏟️ ${(S.aforo + S.gradasN).toLocaleString('es-CO')} lugares</b><small>${S.conectados ? `saliendo… ${S.conectados}` : 'vacío: se llena con la gente que entra en vivo'}</small>`;
+        // Las tres zonas del público, cada una con su cuenta
+        e.zSeg.innerHTML = `<b style="color:#ff6f9a">💗 TE SIGUEN</b><small>${M_.seg} en la pista</small>`;
+        e.zNo.innerHTML = `<b style="color:#aab6d3">👀 NO TE SIGUEN</b><small>✨ ${M_.nue} interactúan · 👣 ${M_.paso} de paso</small>`;
+        const fc = S.filaCuenta || {a: 0, e: 0, i: 0};
+        e.zFila.innerHTML = `<b style="color:#ffc21a">🎵 FILA DE CANCIONES</b><small>${M_.fila || 0} seguidores · ${M_.canciones || 0} canciones</small>`
+          + `<small>👆 ${fc.a} dando tap tap · <span style="color:#ff9a3d">⏳ ${fc.e} por vencer</span> · 🎡 ${fc.i} en el parque</small>`;
       }
       // Solo se muestran al entrar a la sala, para no llenar el mapa general de texto
       const dentro = rt.foco === room.s.id;
       for (const el of [e.brayan, e.clon, e.publico]) el.style.display = dentro ? '' : 'none';
+      for (const el of [e.zSeg, e.zNo, e.zFila]) el.style.display = dentro && vivo ? '' : 'none';
       ubicar(e.brayan, tmpW.copy(S.marcas.etqBrayan).add(room.g.position), -4);
       ubicar(e.clon, tmpW.copy(S.marcas.clon).add(room.g.position), -4);
       ubicar(e.publico, tmpW.copy(S.marcas.publico).add(room.g.position));
+      ubicar(e.zSeg, tmpW.copy(S.marcas.zonaSeg).add(room.g.position));
+      ubicar(e.zNo, tmpW.copy(S.marcas.zonaNo).add(room.g.position));
+      ubicar(e.zFila, tmpW.copy(S.marcas.zonaFila).add(room.g.position));
     }
     return vivo;
+  }
+
+  // La fila de canciones: cada persona tiene su puesto en el pasillo (el #1 pegado al escenario).
+  // Mientras da tap tap se queda en su puesto; si su canción está por vencer, su camiseta parpadea en naranja;
+  // si se inactiva (dejó de dar tap tap) se va a jugar al parque de DURO LIVE, y cuando vuelve a dar tap tap
+  // regresa a su puesto. Cada persona se reconoce por un número (filaLista), así la fila puede avanzar.
+  const NARANJA = new THREE.Color('#ff7a1a'), APAGADO = new THREE.Color('#5a3a10');
+  function actualizarFila(room, S, vivo, dt, t) {
+    const F = S.fila, geo = room.geo.stream, ent = geoEntrada(room), esq = geo.parque?.esquina, juegos = geo.parque?.atracciones || [];
+    if (!F.jugar) {
+      F.iniciada = true;   // las personas las maneja esta función, no moverMultitud
+      F.alSalir = devolverATikTok;
+      // Jugando: da vueltas alrededor de una atracción del parque
+      F.jugar = (p, t_) => {
+        const a = juegos[p.juego], R = a.r + 0.7;
+        if (p.t0 == null) p.t0 = t_;
+        const ang = p.ang0 + (t_ - p.t0) * 0.45;
+        return {x: a.x + Math.cos(ang) * R, z: a.z + Math.sin(ang) * R, rot: Math.atan2(-Math.sin(ang), Math.cos(ang))};
+      };
+    }
+    // Simulación (oficina sin la app): la fila va cambiando sola para ver todo funcionando
+    if (room.s.auto?.ok == null && vivo && !publico) {
+      S.simFila ||= []; S.cSimFila = (S.cSimFila ?? 0) - dt;
+      if (S.cSimFila <= 0) {
+        S.cSimFila = rand(3, 6);
+        const meta = S.mezcla.filaMeta || 0;
+        if (S.simFila.length < meta) S.simFila.push({id: `s${S.simId = (S.simId || 0) + 1}`, e: 'a'});
+        else if (S.simFila.length > meta) S.simFila.pop();
+        else if (S.simFila.length && Math.random() < 0.2) S.simFila.shift();   // sonó la primera canción
+        else if (S.simFila.length) { const l = pick(S.simFila); l.e = {a: 'e', e: 'i', i: 'a'}[l.e]; }
+      }
+      S.mezcla.filaLista = S.simFila;
+    }
+    const lista = vivo ? (S.mezcla.filaLista || Array.from({length: S.mezcla.fila || 0}, (_, i) => ({id: `n${i}`, e: 'a'}))).slice(0, F.gente.length) : [];
+    S.mezcla.fila = lista.length;
+    S.filaCuenta = {a: 0, e: 0, i: 0};
+    for (const l of lista) S.filaCuenta[l.e]++;
+    const punto = (x, z) => ({x, y: 0, z});
+    const puesto = k => punto(F.gente[k].x, F.gente[k].z);
+    const aqui = p => punto(p.px ?? F.gente[p.k].x, p.pz ?? F.gente[p.k].z);
+    const vaAlParque = p => p.estado === 'jugando' || p.alLlegar === 'jugando';
+    const caminar = (p, pts, alLlegar = null) => { p.ruta = ruta3D(pts); p.u = 0; p.estado = 'entrando'; p.alLlegar = alLlegar; p.t0 = null; };
+    const vivos = new Map(F.personas.filter(p => p.estado !== 'saliendo').map(p => [p.id, p]));
+    const ids = new Set(lista.map(l => l.id));
+    // Los que salieron de la fila (su canción ya sonó o la quitaron) vuelven al parque de TikTok
+    for (const p of vivos.values()) if (!ids.has(p.id)) {
+      const desde = vaAlParque(p) ? [] : [punto(ent.x, ent.z)];
+      p.ruta = ruta3D([...(esq ? [punto(esq.x, esq.z)] : []), ...desde, aqui(p)]); p.u = 1; p.estado = 'saliendo'; p.alLlegar = null;
+    }
+    lista.forEach((l, i) => {
+      let p = vivos.get(l.id);
+      if (!p) {
+        // Nuevo en la fila: sale del parque de TikTok y camina hasta su puesto
+        p = {k: i, id: l.id, estado: 'entrando', u: 0, juego: juegos.length ? hash(String(l.id)) % juegos.length : 0, ang0: rand(0, 6.28)};
+        const pre = caminoDesdeTikTok(room, new THREE.Vector3(F.gente[i].x, 0, F.gente[i].z));
+        if (pre) { p.ruta = pre.ruta; p.origen = pre.origen; } else p.ruta = ruta3D([punto(ent.x, ent.z), puesto(i)]);
+        F.personas.push(p); contarEntrada(room.s.id);
+      }
+      const parque = vaAlParque(p);
+      if (l.e === 'i' && !parque && juegos.length) {
+        // Dejó de dar tap tap: se va a jugar al parque
+        const a = juegos[p.juego], R = a.r + 0.7;
+        caminar(p, [aqui(p), punto(ent.x, ent.z), punto(a.x + Math.cos(p.ang0) * R, a.z + Math.sin(p.ang0) * R)], 'jugando');
+      } else if (l.e !== 'i' && parque) {
+        // Volvió a dar tap tap: regresa a su puesto
+        p.k = i; p.ang0 += (t - (p.t0 ?? t)) * 0.45;
+        caminar(p, [aqui(p), punto(ent.x, ent.z), puesto(i)]);
+      } else if (p.k !== i) {
+        // La fila avanzó: pasa al puesto de adelante
+        p.k = i;
+        if (!parque && p.estado === 'quieto') caminar(p, [aqui(p), puesto(i)]);
+        else if (!parque && p.ruta) {
+          // Todavía viene caminando: alarga su camino hasta el puesto nuevo sin que pegue un salto
+          const largo0 = p.ruta.largo; p.ruta = ruta3D([...p.ruta.puntos, puesto(i)]); p.u *= largo0 / p.ruta.largo;
+        }
+      }
+      // Por vencer: la camiseta parpadea en naranja (avisa que le quedan menos de 3 minutos)
+      p.camiseta = l.e === 'e' ? (Math.sin(t * 9) > 0 ? NARANJA : APAGADO) : null;
+    });
+    // Los que dan tap tap sueltan corazoncitos desde su puesto
+    S.cTap = (S.cTap ?? 0) - dt;
+    if (S.cTap <= 0) {
+      S.cTap = rand(0.4, 0.9);
+      const activos = F.personas.filter(p => p.estado === 'quieto' && lista[p.k]?.e === 'a');
+      if (activos.length) {
+        const p = pick(activos), sp = new THREE.Sprite(S.matCorazon.clone());
+        sp.scale.setScalar(0.22); sp.position.set(p.px, 1.45, p.pz); S.g.add(sp);
+        S.particulas.push({s: sp, desde: sp.position.clone(), t: 0, vida: 1.3, regalo: false, fase: rand(0, 6)});
+      }
+    }
+    moverMultitud(F, F.personas.filter(p => p.estado !== 'saliendo').length, dt, room.s.id, false);
+  }
+
+  function rutaPortal(geo, cual) {
+    const P_ = geo.stream.parque?.portales?.[cual], e = geo.stream.entrada;
+    return P_ ? ruta3D([{x: P_.x, y: 0, z: P_.z}, {x: e.x, y: 0, z: e.z}]) : null;
+  }
+
+  function destello(S, lugar) {
+    const d = S.destellos.find(d => d.t >= 1) || S.destellos[0];
+    d.t = 0; d.o.position.set(lugar.x, lugar.base + 0.8, lugar.z);
   }
 
   function lanzarParticula(S, material, tam, regalo) {
@@ -2596,6 +2925,14 @@ export function crearEscena({contenedor, capa, alClicSala, alClicFutura, publico
       // Igual que al enfocar una sala: con el panel abierto, corre la vista a la parte visible
       if (w > 720) p.add(new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).multiplyScalar((camera.right - camera.left) / zoom * Math.min(410, w * 0.45) / 2 / w));
       Object.assign(objetivo, {target: p, zoom, activo: true});
+    },
+    // Para depurar desde la consola: lleva la cámara a un punto de una sala (en coordenadas de la sala)
+    mirar(id, x, z, zoom = 20) {
+      const room = rt.rooms.get(id);
+      if (!room) return null;
+      rt.foco = id;
+      Object.assign(objetivo, {target: room.g.localToWorld(new THREE.Vector3(x, 0, z)), zoom, activo: true});
+      return room.geo.stream?.parque || null;
     },
     entradas() { return new Map(entradas); },
     publico() {

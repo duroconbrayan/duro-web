@@ -1,0 +1,11 @@
+{
+  // LABORATORIO de DURO LIVE: tu mismo Worker corriendo SOLO en tu Mac, con datos de prueba.
+  // Nombre e IDs falsos a propósito: si alguien intentara publicarlo, falla en vez de pisar el DURO LIVE real.
+  "name": "duro-live-laboratorio",
+  "main": "../playlistapi.js",
+  "compatibility_date": "2026-09-18",
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [{"binding": "DURO_STATE", "id": "laboratorio-local"}],
+  "d1_databases": [{"binding": "DB", "database_name": "laboratorio-local", "database_id": "00000000-0000-0000-0000-000000000000"}],
+  "r2_buckets": [{"binding": "PROOFS", "bucket_name": "laboratorio-local"}]
+}

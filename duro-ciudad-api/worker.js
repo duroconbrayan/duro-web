@@ -16,7 +16,9 @@ const ORIGENES = ['https://duroconbrayan.com', 'https://www.duroconbrayan.com', 
 const YOUTUBE_HANDLE = '@Brayanus14';
 const TWITCH_LOGIN = 'duroconbrayan';
 // Lo único de cada sala que sale al público
-const CAMPOS_PUBLICOS = ['ok', 'enVivo', 'conectados', 'ahora', 'vistasHora', 'minutos', 'seguidores', 'actualizado'];
+const CAMPOS_PUBLICOS = ['ok', 'enVivo', 'conectados', 'ahora', 'vistasHora', 'minutos', 'seguidores', 'actualizado',
+  // Audiencia del directo: seguidores, nuevos que interactúan, nuevos seguidores del directo y los que solo miran
+  'seguidoresVivo', 'nuevosVivo', 'nuevosSeguidores', 'dePaso', 'enFila', 'cancionesFila', 'filaLista'];
 
 export default {
   async fetch(request, env) {
@@ -24,6 +26,12 @@ export default {
     const cors = {'Access-Control-Allow-Origin': ORIGENES.includes(origen) ? origen : ORIGENES[0], 'Vary': 'Origin'};
     if (request.method === 'OPTIONS') return new Response(null, {headers: {...cors, 'Access-Control-Allow-Methods': 'GET, OPTIONS'}});
     const url = new URL(request.url);
+    // Solo para la oficina personal de Brayan (con su token): estadísticas de Videos y Shorts. No es público.
+    if (url.pathname === '/privado' && request.method === 'GET') {
+      if (!env.OFICINA_TOKEN || request.headers.get('Authorization') !== `Bearer ${env.OFICINA_TOKEN}`) return new Response('No autorizado', {status: 401});
+      const e = (await env.CIUDAD.get('estado', 'json')) || {};
+      return Response.json({ytTipos: e.ytTipos || null, ytTipos28: e.ytTipos28 || null}, {headers: {'Cache-Control': 'no-store'}});
+    }
     if (url.pathname !== '/publico' || request.method !== 'GET') return new Response('No encontrado', {status: 404, headers: cors});
 
     const estado = (await env.CIUDAD.get('estado', 'json')) || {};
@@ -45,13 +53,48 @@ const ahora = () => Math.floor(Date.now() / 1000);
 // ---------- DURO LIVE (solo lectura) ----------
 export async function duroLive(env) {
   const enVivo = (await env.DURO_STATE.get('live')) === 'true';
-  let conectados = null;
+  let conectados = null, audiencia = {};
   if (enVivo) {
-    const fila = await env.DB.prepare('SELECT viewer_count, sampled_at FROM live_viewer_samples ORDER BY sampled_at DESC LIMIT 1').first();
+    // SELECT *: las columnas de audiencia solo existen cuando la app nueva ya mandó alguna muestra
+    const fila = await env.DB.prepare('SELECT * FROM live_viewer_samples ORDER BY sampled_at DESC LIMIT 1').first();
     // Solo vale si la app la mandó hace poco (manda una por minuto)
-    if (fila && Date.now() - Date.parse(fila.sampled_at) < 5 * 60 * 1000) conectados = Number(fila.viewer_count) || 0;
+    if (fila && Date.now() - Date.parse(fila.sampled_at) < 5 * 60 * 1000) {
+      conectados = Number(fila.viewer_count) || 0;
+      const n = v => (v == null ? null : Number(v) || 0);
+      audiencia = {seguidoresVivo: n(fila.followers_count), nuevosVivo: n(fila.new_count),
+        nuevosSeguidores: n(fila.new_followers_count), dePaso: n(fila.passing_count)};
+    }
+    // La fila de canciones (solo para seguidores): quién tiene canción pedida o sonando ahora
+    const lista = await filaDeCanciones(env).catch(() => null);
+    if (lista) Object.assign(audiencia, lista);
+    else {
+      const cola = await env.DB.prepare("SELECT COUNT(*) AS canciones, COUNT(DISTINCT COALESCE(tiktok_user_id, lower(username), id)) AS personas FROM requests WHERE status IN ('queue', 'playing')").first();
+      audiencia.enFila = Number(cola?.personas) || 0;
+      audiencia.cancionesFila = Number(cola?.canciones) || 0;
+    }
   }
-  return {ok: true, enVivo, conectados, actualizado: ahora()};
+  return {ok: true, enVivo, conectados, ...audiencia, actualizado: ahora()};
+}
+
+// La fila en orden (la que suena primero), una entrada por persona con el estado de su tap tap:
+// a = activa, e = por vencer, i = inactiva (dejó de dar tap tap). Sin nombres: solo un número
+// (el id de su primera canción) para que la arena reconozca a cada persona aunque la fila avance.
+async function filaDeCanciones(env) {
+  if (!env.PLAYLIST) return null;
+  const r = await env.PLAYLIST.fetch('https://playlist-api/requests');
+  if (!r.ok) return null;
+  const canciones = (await r.json()).filter(c => c.status === 'queue' || c.status === 'playing')
+    .sort((a, b) => (b.status === 'playing') - (a.status === 'playing') || a.sort_order - b.sort_order || a.id - b.id);
+  const rango = {active: 'a', expiring: 'e', inactive: 'i'}, mejor = {a: 2, e: 1, i: 0};
+  const personas = new Map();
+  for (const c of canciones) {
+    const clave = c.tiktok_user_id || String(c.username || '').toLowerCase() || `c${c.id}`;
+    const e = rango[c.presence_status] || 'a', p = personas.get(clave);
+    if (!p) personas.set(clave, {id: c.id, e});
+    else if (mejor[e] > mejor[p.e]) p.e = e;   // con varias canciones vale la más activa
+  }
+  const fila = [...personas.values()];
+  return {enFila: fila.length, cancionesFila: canciones.length, filaLista: fila};
 }
 
 // ---------- Recolección (cada hora) ----------
@@ -120,13 +163,24 @@ async function youtube(env, estado, pedir) {
     return {...estado.salas.youtube, ok: true, seguidores, minutos};
   }
   let total = 0, directo = 0;
+  // Videos y Shorts por separado. La API no dice cuál es Short: se toma como Short lo que dura 3 minutos o menos
+  // (es una aproximación; los números de los últimos 28 días por tipo sí son exactos, salen de Analytics).
+  const tipo = () => ({n: 0, vistas: 0, likes: 0, top: []});
+  const tipos = {videos: tipo(), shorts: tipo()};
   for (let i = 0; i < cache.ids.length; i += 50) {
-    const videos = await pedir(conParams(`${api}/videos`, {part: 'statistics,liveStreamingDetails', id: cache.ids.slice(i, i + 50).join(','), key}));
+    // Pedir más partes no cuesta más cuota: sigue siendo 1 unidad por consulta
+    const videos = await pedir(conParams(`${api}/videos`, {part: 'statistics,liveStreamingDetails,contentDetails,snippet', id: cache.ids.slice(i, i + 50).join(','), key}));
     for (const v of videos?.items || []) {
-      total += Number(v.statistics?.viewCount || 0);
+      const vistas = Number(v.statistics?.viewCount || 0);
+      total += vistas;
       directo += Number(v.liveStreamingDetails?.concurrentViewers || 0);
+      const T = tipos[segundosISO(v.contentDetails?.duration) <= 180 ? 'shorts' : 'videos'];
+      T.n++; T.vistas += vistas; T.likes += Number(v.statistics?.likeCount || 0);
+      T.top.push({t: String(v.snippet?.title || '').slice(0, 70), v: vistas});
     }
   }
+  for (const T of Object.values(tipos)) T.top = T.top.sort((a, b) => b.v - a.v).slice(0, 3);
+  estado.ytTipos = {...tipos, cuando: ahora()};
   return {ok: true, seguidores, minutos, vistasHora: vistasPorHora(estado, 'youtube', total), ahora: directo || null};
 }
 
@@ -136,7 +190,7 @@ async function youtube(env, estado, pedir) {
 export async function duracionYouTube(env, estado, pedir) {
   if (!env.YT_CLIENT_ID || !env.YT_CLIENT_SECRET || !env.YT_REFRESH_TOKEN) return estado.ytDuracion?.minutos || null;
   const c = (estado.ytDuracion ||= {});
-  if (c.minutos && ahora() - (c.cuando || 0) < 6 * 3600) return c.minutos;
+  if (c.minutos && estado.ytTipos28 && ahora() - (c.cuando || 0) < 6 * 3600) return c.minutos;
   const tok = await pedir('https://oauth2.googleapis.com/token', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
     body: new URLSearchParams({client_id: env.YT_CLIENT_ID, client_secret: env.YT_CLIENT_SECRET, refresh_token: env.YT_REFRESH_TOKEN, grant_type: 'refresh_token'}).toString()});
   const dia = d => new Date(Date.now() - d * 86400000).toISOString().slice(0, 10);
@@ -145,7 +199,23 @@ export async function duracionYouTube(env, estado, pedir) {
     {headers: {Authorization: `Bearer ${tok.access_token}`}});
   const segundos = Number(r?.rows?.[0]?.[0] || 0);
   if (segundos > 0) Object.assign(c, {minutos: Math.round(segundos / 6) / 10, cuando: ahora()});
+  // Los últimos 28 días separados por tipo de contenido (Shorts, videos, directos): esto sí es exacto
+  try {
+    const t = await pedir(conParams('https://youtubeanalytics.googleapis.com/v2/reports',
+      {ids: 'channel==MINE', startDate: dia(30), endDate: dia(2), dimensions: 'creatorContentType',
+        metrics: 'views,estimatedMinutesWatched,averageViewDuration,subscribersGained'}),
+      {headers: {Authorization: `Bearer ${tok.access_token}`}});
+    estado.ytTipos28 = Object.fromEntries((t?.rows || []).map(([tipo, vistas, minutos, dur, subs]) =>
+      [tipo, {vistas: Number(vistas), minutos: Number(minutos), duracion: Number(dur), suscriptores: Number(subs)}]));
+    estado.ytTipos28.cuando = ahora();
+  } catch (e) { estado.ytTipos28Error = String(e.message || e).slice(0, 160); }
   return c.minutos || null;
+}
+
+// «PT1M5S» → 65 segundos
+export function segundosISO(d) {
+  const m = /P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(String(d || '')) || [];
+  return (+m[1] || 0) * 86400 + (+m[2] || 0) * 3600 + (+m[3] || 0) * 60 + (+m[4] || 0);
 }
 
 // ---------- Twitch (Helix, token de app) ----------

@@ -15,5 +15,9 @@
   "d1_databases": [
     // Solo lectura (el código solo hace SELECT): las muestras de espectadores de la app DURO Live
     {"binding": "DB", "database_name": "duro-playlist", "database_id": "5d426ae7-5af3-42e8-b4c2-4b2bcb5da972"}
+  ],
+  "services": [
+    // Solo lectura: GET /requests de DURO LIVE, para saber quién está en la fila y si su canción sigue activa (tap tap)
+    {"binding": "PLAYLIST", "service": "playlist-api"}
   ]
 }

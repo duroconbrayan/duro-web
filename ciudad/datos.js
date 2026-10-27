@@ -159,7 +159,22 @@ function geometriaStream(s, Lmin) {
   [['rueda', pasos[0]], ['carrusel', pasos[1]], ['puesto', pasos[2]]].forEach(([tipo, d]) => {
     for (const sg of [-1, 1]) { const e = eje(d); atracciones.push({tipo, r: rA, x: e.x + perp.x * lado * sg, z: e.z + perp.z * lado * sg}); }
   });
-  const parque = {esquina: eje(dEsq), dEnt, dEsq, atracciones, ancho: 2.4};
+  const parque = {esquina: eje(dEsq), dEnt, dEsq, atracciones, ancho: 2.4,
+    // Dos portales a los lados del camino, pegados a la puerta de la arena: por uno salen los nuevos (y los de paso), por el otro se van
+    portales: {nuevos: (e => ({x: e.x - perp.x * 1.9, z: e.z - perp.z * 1.9}))(eje(dEnt - 0.5)),
+      salida: (e => ({x: e.x + perp.x * 1.9, z: e.z + perp.z * 1.9}))(eje(dEnt - 0.5))}};
+  // Los de paso (conectados que nunca interactúan) se quedan de pie en el pasillo de atrás de la pista, entre la pista y las gradas,
+  // solo en la mitad de los que no te siguen (así las dos mitades quedan bien separadas)
+  const dePaso = [];
+  for (const r of [rMax + 0.75, rMax + 1.25]) {
+    const hueco = (PASILLO + 0.4) / (2 * r), arco = 2 * Math.PI - 2 * hueco, n = Math.floor(arco * r / 0.5);
+    for (let j = Math.ceil(n / 2); j < n; j++) { const phi = frente + hueco + (j + 0.5) * arco / n; dePaso.push({x: C.x + Math.cos(phi) * r, z: C.z + Math.sin(phi) * r, phi, r, cerca: n - 1 - j}); }
+  }
+  // La fila de canciones (solo seguidores): una fila de verdad por el pasillo, del escenario hacia la entrada;
+  // si es muy larga sigue afuera por el camino del parque. El #1 queda pegado al escenario.
+  const filaCanciones = [];
+  for (let d = RE + 0.7; d < dEsq - 0.8 && filaCanciones.length < 200; d += 0.6) filaCanciones.push(eje(d));
+  dePaso.sort((a, b) => a.cerca - b.cerca);
   // Palco: 2 columnas × 3 filas de escritorios y un pasillo a la derecha
   const escritorio = i => ({x: X0 + 0.3 + (i % 2) * 1.9, z: Z0 + 0.4 + Math.floor(i / 2) * 1.85});
   const carril = X0 + 4.4;
@@ -172,7 +187,7 @@ function geometriaStream(s, Lmin) {
     // Desde el vidrio del palco miran el LIVE
     ventana: {x: carril, z: Z0 + 5.3, tag: 'live'},
     stream: {B, C, radioEscenario: RE, k, yJ, yT, anchoJ: 2.0 * k, anillos, asientos, orden, entrada, frente, pasillo: PASILLO, aforo: cupo,
-      gradas: {filas: filasG, posiciones: posGradas, pasillo: PAS_G, alto: yG0 + filasG.length * hG, rFin},
+      dePaso, filaCanciones, gradas: {filas: filasG, posiciones: posGradas, pasillo: PAS_G, alto: yG0 + filasG.length * hG, rFin},
       maquinas: {x: X0 + Bc / 2, z: -Z0 - Bc / 2, B: Bc}, boveda: {x: -X0 - Bc / 2, z: Z0 + Bc / 2, B: Bc}, parque},
   };
 }

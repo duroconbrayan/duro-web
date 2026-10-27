@@ -14,3 +14,8 @@ node_modules/
 
 # Credenciales de Google (nunca a git)
 client_secret*.json
+
+# Laboratorio de DURO LIVE: datos de prueba locales
+laboratorio/.estado/
+laboratorio/.wrangler/
+laboratorio/.lab-*.log

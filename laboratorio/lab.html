@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Laboratorio DURO LIVE</title>
+<style>
+:root{--bg:#0b0710;--card:#160e1f;--line:#3a2440;--text:#f3eaf5;--muted:#a993b0;--rosa:#ff3d6e;--verde:#3ddc84;--ambar:#ffb020;--gris:#6b5a72}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:20px}
+h1{font:800 22px ui-monospace,Menlo,monospace;margin:0 0 4px}h1 span{color:var(--rosa)}
+.sub{color:var(--muted);margin:0 0 18px;font-size:13px}
+.aviso{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:13px;margin-bottom:16px}
+.fila{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+input,button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+button{cursor:pointer}button.rosa{background:var(--rosa);border-color:var(--rosa);color:#fff;font-weight:700}
+button:disabled{opacity:.5}
+.lista{display:flex;flex-direction:column;gap:10px;max-width:760px}
+.cancion{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:12px}
+.cancion b{display:block}.cancion small{color:var(--muted)}
+.estado{font:700 12px ui-monospace,Menlo,monospace;color:var(--c)}
+.barra{grid-column:1/-1;height:6px;background:#2a1d31;border-radius:6px;overflow:hidden}.barra i{display:block;height:100%;background:var(--c)}
+.acciones{display:flex;gap:6px}
+#log{margin-top:18px;max-width:760px;font:12px ui-monospace,Menlo,monospace;color:var(--muted);white-space:pre-wrap}
+</style>
+</head>
+<body>
+<h1>Laboratorio <span>DURO LIVE</span></h1>
+<p class="sub">Tu mismo Worker, corriendo solo en tu Mac con datos de prueba. Nada de aquí toca tu DURO LIVE real.</p>
+<div class="aviso">Cómo probar: 1) pide canciones con dos fans · 2) dale «Tap tap» solo a uno · 3) «Adelantar 5 min» dos veces · la de quien dio tap tap sigue <b style="color:var(--verde)">activa</b>; la otra pasa a <b style="color:var(--ambar)">por vencer</b> y luego a <b style="color:var(--gris)">inactiva</b>.</div>
+<div class="fila">
+  <input id="fan" placeholder="Nombre del fan (ej. fan_1)" value="fan_1">
+  <input id="cancion" placeholder="Canción" value="Escucho Voces - Brayan Trampa">
+  <button class="rosa" id="pedir">Pedir canción</button>
+  <button id="adelantar">⏩ Adelantar 5 min</button>
+  <button id="sonar">▶ ¿Cuál suena ahora?</button>
+</div>
+<div class="lista" id="lista"></div>
+<div id="log"></div>
+<script>
+const $ = id => document.getElementById(id);
+const COLORES = {active: 'var(--verde)', expiring: 'var(--ambar)', inactive: 'var(--gris)'};
+const NOMBRES = {active: 'ACTIVA', expiring: 'POR VENCER', inactive: 'INACTIVA'};
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function log(t) { $('log').textContent = `${new Date().toLocaleTimeString()}  ${t}\n` + $('log').textContent; }
+async function api(ruta, datos) {
+  const r = await fetch(ruta, datos ? {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(datos)} : {cache: 'no-store'});
+  return r.json();
+}
+async function pintar() {
+  const lista = await api('/api/lista');
+  if (lista.error) { $('lista').innerHTML = `<div class="aviso">${esc(lista.error)}</div>`; return; }
+  $('lista').innerHTML = lista.length ? lista.map(s => {
+    const c = COLORES[s.presence_status] || 'var(--muted)', resta = s.presence_remaining_seconds ?? 0;
+    return `<div class="cancion" style="--c:${c}">
+      <div><b>#${s.id} · ${esc(s.text)}</b><small>${esc(s.username)} · ${s.status === 'playing' ? 'SONANDO · ' : ''}<span class="estado">${NOMBRES[s.presence_status] || s.presence_status}</span> · quedan ${Math.floor(resta / 60)}:${String(resta % 60).padStart(2, '0')}</small></div>
+      <div class="acciones"><button data-tap="${esc(s.username)}">👆 Tap tap</button></div>
+      <div class="barra"><i style="width:${resta / 6}%"></i></div></div>`;
+  }).join('') : '<div class="aviso">No hay canciones. Pide una con un fan.</div>';
+}
+$('pedir').onclick = async () => { const r = await api('/api/pedir', {fan: $('fan').value.trim(), cancion: $('cancion').value.trim()}); log(r.error ? `❌ ${r.error}` : `🎵 ${$('fan').value} pidió #${r.id}`); pintar(); };
+$('adelantar').onclick = async e => { e.target.disabled = true; log('⏩ adelantando el reloj 5 minutos…'); const r = await api('/api/adelantar', {minutos: 5}); log(r.error ? `❌ ${r.error}` : `⏩ listo (${r.canciones} canciones)`); e.target.disabled = false; setTimeout(pintar, 11000); pintar(); };
+$('sonar').onclick = async () => { const r = await api('/api/sonar', {}); log(r.error ? `❌ ${r.error}` : `▶ ahora suena: ${JSON.stringify(r).slice(0, 160)}`); pintar(); };
+$('lista').onclick = async e => {
+  const fan = e.target.dataset?.tap; if (!fan) return;
+  const r = await api('/api/taptap', {fan});
+  log(r.error ? `❌ ${r.error}` : `👆 ${fan} dio tap tap → el Worker renovó ${r.updated} canción(es)`);
+  setTimeout(pintar, 300);
+};
+pintar(); setInterval(pintar, 3000);
+</script>
+</body>
+</html>
