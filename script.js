@@ -773,6 +773,7 @@ menu.style.display = "block";
 }
 
 function cerrarMenu() {
+    if(brebTimer!==null){clearInterval(brebTimer);brebTimer=null;}
 
     document.getElementById("overlay").style.display = "none";
     document.getElementById("song-menu").style.display = "none";
@@ -836,7 +837,7 @@ function abrirSelectorSaltar() {
 
         const price = document.createElement("span");
         price.className = "action-price";
-        price.textContent = "$2";
+        price.textContent = "Elegir pago";
 
         const arrow = document.createElement("span");
         arrow.className = "action-arrow";
@@ -1006,7 +1007,7 @@ function mostrarOpcionesSubir() {
                 </div>
             </div>
             <div class="action-right">
-                <span class="action-price">$2</span>
+                <span class="action-price">Ver opciones</span>
                 <span class="action-arrow">›</span>
             </div>
         </div>
@@ -1489,26 +1490,71 @@ async function enviarPrueba(action) {
     }
 }
 
-function mostrarOpcionesSaltar() {
-
-    document.getElementById("menu-subtitle").textContent =
-    "Pasa tu canción automáticamente al puesto #1.";
-
-    const contenido = document.getElementById("menu-contenido");
-
-    contenido.innerHTML = `
-        <p>⚡ Tu canción subirá <strong>automáticamente al puesto #1</strong>.</p>
-
-        <p>Apoya el directo con <strong>$2 USD</strong> por PayPal.</p>
-
-        <button class="pay-btn" onclick="crearOrdenPayPal()">
-    💵 PAGAR $2 CON PAYPAL
-</button>
-
-        <button onclick="mostrarOpcionesSubir()">⬅️ Volver</button>
-    `;
-
+// DURO PAY: public checkout; the Worker is the sole payment authority.
+const brebBase = new URL(requestsURL).origin;
+let brebOrder = null, brebBusy = false, brebTimer = null, brebChecking = false;
+let brebAvailable = false;
+try { const saved = JSON.parse(sessionStorage.getItem('duro_breb_order') || 'null'); if(saved && typeof saved.order_id === 'string' && Number.isFinite(saved.expires_at)) brebOrder=saved; } catch (_) {}
+function brebSave(order) { brebOrder=order; try { if(order) sessionStorage.setItem('duro_breb_order',JSON.stringify(order)); else sessionStorage.removeItem('duro_breb_order'); } catch (_) {} }
+async function brebAvailability() {
+    try { const r=await fetch(brebBase+'/breb/availability',{cache:'no-store'}); const d=await r.json(); brebAvailable=r.ok && d.available===true; } catch (_) {brebAvailable=false;}
+    const btn=document.getElementById('breb-choice');
+    if(btn){btn.disabled=!brebAvailable||brebBusy;btn.textContent=brebAvailable?'Bre-B · $8.000 COP':'Bre-B · no disponible ahora';}
+    return brebAvailable;
 }
+function mostrarOpcionesSaltar() {
+    document.getElementById('menu-subtitle').textContent='Elige cómo subir tu canción al primer puesto pendiente.';
+    const contenido=document.getElementById('menu-contenido');
+    contenido.innerHTML=`<div class="duro-payment-options">
+        <button class="pay-btn" onclick="crearOrdenPayPal()">PAGAR $2 USD CON PAYPAL</button>
+        <button id="breb-choice" disabled onclick="brebForm()">Bre-B · comprobando disponibilidad…</button>
+        <button id="breb-resume" hidden onclick="brebShowOrder()">Consultar mi orden Bre-B</button>
+        <button onclick="mostrarOpcionesSubir()">← Volver</button></div>`;
+    document.getElementById('breb-resume').hidden=!brebOrder;
+    brebAvailability();
+}
+function brebForm(){
+    if(brebOrder && ['pending','expired'].includes(brebOrder.state) && (brebOrder.expires_at>=Date.now()/1000 || brebOrder.state==='pending')) {brebShowOrder();return;}
+    const target=colaActual.find(x=>Number(x.id)===Number(solicitudSeleccionadaId));
+    if(!target){alert('La canción ya no está pendiente.');return;}
+    const content=document.getElementById('menu-contenido');
+    content.innerHTML=`<form id="breb-form" class="breb-checkout"><label for="breb-name">Nombre del titular de la cuenta que enviará el dinero</label><input id="breb-name" maxlength="200" minlength="3" required autocomplete="name" placeholder="Nombre y apellido"><p>Importe exacto: <strong>$8.000 COP</strong>. Usa el nombre de quien hará la transferencia.</p><button type="submit" class="breb-primary">GENERAR ORDEN Y MOSTRAR QR</button><p id="breb-error" role="status"></p><button type="button" onclick="mostrarOpcionesSaltar()">← Volver</button></form>`;
+    document.getElementById('breb-form').addEventListener('submit',e=>{e.preventDefault();brebCreate(target,e.currentTarget);});
+}
+async function brebPost(path,body){const r=await fetch(brebBase+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store'});const d=await r.json();if(!r.ok)throw Error(d.error||'Servicio no disponible');return d;}
+async function brebCreate(target,form){
+    if(brebBusy)return; const name=form.querySelector('input').value.trim(); if(!name)return;
+    brebBusy=true;const button=form.querySelector('[type=submit]');button.disabled=true;
+    try {const d=await brebPost('/breb/create-order',{request_id:Number(target.id),sender_name:name});
+        if(!d.order_id||d.amount_minor!==800000||!Number.isFinite(Number(d.expires_at)))throw Error('Respuesta de pago inesperada');
+        brebSave({order_id:d.order_id,expires_at:Number(d.expires_at),state:'pending',song:textoSolicitud(target),request_id:Number(target.id)});
+        if(document.getElementById('breb-form')===form)brebShowOrder();else alert('Orden Bre-B creada. Vuelve al menú de pagos para consultarla.');
+    }catch(e){const msg=form.querySelector('#breb-error');if(msg)msg.textContent=e.message+'; si no recibiste el QR, no transfieras dinero.';}
+    finally{brebBusy=false;button.disabled=false;}
+}
+function brebShowOrder(){
+    if(!brebOrder)return;const content=document.getElementById('menu-contenido');
+    document.getElementById('selected-song').textContent=brebOrder.song||'Tu canción';
+    document.getElementById('menu-subtitle').textContent='Orden Bre-B · $8.000 COP';
+    content.innerHTML=`<section class="breb-checkout"><div id="breb-status" role="status" aria-live="polite">Consultando orden…</div><div id="breb-payment" hidden><strong id="breb-clock" class="breb-clock"></strong><p>Escanea el QR desde tu banco o copia la llave.</p><img src="breb-nu.png" class="breb-qr" alt="QR original de Nu para pago Bre-B"><a href="breb-nu.png" download="QR-DURO-BreB.png">Guardar QR</a><button type="button" id="breb-copy" onclick="brebCopy()">Copiar llave @WOJ271</button><p>Envía exactamente $8.000 COP. Si ya pagaste, no vuelvas a transferir.</p></div><button onclick="brebPoll()">Consultar estado</button><button id="breb-new" hidden onclick="brebSave(null);mostrarOpcionesSaltar()">Volver a métodos de pago</button><button onclick="cerrarMenu()">Cerrar</button></section>`;
+    brebPaint();brebPoll();if(brebTimer===null)brebTimer=setInterval(()=>{brebPaint();if(++brebTicks%5===0)brebPoll();},1000);
+}
+let brebTicks=0;
+function brebPaint(){
+    if(!brebOrder)return;const el=document.getElementById('breb-status');if(!el)return;
+    const left=Math.max(0,Math.floor(brebOrder.expires_at-Date.now()/1000));const pay=document.getElementById('breb-payment');const clock=document.getElementById('breb-clock');const next=document.getElementById('breb-new');
+    const active=brebOrder.state==='pending'&&left>0&&stageLiveActivo;
+    pay.hidden=!active;clock.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+    next.hidden=!['matched','cancelled','expired'].includes(brebOrder.state);
+    el.textContent=brebOrder.state==='matched'?'Pago confirmado. Se aplicó la prioridad a tu canción.':brebOrder.state==='cancelled'?'Orden cancelada. Si pagaste, contacta al anfitrión.':!active?'Orden vencida o directo cerrado. Si ya pagaste, no repitas el pago; consulta al anfitrión.':'Esperando confirmación de Nu. Si el nombre no coincide, el anfitrión podrá revisar el pago.';
+}
+async function brebPoll(){
+    if(!brebOrder||brebChecking||!document.getElementById('breb-status'))return;brebChecking=true;const id=brebOrder.order_id;
+    try{const d=await brebPost('/breb/order-status',{order_id:id});if(brebOrder?.order_id!==id)return;if(['pending','matched','expired','cancelled'].includes(d.state)){const previous=brebOrder.state;brebSave({...brebOrder,state:d.state});brebPaint();if(d.state==='matched'&&previous!=='matched')cargarStageHistorial();}}
+    catch(_){const el=document.getElementById('breb-status');if(el)el.textContent='No se pudo consultar el pago. No repitas la transferencia.';}
+    finally{brebChecking=false;}
+}
+async function brebCopy(){const btn=document.getElementById('breb-copy');try{await navigator.clipboard.writeText('@WOJ271');if(btn)btn.textContent='Llave copiada';}catch(_){if(btn)btn.textContent='Copia manualmente: @WOJ271';}}
 
 async function crearOrdenPayPal() {
 
