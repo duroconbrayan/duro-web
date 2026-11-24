@@ -8,9 +8,9 @@
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="https://duroconbrayan.com/playlist.html">
     <link rel="icon" href="/assets/favicon.png">
-    <link rel="stylesheet" href="style.css?v=30">
+    <link rel="stylesheet" href="style.css?v=20261124-stage3">
 </head>
-<body class="stage-v2">
+<body class="stage-v2 duro-stage3">
 <div class="stage-glow"></div>
 <main>
 <div class="page-wrap">
@@ -43,18 +43,17 @@
         </section>
 
         <!-- TOP DEL LIVE -->
-        <aside class="top-live-panel" id="live-likes-ranking" aria-label="Top del Live"><div class="live-likes-ranking-title">❤️ TOP DEL LIVE</div><div id="live-likes-ranking-list">Esperando corazones...</div></aside>
+        <aside class="top-live-panel" id="live-likes-ranking" aria-label="Top del Live"><div class="live-likes-ranking-title">TOP DEL LIVE</div><div class="ranking-subtitle">LOS QUE MÁS TAP TAPS DAN</div><div id="live-likes-ranking-list">Esperando corazones...</div></aside>
 
         <!-- SALTAR AL #1 / PAYPAL -->
         <div class="skip-banner">
             <button onclick="abrirSelectorSaltar()">
                 <span class="skip-cta">⚡ SALTAR AL #1</span>
-                <span class="skip-price">$2</span>
+                <span class="skip-price">$2 USD</span>
             </button>
 
             <div class="skip-paypal">
-                <span>PAGO SEGURO<br>CON PAYPAL</span>
-                <strong>P</strong>
+                <span class="payment-wordmark" aria-label="PayPal">Pay<span>Pal</span></span><span class="payment-coming">Bre-B · próximamente</span>
             </div>
         </div>
 
@@ -62,7 +61,7 @@
 
         <section class="tap-player" id="live-likes"  aria-label="Meta de Tap Taps">
             <div class="tap-player-top">
-                <div><span class="tap-eyebrow">❤️ TAP TAPS DEL LIVE</span><strong class="tap-callout">DA CORAZÓN Y CAMBIA LA CANCIÓN</strong></div>
+                <div><span class="tap-eyebrow">❤️ TAP TAPS DEL LIVE</span><strong class="tap-callout">DA CORAZÓN PARA AVANZAR</strong></div>
                 <div class="tap-counter"><strong id="live-likes-count">0</strong><span>/ <b id="live-likes-goal">5.000</b></span></div>
             </div>
             <div class="tap-track" aria-label="Progreso hacia la siguiente canción"><div class="tap-progress" id="live-likes-progress"></div><span class="tap-heart">❤</span></div>
@@ -104,6 +103,6 @@
 <div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
 <div id="song-menu" class="song-menu"><h3>Adelanta tu canción</h3><div id="selected-song"></div><p id="menu-subtitle"></p><div id="menu-contenido"><button id="btn-subir" onclick="mostrarOpcionesSubir()">⚡ Adelantar canción</button><button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Pasar al #1</button><button onclick="cerrarMenu()">❌ Cancelar</button></div></div>
 
-<script src="script.js?v=20261124-rating-session"></script>
+<script src="script.js?v=20261124-stage3"></script>
 </body>
 </html>

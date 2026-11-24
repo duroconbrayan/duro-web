@@ -281,6 +281,7 @@ async function comprobarEstadoLive() {
 
             stagePlayingId = null;
             stageRequestsFirma = "";
+            stageAvatarCache.clear();
 
             /*
              * No seguir procesando datos antiguos
@@ -1583,6 +1584,21 @@ function claveEventoGoal(evento) {
     return `${evento.occurred_at}:${evento.completed_goals || 0}`;
 }
 
+const stageAvatarCache = new Map();
+function stageAvatar(item) {
+    const username = String(item.username || "").trim().replace(/^@+/, "");
+    const wrap = document.createElement("span");
+    wrap.className = "stage-user-avatar";
+    wrap.textContent = username.slice(0, 2).toUpperCase() || "?";
+    const url = item.avatar_url || stageAvatarCache.get(username.toLowerCase());
+    if (typeof url === "string" && /^https:\/\//i.test(url)) {
+        const img = document.createElement("img");
+        img.src = url; img.alt = ""; img.referrerPolicy = "no-referrer";
+        img.addEventListener("error", () => img.remove());
+        wrap.appendChild(img);
+    }
+    return wrap;
+}
 function tarjetaStage(item, tipo, posicion) {
     const card = document.createElement("article");
 
@@ -1602,7 +1618,7 @@ function tarjetaStage(item, tipo, posicion) {
     label.className = "stage-card-label";
 
     if (tipo === "current") {
-        label.textContent = "⚡ AHORA SUENA ⚡";
+        label.textContent = item.play_number ? `CANCIÓN #${String(item.play_number).padStart(3, "0")}` : "CANCIÓN EN CURSO";
 
     } else if (tipo === "played") {
         label.textContent = "✓ YA SONÓ";
@@ -1654,7 +1670,12 @@ function tarjetaStage(item, tipo, posicion) {
     card.append(label, comment);
 
     if (user.textContent) {
-        card.appendChild(user);
+        if (tipo === "current") {
+            const profile = document.createElement("div");
+            profile.className = "stage-current-profile";
+            profile.append(stageAvatar(item), user);
+            card.appendChild(profile);
+        } else card.appendChild(user);
     }
 
     if (tipo === "queue") {
@@ -2318,7 +2339,9 @@ async function cargarStageHistorial() {
     item.username,
     item.tap_exempt_reason,
     item.presence_status,
-    item.presence_remaining_seconds
+    item.presence_remaining_seconds,
+    item.play_number,
+    item.avatar_url
 ]));
 
         detectarEventosRequests(requests, playing, queue);
@@ -2496,6 +2519,16 @@ requestAnimationFrame(() => overlay.classList.add("show"));
 }
 
 function actualizarRankingStage(topUsers) {
+    for (const user of topUsers) {
+        const key = String(user.username || "").trim().replace(/^@+/, "").toLowerCase();
+        if (key && user.avatar_url) stageAvatarCache.set(key, user.avatar_url);
+    }
+    const playing = stageUltimosDatos.playing;
+    if (playing && !playing.avatar_url) {
+        const profile = document.querySelector(".stage-current-profile .stage-user-avatar");
+        const key = String(playing.username || "").trim().replace(/^@+/, "").toLowerCase();
+        if (profile && !profile.querySelector("img") && stageAvatarCache.has(key)) profile.replaceWith(stageAvatar(playing));
+    }
     const rankingList = document.getElementById("live-likes-ranking-list");
     if (!rankingList) return;
     if (!topUsers.length) {
