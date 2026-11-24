@@ -49,6 +49,9 @@ let stageCargaLikesActiva = false;
 let historialCargaActiva = false;
 let stageLiveActivo = false;
 let stageRequestsFirma = "";
+let stageFiltro = "all";
+let stageBusqueda = "";
+let stageSessionEpoch = 0;
 let stageUltimosDatos = { played: [], playing: null, queue: [] };
 
 // ============ SKINS DURO ============
@@ -204,6 +207,7 @@ async function comprobarEstadoLive() {
 
         const estaEnVivo = data.live === true;
 
+        if (stageLiveActivo !== estaEnVivo) stageSessionEpoch++;
         stageLiveActivo = estaEnVivo;
 
         document.body.classList.toggle(
@@ -281,6 +285,10 @@ async function comprobarEstadoLive() {
 
             stagePlayingId = null;
             stageRequestsFirma = "";
+            stageFiltro = "all";
+            stageBusqueda = "";
+            stageHistorialDesbloqueado = false;
+            stagePrimeraCarga = true;
             stageAvatarCache.clear();
 
             /*
@@ -810,7 +818,7 @@ function abrirSelectorSaltar() {
 
         const icon = document.createElement("span");
         icon.className = "action-icon";
-        icon.textContent = `#${index + 1}`;
+        icon.textContent = `#${String(Math.max(0, Number(stageUltimosDatos.playing?.play_number)||0, ...stageUltimosDatos.played.map(x=>Number(x.play_number)||0)) + index + 1).padStart(3,"0")}`;
 
         const textWrap = document.createElement("div");
 
@@ -1599,7 +1607,7 @@ function stageAvatar(item) {
     }
     return wrap;
 }
-function tarjetaStage(item, tipo, posicion) {
+function tarjetaStage(item, tipo, posicion, turno, esSiguiente = false) {
     const card = document.createElement("article");
 
     const presenceStatus =
@@ -1621,31 +1629,20 @@ function tarjetaStage(item, tipo, posicion) {
         label.textContent = item.play_number ? `CANCIÓN #${String(item.play_number).padStart(3, "0")}` : "CANCIÓN EN CURSO";
 
     } else if (tipo === "played") {
-        label.textContent = "✓ YA SONÓ";
-
+        label.textContent = "✓ ESCUCHADA";
     } else if (presenceStatus === "active") {
-        label.textContent =
-            posicion === 0
-                ? "🟢 ACTIVA · SIGUIENTE"
-                : `🟢 ACTIVA · #${posicion + 1}`;
-
+        label.textContent = esSiguiente ? "ACTIVA · SIGUIENTE" : "ACTIVA";
     } else if (presenceStatus === "expiring") {
-        label.textContent =
-            posicion === 0
-                ? "🟡 POR INACTIVARSE · SIGUIENTE"
-                : `🟡 POR INACTIVARSE · #${posicion + 1}`;
-
+        label.textContent = esSiguiente ? "POR INACTIVARSE · SIGUIENTE" : "POR INACTIVARSE";
     } else {
-        // Las inactivas siguen visibles y CONSERVAN su puesto.
-        // No pueden reproducirse mientras no recuperen presencia,
-        // pero /next tampoco renumera la cola por presencia.
-        label.textContent = `⚫ INACTIVA · #${posicion + 1}`;
+        label.textContent = "INACTIVA";
     }
 
-    if (tipo === "queue") {
+    if (tipo !== "current") {
         const positionBadge = document.createElement("span");
         positionBadge.className = "stage-position-badge";
-        positionBadge.textContent = String(posicion + 1).padStart(2, "0");
+        positionBadge.textContent = Number.isInteger(turno) && turno > 0 ? `#${String(turno).padStart(3, "0")}` : "—";
+        positionBadge.title = tipo === "queue" ? "Turno provisional" : "Turno escuchado";
         card.appendChild(positionBadge);
     }
 
@@ -1728,23 +1725,32 @@ function tarjetaStage(item, tipo, posicion) {
         );
     }
 
+    if (tipo === "played" && item.rating !== null && item.rating !== undefined && Number.isFinite(Number(item.rating)) && Number(item.rating) >= 1 && Number(item.rating) <= 10) {
+        const nota = document.createElement("span");
+        const valor = Number(item.rating);
+        nota.className = "stage-final-rating " + (valor >= 8 ? "rating-high" : valor >= 5 ? "rating-mid" : "rating-low");
+        nota.textContent = `${valor.toFixed(1)}/10`;
+        nota.setAttribute("aria-label", `Calificación final ${valor.toFixed(1)} de 10`);
+        card.appendChild(nota);
+    }
+
     if (item.tap_exempt_reason === "gafas") {
 
         card.classList.add("stage-card-gift");
 
         const badge = document.createElement("span");
         badge.className = "stage-special-badge";
-        badge.textContent = "😎 GAFAS";
+        badge.textContent = "😎 GAFAS · PROTEGIDA";
 
         card.appendChild(badge);
 
-    } else if (item.tap_exempt_reason === "paypal") {
+    } else if (["paypal", "breb"].includes(item.tap_exempt_reason)) {
 
         card.classList.add("stage-card-paypal");
 
         const badge = document.createElement("span");
         badge.className = "stage-special-badge";
-        badge.textContent = "PAGO ✓";
+        badge.textContent = item.tap_exempt_reason === "breb" ? "BRE-B · PROTEGIDA" : "PAYPAL · PROTEGIDA";
 
         card.appendChild(badge);
     }
@@ -1874,7 +1880,7 @@ function renderizarCarruselStage(played, playing, queue) {
                     </span>
 
                     <h2>
-                        Canciones en cola
+                        Canciones del directo
                     </h2>
 
                     <div class="stage-queue-legend" aria-label="Estados de la cola">
@@ -1890,11 +1896,32 @@ function renderizarCarruselStage(played, playing, queue) {
                 </div>
             </div>
 
+            <div class="stage-list-tools">
+                <label class="stage-search-label" for="stage-search">Buscar canción o usuario</label>
+                <input id="stage-search" type="search" placeholder="Canción, artista o @usuario" autocomplete="off">
+                <div class="stage-filter-row" role="group" aria-label="Filtrar canciones">
+                    <button type="button" data-stage-filter="all" aria-pressed="true">Todas <span></span></button>
+                    <button type="button" data-stage-filter="active" aria-pressed="false">Activas <span></span></button>
+                    <button type="button" data-stage-filter="inactive" aria-pressed="false">Inactivas <span></span></button>
+                    <button type="button" data-stage-filter="played" aria-pressed="false">Escuchadas <span></span></button>
+                </div>
+                <p id="stage-filter-summary" class="stage-filter-summary" aria-live="polite"></p>
+            </div>
             <div
                 id="stage-live-list-items"
                 class="stage-live-list-items"
             ></div>
         `;
+
+        lista.querySelector("#stage-search").value = stageBusqueda;
+        lista.querySelector("#stage-search").addEventListener("input", (event) => {
+            stageBusqueda = event.target.value;
+            renderizarListaFiltradaStage();
+        });
+        lista.querySelectorAll("[data-stage-filter]").forEach(button => button.addEventListener("click", () => {
+            stageFiltro = button.dataset.stageFilter;
+            renderizarListaFiltradaStage();
+        }));
 
         const tapPlayer =
             document.querySelector(".tap-player");
@@ -1911,124 +1938,55 @@ function renderizarCarruselStage(played, playing, queue) {
         }
     }
 
-    const listaItems =
-        document.getElementById(
-            "stage-live-list-items"
-        );
-
-    const listaCount =
-        document.getElementById(
-            "stage-live-list-count"
-        );
-
-    if (!listaItems) {
-        return;
-    }
-
-    listaItems.innerHTML = "";
-
-/*
- * LISTA EN VIVO
- *
- * Ahora mostramos TODA la cola para que el usuario pueda
- * ver qué canciones están activas, cuáles están por
- * inactivarse y cuáles perdieron presencia.
- *
- * La regla de reproducción sigue estando en el Worker:
- * /next elige únicamente la primera canción activa
- * (active o expiring) según sort_order.
- *
- * Los puestos visibles pertenecen a TODA la cola. Una canción
- * inactiva conserva su puesto, pero /next la salta hasta que
- * vuelva a tener presencia.
- */
-
-const queueOrdenada = [...queue].sort(
-    (a, b) =>
-        Number(a.sort_order) -
-        Number(b.sort_order)
-);
-
-const queueActivas = queueOrdenada.filter(
-    (item) =>
-        item.presence_status === "active" ||
-        item.presence_status === "expiring"
-);
-
-if (listaCount) {
-    listaCount.textContent = String(queueOrdenada.length);
-}
-
-const activeCount = document.getElementById("stage-live-active-count");
-
-if (activeCount) {
-    activeCount.textContent = `${queueActivas.length} ACTIVAS`;
-}
-
-// Los puestos pertenecen a TODA la cola, no solamente a las
-// canciones con presencia. Una canción inactiva conserva su
-// posición y puede volver a activarse sin perderla.
-const positionById = new Map(
-    queueOrdenada.map((item, index) => [
-        String(item.id),
-        index
-    ])
-);
-
-queueOrdenada.forEach((item) => {
-    const posicion = positionById.get(String(item.id));
-
-    listaItems.appendChild(
-        tarjetaStage(
-            item,
-            "queue",
-            posicion
-        )
-    );
-});
-
-    /*
-     * Si no hay canciones esperando,
-     * mostramos un estado limpio.
-     */
-    if (queue.length === 0) {
-        const empty = document.createElement("div");
-
-        empty.className =
-            "stage-live-list-empty";
-
-        empty.innerHTML = `
-            <span>🎵</span>
-            <strong>
-                La lista está esperando canciones
-            </strong>
-            <small>
-                Agrega una canción desde el directo.
-            </small>
-        `;
-
-        listaItems.appendChild(empty);
-    }
-
-    if (listaCount) {
-        listaCount.textContent =
-            queue.length.toLocaleString("es-CO");
-    }
-
-    /*
-     * Guardamos los datos actuales
-     * para las demás funciones del sistema.
-     */
     colaActual = queue;
+    stageUltimosDatos = { played, playing, queue };
+    stagePlayingId = playing?.id || null;
+    renderizarListaFiltradaStage();
+}
 
-    stageUltimosDatos = {
-        played,
-        playing,
-        queue
-    };
+function normalizarBusquedaStage(texto) {
+    return String(texto ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
 
-    stagePlayingId =
-        playing?.id || null;
+function datosFiltradosStage(played, playing, queue, filtro, busqueda) {
+    const ordenada = [...queue].sort((a,b) => Number(a.sort_order)-Number(b.sort_order) || Number(a.id)-Number(b.id));
+    const activas = item => ["active", "expiring"].includes(item.presence_status);
+    const base = Math.max(0, Number(playing?.play_number)||0, ...played.map(item => Number(item.play_number)||0));
+    const siguiente = ordenada.find(activas)?.id;
+    const pendientes = ordenada.map((item,index) => ({item, tipo:"queue", posicion:index, turno:base+index+1, siguiente:item.id===siguiente}));
+    const escuchadas = [...played].sort((a,b) => Number(b.play_number||0)-Number(a.play_number||0) || Number(b.id)-Number(a.id)).map(item => ({item,tipo:"played",posicion:0,turno:Number(item.play_number)||null,siguiente:false}));
+    const counts = {all:pendientes.length+escuchadas.length,active:ordenada.filter(activas).length,inactive:ordenada.filter(item=>!activas(item)).length,played:escuchadas.length};
+    const filas = [...pendientes,...escuchadas].filter(row => {
+        if (filtro === "played" && row.tipo !== "played") return false;
+        if (filtro === "active" && (row.tipo !== "queue" || !activas(row.item))) return false;
+        if (filtro === "inactive" && (row.tipo !== "queue" || activas(row.item))) return false;
+        const texto = normalizarBusquedaStage([row.item.text,row.item.raw_comment,row.item.username,usuarioSolicitud(row.item),row.turno ? `#${String(row.turno).padStart(3,"0")} #${row.turno}` : ""].join(" "));
+        return normalizarBusquedaStage(busqueda).split(/\s+/).filter(Boolean).every(palabra => texto.includes(palabra));
+    });
+    return {filas,counts};
+}
+
+function renderizarListaFiltradaStage() {
+    const lista = document.getElementById("stage-live-list-items");
+    if (!lista || !stageLiveActivo) return;
+    const {played,playing,queue} = stageUltimosDatos;
+    const {filas,counts} = datosFiltradosStage(played,playing,queue,stageFiltro,stageBusqueda);
+    document.getElementById("stage-live-active-count").textContent = `${counts.active} ACTIVAS`;
+    document.getElementById("stage-live-list-count").textContent = String(queue.length);
+    document.querySelectorAll("[data-stage-filter]").forEach(button => {
+        button.setAttribute("aria-pressed",String(button.dataset.stageFilter===stageFiltro));
+        button.querySelector("span").textContent = counts[button.dataset.stageFilter];
+    });
+    document.getElementById("stage-filter-summary").textContent = `${filas.length} canciones · Turnos pendientes provisionales`;
+    const fragment = document.createDocumentFragment();
+    for (const row of filas) fragment.appendChild(tarjetaStage(row.item,row.tipo,row.posicion,row.turno,row.siguiente));
+    if (!filas.length) {
+        const empty = document.createElement("div");
+        empty.className = "stage-live-list-empty";
+        empty.textContent = stageBusqueda.trim() ? "No encontramos canciones con esa búsqueda." : "No hay canciones en esta categoría.";
+        fragment.appendChild(empty);
+    }
+    lista.replaceChildren(fragment);
 }
 
 function detectarEventosRequests(requests, playing, queue) {
@@ -2299,6 +2257,7 @@ async function cargarStageHistorial() {
     }
 
     stageCargaRequestsActiva = true;
+    const epoch = stageSessionEpoch;
     try {
 
         const response = await fetch(
@@ -2313,6 +2272,7 @@ async function cargarStageHistorial() {
         if (!response.ok) return;
 
         const requests = await response.json();
+        if (!stageLiveActivo || epoch !== stageSessionEpoch || !Array.isArray(requests)) return;
 
 // Los Tap Taps se consultan independientemente
 // del estado visual de /status.
@@ -2341,7 +2301,8 @@ async function cargarStageHistorial() {
     item.presence_status,
     item.presence_remaining_seconds,
     item.play_number,
-    item.avatar_url
+    item.avatar_url,
+    item.rating
 ]));
 
         detectarEventosRequests(requests, playing, queue);
