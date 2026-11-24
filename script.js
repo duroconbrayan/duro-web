@@ -2581,8 +2581,10 @@ const porcentaje = Math.min(
             const evento = data.last_goal_event;
             if (evento.song_changed) {
                 encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "¡SIGUIENTE CANCIÓN!", "EL LIVE LA DESBLOQUEÓ");
+            } else if (evento.rating_pending) {
+                encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "ESPERANDO CALIFICACIÓN", "DURO CALIFICA ANTES DE AVANZAR");
             } else {
-                const proteccion = evento.exempt_reason === "gafas" ? "PROTEGIDA POR GAFAS 😎" : "PROTEGIDA POR PAYPAL ✓";
+                const proteccion = evento.exempt_reason === "gafas" ? "PROTEGIDA POR GAFAS 😎" : evento.exempt_reason === "breb" ? "PROTEGIDA POR BRE-B ✓" : "PROTEGIDA POR PAYPAL ✓";
                 encolarEventoStage("goal", "🛡️", "META DE TAP TAPS COMPLETADA", "LA CANCIÓN CONTINÚA", proteccion);
             }
             stageGoalEventKey = eventKey;
