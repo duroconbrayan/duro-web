@@ -178,13 +178,22 @@ if (paypalStatus === "cancel") {
         }
 
         if (data.paid) {
-            alert("✅ Pago confirmado. Tu canción pasó automáticamente al puesto #1.");
-
-            window.history.replaceState(
-                {},
-                "",
-                window.location.pathname
-            );
+            if (data.refunded) {
+                alert(data.message || "El pago fue reembolsado. No se aplicó otra prioridad.");
+            } else if (data.pending_processing) {
+                alert(data.message || "Pago registrado, pendiente de revisión. No vuelvas a pagar.");
+                return; // keep token available to check status again
+            } else if (data.priority_applied === true || data.moved_to_next === true) {
+                alert("✅ Pago confirmado. Tu canción pasó al puesto #1.");
+            } else if (data.already_processed) {
+                alert("Este pago ya fue registrado. Consulta la posición actual de tu canción; no vuelvas a pagar.");
+            } else {
+                alert("Pago registrado. Comprueba la posición de tu canción antes de volver a pagar.");
+                return;
+            }
+            const cleanUrl = new URL(window.location.href);
+            for (const key of ["paypal","token","PayerID"]) cleanUrl.searchParams.delete(key);
+            window.history.replaceState({}, "", cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
         }
 
     } catch (error) {
@@ -225,7 +234,9 @@ async function comprobarEstadoLive() {
             }
         );
 
+        if (!response.ok) throw new Error(`Estado LIVE HTTP ${response.status}`);
         const data = await response.json();
+        if (typeof data.live !== "boolean") throw new Error("Estado LIVE inválido");
 
         const estaEnVivo = data.live === true;
         actualizarAperturaStage(estaEnVivo ? data.opening : null);
