@@ -56,6 +56,9 @@ let stageBusqueda = "";
 let stageSessionEpoch = 0;
 let stageUltimosDatos = { played: [], playing: null, queue: [] };
 
+// Storage may be blocked by embedded or private browsers. Keep playback UI usable.
+function duroStorageGet(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
+function duroStorageSet(key,value) { try { localStorage.setItem(key,value); } catch (_) {} }
 // ============ SKINS DURO ============
 
 function aplicarSkin(skin) {
@@ -67,7 +70,7 @@ function aplicarSkin(skin) {
 
     document.body.classList.add(`skin-${skin}`);
 
-    localStorage.setItem("duro_skin", skin);
+    duroStorageSet("duro_skin", skin);
 
     const btnDuro = document.getElementById("skin-duro-btn");
     const btnIce = document.getElementById("skin-ice-btn");
@@ -81,7 +84,7 @@ function aplicarSkin(skin) {
 function cargarSkinGuardada() {
 
     const skinGuardada =
-        localStorage.getItem("duro_skin") || "duro";
+        duroStorageGet("duro_skin") || "duro";
 
     aplicarSkin(skinGuardada);
 }
@@ -98,11 +101,11 @@ function escaparHTML(valor) {
 }
 
 function obtenerVisitorId() {
-    let visitorId = localStorage.getItem("duro_visitor_id");
+    let visitorId = duroStorageGet("duro_visitor_id");
 
     if (!visitorId) {
-        visitorId = crypto.randomUUID();
-        localStorage.setItem("duro_visitor_id", visitorId);
+        visitorId = globalThis.crypto?.randomUUID?.() || `duro-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        duroStorageSet("duro_visitor_id", visitorId);
     }
 
     return visitorId;
@@ -239,6 +242,14 @@ async function comprobarEstadoLive() {
         if (typeof data.live !== "boolean") throw new Error("Estado LIVE inválido");
 
         const estaEnVivo = data.live === true;
+        const cambioSesion = stageLiveActivo && estaEnVivo && duroOpening?.session_id != null && data.opening?.session_id != null && duroOpening.session_id !== data.opening.session_id;
+        if (cambioSesion) {
+            stageSessionEpoch++;
+            colaActual=[]; stageRequestsAnterior.clear(); stageQueueAnterior.clear();
+            stageUltimosDatos={played:[],playing:null,queue:[]}; stagePlayingId=null;
+            stagePrimeraCarga=true; stageRequestsFirma=''; stageGoalInicializado=false; stageGoalEventKey=null;
+            resetStageAlerts(); cerrarMenu();
+        }
         actualizarAperturaStage(estaEnVivo ? data.opening : null);
 
         if (stageLiveActivo !== estaEnVivo) stageSessionEpoch++;
@@ -811,6 +822,7 @@ menu.style.display = "block";
 
 function cerrarMenu() {
     if(brebTimer!==null){clearInterval(brebTimer);brebTimer=null;}
+    brebVerifiedAt=0;brebReaderReady=false;
 
     document.getElementById("overlay").style.display = "none";
     document.getElementById("song-menu").style.display = "none";
@@ -1531,8 +1543,9 @@ async function enviarPrueba(action) {
 const brebBase = new URL(requestsURL).origin;
 let brebOrder = null, brebBusy = false, brebTimer = null, brebChecking = false;
 let brebAvailable = false;
+let brebVerifiedOrderId = null, brebVerifiedAt = 0, brebReaderReady = false;
 try { const saved = JSON.parse(sessionStorage.getItem('duro_breb_order') || 'null'); if(saved && typeof saved.order_id === 'string' && Number.isFinite(saved.expires_at)) brebOrder=saved; } catch (_) {}
-function brebSave(order) { brebOrder=order; try { if(order) sessionStorage.setItem('duro_breb_order',JSON.stringify(order)); else sessionStorage.removeItem('duro_breb_order'); } catch (_) {} }
+function brebSave(order) { if (brebOrder?.order_id !== order?.order_id) { brebVerifiedOrderId=null; brebVerifiedAt=0; brebReaderReady=false; } brebOrder=order; try { if(order) sessionStorage.setItem('duro_breb_order',JSON.stringify(order)); else sessionStorage.removeItem('duro_breb_order'); } catch (_) {} }
 async function brebAvailability() {
     try { const r=await fetch(brebBase+'/breb/availability',{cache:'no-store'}); const d=await r.json(); brebAvailable=r.ok && d.available===true; } catch (_) {brebAvailable=false;}
     const btn=document.getElementById('breb-choice');
@@ -1540,6 +1553,13 @@ async function brebAvailability() {
     return brebAvailable;
 }
 function mostrarOpcionesSaltar() {
+    const target=colaActual.find(x=>Number(x.id)===Number(solicitudSeleccionadaId));
+    if (target?.tap_exempt_reason) {
+        document.getElementById('menu-subtitle').textContent='Tu canción ya tiene prioridad. No necesitas volver a pagar.';
+        document.getElementById('menu-contenido').innerHTML=`<div class="duro-payment-options"><button id="breb-resume" hidden onclick="brebShowOrder()">Consultar mi orden Bre-B</button><button onclick="mostrarOpcionesSubir()">← Volver</button></div>`;
+        document.getElementById('breb-resume').hidden=!brebOrder;
+        return;
+    }
     document.getElementById('menu-subtitle').textContent='Elige cómo subir tu canción al primer puesto pendiente.';
     const contenido=document.getElementById('menu-contenido');
     contenido.innerHTML=`<div class="duro-payment-options">
@@ -1558,7 +1578,7 @@ function brebForm(){
     content.innerHTML=`<form id="breb-form" class="breb-checkout"><label for="breb-name">Nombre del titular de la cuenta que enviará el dinero</label><input id="breb-name" maxlength="200" minlength="3" required autocomplete="name" placeholder="Nombre y apellido"><p>Importe exacto: <strong>$8.000 COP</strong>. Usa el nombre de quien hará la transferencia.</p><button type="submit" class="breb-primary">GENERAR ORDEN Y MOSTRAR QR</button><p id="breb-error" role="status"></p><button type="button" onclick="mostrarOpcionesSaltar()">← Volver</button></form>`;
     document.getElementById('breb-form').addEventListener('submit',e=>{e.preventDefault();brebCreate(target,e.currentTarget);});
 }
-async function brebPost(path,body){const r=await fetch(brebBase+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store'});const d=await r.json();if(!r.ok)throw Error(d.error||'Servicio no disponible');return d;}
+async function brebPost(path,body){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);try{const r=await fetch(brebBase+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store',signal:controller.signal});const d=await r.json();if(!r.ok)throw Error(d.error||'Servicio no disponible');return d;}finally{clearTimeout(timer);}}
 async function brebCreate(target,form){
     if(brebBusy)return; const name=form.querySelector('input').value.trim(); if(!name)return;
     brebBusy=true;const button=form.querySelector('[type=submit]');button.disabled=true;
@@ -1570,7 +1590,7 @@ async function brebCreate(target,form){
     finally{brebBusy=false;button.disabled=false;}
 }
 function brebShowOrder(){
-    if(!brebOrder)return;const content=document.getElementById('menu-contenido');
+    if(!brebOrder)return;brebVerifiedAt=0;brebReaderReady=false;const content=document.getElementById('menu-contenido');
     document.getElementById('selected-song').textContent=brebOrder.song||'Tu canción';
     document.getElementById('menu-subtitle').textContent='Orden Bre-B · $8.000 COP';
     content.innerHTML=`<section class="breb-checkout"><div id="breb-status" role="status" aria-live="polite">Consultando orden…</div><div id="breb-payment" hidden><strong id="breb-clock" class="breb-clock"></strong><p>Escanea el QR desde tu banco o copia la llave.</p><img src="breb-nu.png" class="breb-qr" alt="QR original de Nu para pago Bre-B"><a href="breb-nu.png" download="QR-DURO-BreB.png">Guardar QR</a><button type="button" id="breb-copy" onclick="brebCopy()">Copiar llave @WOJ271</button><p>Envía exactamente $8.000 COP. Si ya pagaste, no vuelvas a transferir.</p></div><button onclick="brebPoll()">Consultar estado</button><button id="breb-new" hidden onclick="brebSave(null);mostrarOpcionesSaltar()">Volver a métodos de pago</button><button onclick="cerrarMenu()">Cerrar</button></section>`;
@@ -1580,18 +1600,20 @@ let brebTicks=0;
 function brebPaint(){
     if(!brebOrder)return;const el=document.getElementById('breb-status');if(!el)return;
     const left=Math.max(0,Math.floor(brebOrder.expires_at-Date.now()/1000));const pay=document.getElementById('breb-payment');const clock=document.getElementById('breb-clock');const next=document.getElementById('breb-new');
-    const active=brebOrder.state==='pending'&&left>0&&stageLiveActivo&&!brebOrder.song_playing;
+    const eligible=brebOrder.state==='pending'&&left>0&&stageLiveActivo&&!brebOrder.song_playing;
+    const verified=brebVerifiedOrderId===brebOrder.order_id&&Date.now()-brebVerifiedAt<10000&&brebReaderReady;
+    const active=eligible&&verified;
     pay.hidden=!active;clock.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
     next.hidden=!['matched','cancelled','expired'].includes(brebOrder.state);
-    el.textContent=brebOrder.state==='matched'?'Pago confirmado. Tu canción tiene prioridad o protección si ya está sonando.':brebOrder.state==='cancelled'?'Orden cancelada. Si pagaste, contacta al anfitrión.':brebOrder.gift_conflict?'Tu canción recibió Gafas. No transfieras. Si ya pagaste, contacta al anfitrión para revisar el pago.':brebOrder.state==='pending'&&brebOrder.song_playing?'Tu canción ya está sonando. No transfieras ahora; si ya pagaste, espera la confirmación.':!active?'Orden vencida o directo cerrado. Si ya pagaste, no repitas el pago; consulta al anfitrión.':'Esperando confirmación de Nu. Si el nombre no coincide, el anfitrión podrá revisar el pago.';
+    el.textContent=brebOrder.state==='matched'?'Pago confirmado. Tu canción tiene prioridad o protección si ya está sonando.':brebOrder.state==='cancelled'?'Orden cancelada. Si pagaste, contacta al anfitrión.':brebOrder.gift_conflict?'Tu canción recibió Gafas. No transfieras. Si ya pagaste, contacta al anfitrión para revisar el pago.':brebOrder.state==='pending'&&brebOrder.song_playing?'Tu canción ya está sonando. No transfieras ahora; si ya pagaste, espera la confirmación.':eligible&&!verified?'Lector desconectado o estado sin verificar. No transfieras. Si ya pagaste, espera confirmación.':!active?'Orden vencida o directo cerrado. Si ya pagaste, no repitas el pago; consulta al anfitrión.':'Esperando confirmación de Nu. Si el nombre no coincide, el anfitrión podrá revisar el pago.';
 }
 async function brebPoll(){
-    if(!brebOrder||brebChecking||!document.getElementById('breb-status'))return;brebChecking=true;const id=brebOrder.order_id;
-    try{const d=await brebPost('/breb/order-status',{order_id:id});if(brebOrder?.order_id!==id)return;if(['pending','matched','expired','cancelled'].includes(d.state)){const previous=brebOrder.state;brebSave({...brebOrder,state:d.state,song_playing:d.song_playing===true,gift_conflict:d.gift_conflict===true});brebPaint();if(d.state==='matched'&&previous!=='matched')cargarStageHistorial();}}
-    catch(_){const el=document.getElementById('breb-status');if(el)el.textContent='No se pudo consultar el pago. No repitas la transferencia.';}
+    if(!brebOrder||brebChecking||!document.getElementById('breb-status'))return;brebChecking=true;const id=brebOrder.order_id;const checkedAt=Date.now();
+    try{const d=await brebPost('/breb/order-status',{order_id:id});if(brebOrder?.order_id!==id)return;if(['pending','matched','expired','cancelled'].includes(d.state)){const previous=brebOrder.state;brebSave({...brebOrder,state:d.state,song_playing:d.song_playing===true,gift_conflict:d.gift_conflict===true});brebVerifiedOrderId=id;brebVerifiedAt=checkedAt;brebReaderReady=d.payment_allowed===true;brebPaint();if(d.state==='matched'&&previous!=='matched')cargarStageHistorial();}}
+    catch(_){if(brebOrder?.order_id===id){brebVerifiedAt=0;brebReaderReady=false;brebPaint();}}
     finally{brebChecking=false;}
 }
-async function brebCopy(){const btn=document.getElementById('breb-copy');try{await navigator.clipboard.writeText('@WOJ271');if(btn)btn.textContent='Llave copiada';}catch(_){if(btn)btn.textContent='Copia manualmente: @WOJ271';}}
+async function brebCopy(){if(!brebOrder||brebVerifiedOrderId!==brebOrder.order_id||Date.now()-brebVerifiedAt>=10000||!brebReaderReady||!stageLiveActivo||brebOrder.state!=='pending'||brebOrder.expires_at<=Date.now()/1000||brebOrder.song_playing)return;const btn=document.getElementById('breb-copy');try{await navigator.clipboard.writeText('@WOJ271');if(btn)btn.textContent='Llave copiada';}catch(_){if(btn)btn.textContent='Copia manualmente: @WOJ271';}}
 
 async function crearOrdenPayPal() {
 
@@ -1600,7 +1622,14 @@ async function crearOrdenPayPal() {
         return;
     }
 
+    const pagoId=solicitudSeleccionadaId;
+    const pagoEpoch=stageSessionEpoch;
+    if (!stageLiveActivo || colaActual.find(x=>Number(x.id)===Number(pagoId))?.tap_exempt_reason) {
+        alert("Esta canción ya tiene prioridad o el directo terminó. No vuelvas a pagar.");
+        return;
+    }
     const boton = document.querySelector(".pay-btn");
+    if (boton?.disabled) return;
 
     if (boton) {
         boton.disabled = true;
@@ -1617,7 +1646,7 @@ async function crearOrdenPayPal() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    request_id: solicitudSeleccionadaId
+                    request_id: pagoId
                 })
             }
         );
@@ -1646,6 +1675,7 @@ async function crearOrdenPayPal() {
             return;
         }
 
+        if (!stageLiveActivo || pagoEpoch!==stageSessionEpoch || pagoId!==solicitudSeleccionadaId || !boton?.isConnected) return;
         window.location.href = data.approve_url;
 
     } catch (error) {
