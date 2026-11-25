@@ -414,3 +414,12 @@ body.offline .playlist-socials{margin-top:18px}
 /* DURO opening */
 .duro-opening-closed .stage-live-list,.duro-opening-closed .skip-banner{display:none!important}
 .stage-current-empty .stage-requester{color:#ff9500;text-align:center;font-weight:700}
+
+/* DURO: confirmed live status / connection warning only. */
+.duro-connection-status{margin:0 0 12px;padding:12px 16px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:#121212;color:#c7c7c7;font:700 11px var(--body);letter-spacing:.06em;text-align:center}
+.duro-connection-status[hidden]{display:none!important}
+.duro-connection-status[data-state="reconnecting"]{color:#ffd34d;border-color:rgba(255,211,77,.5);background:#1b160b}
+.live-status[data-state="checking"],.live-status[data-state="offline"]{border-color:#777;background:#161616;color:#ddd}
+.live-status[data-state="checking"] .live-dot,.live-status[data-state="offline"] .live-dot{background:#999;box-shadow:none;animation:none}
+.live-status[data-state="reconnecting"]{border-color:#ffd34d;background:#20180b;color:#ffd34d}
+.live-status[data-state="reconnecting"] .live-dot{background:#ffd34d;box-shadow:none;animation:none}

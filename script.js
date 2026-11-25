@@ -48,6 +48,7 @@ let stageCargaRequestsActiva = false;
 let stageCargaLikesActiva = false;
 let historialCargaActiva = false;
 let stageLiveActivo = false;
+let stageStatusSessionId = null;
 let duroOpening = null;
 let duroOpeningPhase = null;
 let stageRequestsFirma = "";
@@ -113,27 +114,46 @@ function obtenerVisitorId() {
 
 const visitorId = obtenerVisitorId();
 
-async function registrarVisitaSesion() {
-
+// Register once per confirmed session; retry failed/ambiguous requests.
+const duroVisitedSessions = new Set();
+const duroVisitInFlight = new Set();
+async function registrarVisitaSesion(sessionId) {
+    if (!Number.isSafeInteger(sessionId) || sessionId <= 0 ||
+        duroVisitedSessions.has(sessionId) || duroVisitInFlight.has(sessionId)) return;
+    duroVisitInFlight.add(sessionId);
     try {
-        await fetch(
+        const data = await duroPollJSON(
             "https://playlist-api.bookingelbrayan.workers.dev/session-visit",
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    visitor_id: visitorId
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ visitor_id: visitorId, session_id: sessionId })
             }
         );
+        if (data.registered === true && data.session_id === sessionId) {
+            duroVisitedSessions.add(sessionId);
+        }
     } catch (error) {
         console.error("Error registrando visita:", error);
+    } finally {
+        duroVisitInFlight.delete(sessionId);
     }
 }
 
-registrarVisitaSesion();
+function duroMostrarEstadoConexion(state) {
+    const labels = {checking: "COMPROBANDO", live: "EN VIVO", reconnecting: "RECONECTANDO", offline: "FUERA DE DIRECTO"};
+    const messages = {checking: "COMPROBANDO ESTADO DEL DIRECTO…", reconnecting: "RECONECTANDO · Los datos del directo pueden estar desactualizados.", offline: "FUERA DE DIRECTO"};
+    const badge = document.querySelector(".live-status");
+    const label = document.getElementById("duro-live-status-label");
+    const notice = document.getElementById("duro-connection-status");
+    if (badge) badge.dataset.state = state;
+    if (label && label.textContent !== labels[state]) label.textContent = labels[state];
+    if (notice) {
+        notice.dataset.state = state;
+        notice.hidden = state === "live";
+        if (state !== "live" && notice.textContent !== messages[state]) notice.textContent = messages[state];
+    }
+}
 
 async function procesarRegresoPayPal() {
 
@@ -160,7 +180,7 @@ if (paypalStatus === "cancel") {
 
     try {
 
-        const response = await fetch(
+        const {ok, data} = await duroPollJSON(
             "https://playlist-api.bookingelbrayan.workers.dev/paypal/capture-order",
             {
                 method: "POST",
@@ -170,12 +190,10 @@ if (paypalStatus === "cancel") {
                 body: JSON.stringify({
                     order_id: orderId
                 })
-            }
+            }, 20000, true
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
+        if (!ok) {
             alert(data.error || "No se pudo confirmar el pago.");
             return;
         }
@@ -200,7 +218,7 @@ if (paypalStatus === "cancel") {
         }
 
     } catch (error) {
-        alert("Error confirmando el pago con PayPal.");
+        alert("No se pudo confirmar el estado del pago. Si ya pagaste, no vuelvas a pagar. Recarga esta página para consultar la misma orden.");
     }
 }
 
@@ -226,23 +244,31 @@ function actualizarAperturaStage(opening) {
     }
 }
 
+async function duroPollJSON(url, options={}, timeout=8000, includeStatus=false) {
+    const controller = new AbortController();
+    let timer;
+    try {
+        return await Promise.race([
+            (async()=>{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok && !includeStatus) throw Error(`HTTP ${response.status}`);const data=await response.json();return includeStatus?{ok:response.ok,data,status:response.status,sessionId:response.headers?.get?.("X-Duro-Session-Id")??null}:data;})(),
+            new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('Tiempo de espera de DURO agotado'));},timeout);})
+        ]);
+    } finally { clearTimeout(timer); }
+}
 async function comprobarEstadoLive() {
+    // Ignore out-of-order responses; an older request cannot undo a newer applied status.
+    const consulta=++comprobarEstadoLive.consulta;
     try {
 
-        const response = await fetch(
-            `${statusURL}?t=${Date.now()}`,
-            {
-                method: "GET",
-                cache: "no-store"
-            }
-        );
-
-        if (!response.ok) throw new Error(`Estado LIVE HTTP ${response.status}`);
-        const data = await response.json();
+        const data = await duroPollJSON(`${statusURL}?t=${Date.now()}`,{method:"GET",cache:"no-store"});
         if (typeof data.live !== "boolean") throw new Error("Estado LIVE inválido");
+        if (consulta < comprobarEstadoLive.aplicada) return;
+        comprobarEstadoLive.aplicada=consulta;
 
         const estaEnVivo = data.live === true;
-        const cambioSesion = stageLiveActivo && estaEnVivo && duroOpening?.session_id != null && data.opening?.session_id != null && duroOpening.session_id !== data.opening.session_id;
+        const oldSession=stageStatusSessionId??duroOpening?.session_id??null;
+        const newSession=estaEnVivo?(data.session_id??data.opening?.session_id??null):null;
+        const cambioSesion = stageLiveActivo && estaEnVivo && oldSession!=null && newSession!=null && oldSession!==newSession;
+        stageStatusSessionId=newSession;
         if (cambioSesion) {
             stageSessionEpoch++;
             colaActual=[]; stageRequestsAnterior.clear(); stageQueueAnterior.clear();
@@ -252,8 +278,10 @@ async function comprobarEstadoLive() {
         }
         actualizarAperturaStage(estaEnVivo ? data.opening : null);
 
-        if (stageLiveActivo !== estaEnVivo) stageSessionEpoch++;
+        if (stageLiveActivo !== estaEnVivo) { stageSessionEpoch++; if(!estaEnVivo) cerrarMenu(); }
         stageLiveActivo = estaEnVivo;
+        duroMostrarEstadoConexion(estaEnVivo ? "live" : "offline");
+        if (estaEnVivo) void registrarVisitaSesion(newSession);
 
         document.body.classList.toggle(
             "offline",
@@ -383,6 +411,11 @@ async function comprobarEstadoLive() {
         }
 
     } catch (error) {
+        // An older failure must not override a newer confirmed status.
+        if (consulta < comprobarEstadoLive.aplicada) return;
+        comprobarEstadoLive.aplicada = consulta;
+        // A failed check is not a confirmed end of the live. Keep its data.
+        duroMostrarEstadoConexion("reconnecting");
 
         console.error(
             "Error al comprobar estado LIVE:",
@@ -390,6 +423,9 @@ async function comprobarEstadoLive() {
         );
     }
 }
+
+comprobarEstadoLive.consulta=0;
+comprobarEstadoLive.aplicada=0;
 
 async function cargarHistorial() {
     if (historialCargaActiva) return;
@@ -404,15 +440,9 @@ async function cargarHistorial() {
             return;
         }
 
-        const response = await fetch(
-    modoLivePrivado
-        ? `${requestsLiveURL}&t=${Date.now()}`
-        : requestsURL,
-    {
-        cache: "no-store"
-    }
-);
-        const requests = await response.json();
+        const epoch=stageSessionEpoch;
+        const requests = await duroPollJSON(modoLivePrivado ? `${requestsLiveURL}&t=${Date.now()}` : requestsURL,{cache:"no-store"});
+        if(epoch!==stageSessionEpoch) return;
 
         const played = requests
             .filter(item => item.status === "played")
@@ -643,6 +673,8 @@ function toggleTopLikes() {
 let stageRequestsTimer = null;
 let stageLikesTimer = null;
 let stageStatusTimer = null;
+let stagePollingStarting = false;
+let stagePollingGeneration=0;
 
 const STAGE_REQUESTS_INTERVAL_PUBLIC = 30000;
 const STAGE_REQUESTS_INTERVAL_LIVE = 5000;
@@ -676,7 +708,7 @@ function detenerPollingDatosStage() {
 // =====================================================
 
 function detenerPollingStage() {
-
+    stagePollingGeneration++;
     detenerPollingDatosStage();
 
     if (stageStatusTimer !== null) {
@@ -708,9 +740,14 @@ async function iniciarPollingDatosStage() {
         return;
     }
 
+    if (stagePollingStarting) return;
+    stagePollingStarting = true;
+    const epoch=stageSessionEpoch;
+    try {
     // Cargar inmediatamente.
     await cargarStageHistorial();
     await cargarStageLiveLikes();
+    if (!stageLiveActivo || document.hidden || epoch!==stageSessionEpoch) return;
 
     // =================================================
     // MODO LIVE PRIVADO
@@ -719,7 +756,7 @@ async function iniciarPollingDatosStage() {
     if (modoLivePrivado) {
 
         await inicializarLiveEvent();
-
+        if (!stageLiveActivo || document.hidden || epoch!==stageSessionEpoch) return;
         iniciarLiveEventPolling();
     }
 
@@ -752,6 +789,7 @@ stageLikesTimer = setInterval(() => {
     cargarStageLiveLikes();
 
 }, STAGE_LIKES_INTERVAL);
+    } finally { stagePollingStarting=false; }
 }
 
 
@@ -762,6 +800,7 @@ stageLikesTimer = setInterval(() => {
 async function iniciarPollingStage() {
 
     detenerPollingStage();
+    const generation=stagePollingGeneration;
 
     if (document.hidden) {
         return;
@@ -772,6 +811,7 @@ async function iniciarPollingStage() {
     // =================================================
 
     await comprobarEstadoLive();
+    if(generation!==stagePollingGeneration || document.hidden) return;
 
     // =================================================
     // IMPORTANTE:
@@ -821,6 +861,7 @@ menu.style.display = "block";
 }
 
 function cerrarMenu() {
+    solicitudSeleccionadaId=null;
     if(brebTimer!==null){clearInterval(brebTimer);brebTimer=null;}
     brebVerifiedAt=0;brebReaderReady=false;
 
@@ -969,16 +1010,10 @@ async function cargarEstadosMisiones() {
 
     try {
 
-        const response = await fetch(
+        const data = await duroPollJSON(
             `https://playlist-api.bookingelbrayan.workers.dev/mission-status?visitor_id=${encodeURIComponent(visitorId)}`,
-            { method: "GET" }
+            { method: "GET",cache:"no-store" }
         );
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
         estadosMisiones = data.missions || {};
 
         document
@@ -996,6 +1031,9 @@ async function cargarEstadosMisiones() {
                 );
 
                 card.style.pointerEvents = "";
+                if (reward && reward.dataset.originalReward === undefined) reward.dataset.originalReward=reward.textContent;
+                if (reward) reward.textContent=reward.dataset.originalReward;
+                if (arrow) arrow.textContent="›";
 
                 if (estado === "completed") {
 
@@ -1331,6 +1369,8 @@ async function enviarPrueba(action) {
         return;
     }
 
+    const proofRequestId=solicitudSeleccionadaId;
+    const proofEpoch=stageSessionEpoch;
     const submitBtn = document.getElementById("proof-submit-btn");
 
     if (submitBtn) {
@@ -1346,12 +1386,12 @@ async function enviarPrueba(action) {
         let ultimoError = null;
 
         for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
-
+            if(proofEpoch!==stageSessionEpoch || proofRequestId!==solicitudSeleccionadaId) return;
             const formData = new FormData();
 
             formData.append(
                 "request_id",
-                solicitudSeleccionadaId
+                proofRequestId
             );
 
             formData.append(
@@ -1369,52 +1409,22 @@ async function enviarPrueba(action) {
                 file
             );
 
-            const controller = new AbortController();
 
-            const timeout = setTimeout(
-                () => controller.abort(),
-                30000
-            );
 
             try {
 
-                const response = await fetch(
-                    "https://playlist-api.bookingelbrayan.workers.dev/submit-proof",
-                    {
-                        method: "POST",
-                        body: formData,
-                        signal: controller.signal
-                    }
-                );
-
-                clearTimeout(timeout);
-
-                const textoRespuesta =
-                    await response.text();
-
-                let data = {};
-
-                try {
-                    data = JSON.parse(
-                        textoRespuesta
-                    );
-                } catch {
-                    data = {
-                        error:
-                            textoRespuesta ||
-                            "Respuesta inválida del servidor."
-                    };
-                }
+                const {ok,data,status}=await duroPollJSON("https://playlist-api.bookingelbrayan.workers.dev/submit-proof",{method:'POST',body:formData},30000,true);
+                if(proofEpoch!==stageSessionEpoch || proofRequestId!==solicitudSeleccionadaId) return;
 
                 /*
                  * Los errores HTTP son respuestas reales
                  * del servidor. NO debemos repetir el envío.
                  */
-                if (!response.ok) {
+                if (!ok) {
 
                     console.error(
                         "ERROR HTTP ENVIANDO PRUEBA:",
-                        response.status,
+                        status,
                         data
                     );
 
@@ -1423,7 +1433,7 @@ async function enviarPrueba(action) {
                         : "";
 
                     alert(
-                        `ERROR ${response.status}\n\n` +
+                        `ERROR ${status}\n\n` +
                         (
                             data.error ||
                             "No se pudo enviar la prueba."
@@ -1471,7 +1481,6 @@ async function enviarPrueba(action) {
 
             } catch (error) {
 
-                clearTimeout(timeout);
 
                 ultimoError = error;
 
@@ -1547,7 +1556,7 @@ let brebVerifiedOrderId = null, brebVerifiedAt = 0, brebReaderReady = false;
 try { const saved = JSON.parse(sessionStorage.getItem('duro_breb_order') || 'null'); if(saved && typeof saved.order_id === 'string' && Number.isFinite(saved.expires_at)) brebOrder=saved; } catch (_) {}
 function brebSave(order) { if (brebOrder?.order_id !== order?.order_id) { brebVerifiedOrderId=null; brebVerifiedAt=0; brebReaderReady=false; } brebOrder=order; try { if(order) sessionStorage.setItem('duro_breb_order',JSON.stringify(order)); else sessionStorage.removeItem('duro_breb_order'); } catch (_) {} }
 async function brebAvailability() {
-    try { const r=await fetch(brebBase+'/breb/availability',{cache:'no-store'}); const d=await r.json(); brebAvailable=r.ok && d.available===true; } catch (_) {brebAvailable=false;}
+    try { const d=await duroPollJSON(brebBase+'/breb/availability',{cache:'no-store'}); brebAvailable=d.available===true; } catch (_) {brebAvailable=false;}
     const btn=document.getElementById('breb-choice');
     if(btn){btn.disabled=!brebAvailable||brebBusy;btn.textContent=brebAvailable?'Bre-B · $8.000 COP':'Bre-B · no disponible ahora';}
     return brebAvailable;
@@ -1578,14 +1587,14 @@ function brebForm(){
     content.innerHTML=`<form id="breb-form" class="breb-checkout"><label for="breb-name">Nombre del titular de la cuenta que enviará el dinero</label><input id="breb-name" maxlength="200" minlength="3" required autocomplete="name" placeholder="Nombre y apellido"><p>Importe exacto: <strong>$8.000 COP</strong>. Usa el nombre de quien hará la transferencia.</p><button type="submit" class="breb-primary">GENERAR ORDEN Y MOSTRAR QR</button><p id="breb-error" role="status"></p><button type="button" onclick="mostrarOpcionesSaltar()">← Volver</button></form>`;
     document.getElementById('breb-form').addEventListener('submit',e=>{e.preventDefault();brebCreate(target,e.currentTarget);});
 }
-async function brebPost(path,body){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);try{const r=await fetch(brebBase+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store',signal:controller.signal});const d=await r.json();if(!r.ok)throw Error(d.error||'Servicio no disponible');return d;}finally{clearTimeout(timer);}}
+async function brebPost(path,body){const {ok,data}=await duroPollJSON(brebBase+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store'},8000,true);if(!ok)throw Error(data.error||'Servicio no disponible');return data;}
 async function brebCreate(target,form){
     if(brebBusy)return; const name=form.querySelector('input').value.trim(); if(!name)return;
     brebBusy=true;const button=form.querySelector('[type=submit]');button.disabled=true;
     try {const d=await brebPost('/breb/create-order',{request_id:Number(target.id),sender_name:name});
         if(!d.order_id||d.amount_minor!==800000||!Number.isFinite(Number(d.expires_at)))throw Error('Respuesta de pago inesperada');
         brebSave({order_id:d.order_id,expires_at:Number(d.expires_at),state:'pending',song:textoSolicitud(target),request_id:Number(target.id)});
-        if(document.getElementById('breb-form')===form)brebShowOrder();else alert('Orden Bre-B creada. Vuelve al menú de pagos para consultarla.');
+        if(document.getElementById('breb-form')===form && stageLiveActivo && Number(solicitudSeleccionadaId)===Number(target.id))brebShowOrder();else alert('Orden Bre-B creada. Vuelve al menú de pagos para consultarla.');
     }catch(e){const msg=form.querySelector('#breb-error');if(msg)msg.textContent=e.message+'; si no recibiste el QR, no transfieras dinero.';}
     finally{brebBusy=false;button.disabled=false;}
 }
@@ -1638,7 +1647,7 @@ async function crearOrdenPayPal() {
 
     try {
 
-        const response = await fetch(
+        const {ok, data} = await duroPollJSON(
             "https://playlist-api.bookingelbrayan.workers.dev/paypal/create-order",
             {
                 method: "POST",
@@ -1648,12 +1657,10 @@ async function crearOrdenPayPal() {
                 body: JSON.stringify({
                     request_id: pagoId
                 })
-            }
+            }, 20000, true
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
+        if (!ok) {
             alert(data.error || "No se pudo crear el pago.");
             
             if (boton) {
@@ -2182,30 +2189,12 @@ function detectarEventosRequests(requests, playing, queue) {
 // =====================================================
 
 async function inicializarLiveEvent() {
-
-    if (!modoLivePrivado) {
-        return;
-    }
-
+    if (!modoLivePrivado || !stageLiveActivo || liveEventConsultaActiva) return;
+    liveEventConsultaActiva = true;
+    const epoch = stageSessionEpoch;
     try {
-
-        const response = await fetch(
-            `${liveEventURL}?after=0`,
-            {
-                cache: "no-store"
-            }
-        );
-
-        if (!response.ok) {
-            console.warn(
-                "LIVE EVENT INIT:",
-                response.status
-            );
-            return;
-        }
-
-        const data = await response.json();
-
+        const data = await duroPollJSON(`${liveEventURL}?after=0`,{cache:'no-store'});
+        if (!stageLiveActivo || epoch !== stageSessionEpoch || document.hidden) return;
         const evento = data?.event;
 
         if (evento?.id) {
@@ -2223,7 +2212,7 @@ async function inicializarLiveEvent() {
             error
         );
 
-    }
+    } finally { liveEventConsultaActiva=false; }
 }
 
 
@@ -2242,6 +2231,7 @@ async function comprobarLiveEvent() {
     }
 
     if (!liveEventInicializado) {
+        await inicializarLiveEvent();
         return;
     }
 
@@ -2254,20 +2244,7 @@ async function comprobarLiveEvent() {
 
     try {
 
-        const response = await fetch(
-            `${liveEventURL}?after=${encodeURIComponent(
-                liveEventAnteriorId
-            )}`,
-            {
-                cache: "no-store"
-            }
-        );
-
-        if (!response.ok) {
-            return;
-        }
-
-        const data = await response.json();
+        const data = await duroPollJSON(`${liveEventURL}?after=${encodeURIComponent(liveEventAnteriorId)}`,{cache:'no-store'});
         if (!stageLiveActivo || epoch !== stageSessionEpoch) return;
 
         const evento = data?.event;
@@ -2392,18 +2369,10 @@ async function cargarStageHistorial() {
     const epoch = stageSessionEpoch;
     try {
 
-        const response = await fetch(
-            modoLivePrivado
-                ? `${requestsLiveURL}&t=${Date.now()}`
-                : requestsURL,
-            {
-                cache: "no-store"
-            }
-        );
-
-        if (!response.ok) return;
-
-        const requests = await response.json();
+        const packet = await duroPollJSON(modoLivePrivado ? `${requestsLiveURL}&t=${Date.now()}` : requestsURL,{cache:"no-store"},8000,true);
+        const requests=Array.isArray(packet)?packet:packet.data;
+        const expected=stageStatusSessionId??duroOpening?.session_id??null;
+        if(!Array.isArray(packet) && (!packet.ok || (expected!=null && packet.sessionId!==null && String(expected)!==packet.sessionId))) return;
         if (!stageLiveActivo || epoch !== stageSessionEpoch || !Array.isArray(requests)) return;
 
 // Los Tap Taps se consultan independientemente
@@ -2500,11 +2469,7 @@ function moverColaStage(direccion) {
 
 function desbloquearHistorialStage() {
     if (stageHistorialDesbloqueado) return;
-    const anuncio = window.open(
-    "https://omg10.com/4/11599214",
-    "_blank",
-    "noopener,noreferrer"
-);
+    const anuncio = window.open("about:blank", "_blank");
 
 if (!anuncio) {
     console.info("El navegador bloqueó la pestaña del anuncio.");
@@ -2512,6 +2477,7 @@ if (!anuncio) {
     return;
 }
 
+try { anuncio.opener=null; anuncio.location.replace("https://omg10.com/4/11599214"); } catch(error) { try { anuncio.close(); } catch(_) {} return; }
 stageHistorialDesbloqueado = true;
     renderizarCarruselStage(
         stageUltimosDatos.played,
@@ -2616,20 +2582,18 @@ async function cargarStageLiveLikes() {
         const liveLikesRequestURL =
     `${liveLikesURL}?live&t=${Date.now()}`;
 
-const response = await fetch(
-    liveLikesRequestURL,
-    {
-        cache: "no-store"
-    }
-);
-        if (!response.ok) return;
-        const data = await response.json();
+const data = await duroPollJSON(liveLikesRequestURL,{cache:"no-store"});
         if (!stageLiveActivo || epoch !== stageSessionEpoch) return;
 
 // No descartamos los datos de Tap Taps
 // por el estado visual de /status.
 
-        if (Object.prototype.hasOwnProperty.call(data,'opening')) actualizarAperturaStage(data.opening);
+        if (Object.prototype.hasOwnProperty.call(data,'opening')) {
+            const expected=stageStatusSessionId??duroOpening?.session_id??null;
+            const received=data.session_id??data.opening?.session_id??null;
+            if(expected!==received) { comprobarEstadoLive(); return; }
+            actualizarAperturaStage(data.opening);
+        }
         const goal = duroOpening?.phase === 0 ? 2000 : (Number(data.goal) || 5000);
 const total = Number(data.total) || 0;
 const base = Number(data.base) || 0;

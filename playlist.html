@@ -8,12 +8,13 @@
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="https://duroconbrayan.com/playlist.html">
     <link rel="icon" href="/assets/favicon.png">
-    <link rel="stylesheet" href="style.css?v=20261125-stage7-verified">
+    <link rel="stylesheet" href="style.css?v=20261125-estado-visitas-1">
 </head>
 <body class="stage-v2 duro-stage3">
 <div class="stage-glow"></div>
 <main>
 <div class="page-wrap">
+    <div id="duro-connection-status" class="duro-connection-status" data-state="checking" role="status" aria-live="polite">COMPROBANDO ESTADO DEL DIRECTO…</div>
     <section class="live-stage" aria-label="Playlist del directo">
         <header class="stage-header">
             <div class="stage-brand">
@@ -22,7 +23,7 @@
             </div>
             <div class="playlist-header-controls">
                 <div class="live-control-badge">CONTROL DEL LIVE</div>
-<div class="live-status"><span class="live-dot"></span> EN VIVO</div>
+<div class="live-status" data-state="checking"><span class="live-dot"></span><span id="duro-live-status-label">COMPROBANDO</span></div>
             </div>
         </header>
 
@@ -103,6 +104,6 @@
 <div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
 <div id="song-menu" class="song-menu"><h3>Adelanta tu canción</h3><div id="selected-song"></div><p id="menu-subtitle"></p><div id="menu-contenido"><button id="btn-subir" onclick="mostrarOpcionesSubir()">⚡ Adelantar canción</button><button id="btn-saltar" onclick="mostrarOpcionesSaltar()">⏭️ Pasar al #1</button><button onclick="cerrarMenu()">❌ Cancelar</button></div></div>
 
-<script src="script.js?v=20261125-stability5"></script>
+<script src="script.js?v=20261125-estado-visitas-1"></script>
 </body>
 </html>
