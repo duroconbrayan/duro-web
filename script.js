@@ -48,6 +48,8 @@ let stageCargaRequestsActiva = false;
 let stageCargaLikesActiva = false;
 let historialCargaActiva = false;
 let stageLiveActivo = false;
+let duroOpening = null;
+let duroOpeningPhase = null;
 let stageRequestsFirma = "";
 let stageFiltro = "all";
 let stageBusqueda = "";
@@ -192,6 +194,26 @@ if (paypalStatus === "cancel") {
 
 procesarRegresoPayPal();
 
+function actualizarAperturaStage(opening) {
+    opening = opening || null;
+    if (opening && duroOpening?.session_id === opening.session_id && opening.phase < duroOpening.phase) return;
+    const mismaSesion = opening && duroOpening?.session_id === opening.session_id;
+    if (mismaSesion && duroOpening.phase === 0 && opening.phase >= 1) {
+        encolarEventoStage('goal','🔓','LISTA ABIERTA','¡PIDE TU CANCIÓN!','2.000 TAP TAPS');
+    }
+    if (mismaSesion && duroOpening.phase < 2 && opening.phase === 2) {
+        encolarEventoStage('goal','▶','COMIENZAN LAS REACCIONES','¡META ALCANZADA!','5.000 TAP TAPS');
+    }
+    const cambio = JSON.stringify(duroOpening) !== JSON.stringify(opening);
+    duroOpening = opening;
+    duroOpeningPhase = opening?.phase ?? null;
+    document.body.classList.toggle('duro-opening-closed',opening?.phase === 0);
+    if(cambio) {
+        stageRequestsFirma='';
+        if(stageLiveActivo && opening) cargarStageHistorial();
+    }
+}
+
 async function comprobarEstadoLive() {
     try {
 
@@ -206,6 +228,7 @@ async function comprobarEstadoLive() {
         const data = await response.json();
 
         const estaEnVivo = data.live === true;
+        actualizarAperturaStage(estaEnVivo ? data.opening : null);
 
         if (stageLiveActivo !== estaEnVivo) stageSessionEpoch++;
         stageLiveActivo = estaEnVivo;
@@ -602,7 +625,7 @@ let stageStatusTimer = null;
 const STAGE_REQUESTS_INTERVAL_PUBLIC = 30000;
 const STAGE_REQUESTS_INTERVAL_LIVE = 5000;
 const STAGE_LIKES_INTERVAL = 20000;
-const STAGE_STATUS_INTERVAL = 15000;
+const STAGE_STATUS_INTERVAL = modoLivePrivado ? 5000 : 10000;
 
 
 // =====================================================
@@ -1881,7 +1904,11 @@ function renderizarCarruselStage(played, playing, queue) {
      */
     currentDisplay.innerHTML = "";
 
-    if (playing) {
+    if (duroOpening && duroOpening.phase < 2) {
+        const card=document.createElement('div');card.className='stage-current-empty';
+        card.innerHTML='<span class="stage-card-label">#000 · APERTURA</span><strong>'+escaparHTML(duroOpening.title)+'</strong><span class="stage-requester">'+(duroOpening.phase===0?'LISTA CERRADA · 2.000 TAP TAPS':'REACCIONES A LOS 5.000 TAP TAPS')+'</span>';
+        currentDisplay.appendChild(card);
+    } else if (playing) {
         currentDisplay.appendChild(
             tarjetaStage(
                 playing,
@@ -2354,7 +2381,7 @@ async function cargarStageHistorial() {
         // siendo quien decide cuál puede reproducirse.
         const queue = queueCompleta;
 
-        const firma = JSON.stringify(requests.map((item) => [
+        const firma = JSON.stringify([duroOpening, requests.map((item) => [
     item.id,
     item.status,
     item.sort_order,
@@ -2367,7 +2394,7 @@ async function cargarStageHistorial() {
     item.play_number,
     item.avatar_url,
     item.rating
-]));
+])]);
 
         detectarEventosRequests(requests, playing, queue);
         stageUltimosDatos = { played, playing, queue };
@@ -2561,7 +2588,8 @@ const response = await fetch(
 // No descartamos los datos de Tap Taps
 // por el estado visual de /status.
 
-        const goal = Number(data.goal) || 5000;
+        if (Object.prototype.hasOwnProperty.call(data,'opening')) actualizarAperturaStage(data.opening);
+        const goal = duroOpening?.phase === 0 ? 2000 : (Number(data.goal) || 5000);
 const total = Number(data.total) || 0;
 const base = Number(data.base) || 0;
 
@@ -2570,7 +2598,7 @@ const likesDelLive = Math.max(
     total - base
 );
 
-const progress = likesDelLive % goal;
+const progress = duroOpening && duroOpening.phase < 2 ? Math.min(likesDelLive,goal) : likesDelLive % goal;
 
 const porcentaje = Math.min(
     100,
@@ -2581,7 +2609,7 @@ const porcentaje = Math.min(
         document.getElementById("live-likes-goal").textContent = goal.toLocaleString("es-CO");
         document.getElementById("live-likes-total").textContent = likesDelLive.toLocaleString("es-CO");
         document.getElementById("live-likes-progress").style.width = `${porcentaje}%`;
-        document.getElementById("live-likes-message").textContent = `${Math.max(0, goal - progress).toLocaleString("es-CO")} TAP TAPS PARA LA SIGUIENTE`;
+        document.getElementById("live-likes-message").textContent = duroOpening && duroOpening.phase < 2 ? (duroOpening.phase===0 ? `${Math.max(0,2000-likesDelLive).toLocaleString("es-CO")} TAP TAPS PARA ABRIR LISTA` : `${Math.max(0,5000-likesDelLive).toLocaleString("es-CO")} TAP TAPS PARA EMPEZAR`) : `${Math.max(0, goal - progress).toLocaleString("es-CO")} TAP TAPS PARA LA SIGUIENTE`;
         actualizarRankingStage(Array.isArray(data.top_users) ? data.top_users : []);
 
         document.body.classList.remove("likes-50k", "likes-100k", "likes-150k", "likes-200k");

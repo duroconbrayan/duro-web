@@ -410,3 +410,7 @@ body.offline .playlist-socials{margin-top:18px}
 .stage-event-rating-low{--alert:#ff4b53;--glow:rgba(255,20,44,.43)}
 .stage-event[class*="stage-event-rating-"] .stage-event-icon{font-size:clamp(56px,12vw,108px)}
 @media(max-width:600px){.stage-event{padding:20px 16px}.stage-event-user{font-size:12px}}
+
+/* DURO opening */
+.duro-opening-closed .stage-live-list,.duro-opening-closed .skip-banner{display:none!important}
+.stage-current-empty .stage-requester{color:#ff9500;text-align:center;font-weight:700}
