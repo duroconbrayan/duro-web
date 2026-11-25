@@ -1580,14 +1580,14 @@ let brebTicks=0;
 function brebPaint(){
     if(!brebOrder)return;const el=document.getElementById('breb-status');if(!el)return;
     const left=Math.max(0,Math.floor(brebOrder.expires_at-Date.now()/1000));const pay=document.getElementById('breb-payment');const clock=document.getElementById('breb-clock');const next=document.getElementById('breb-new');
-    const active=brebOrder.state==='pending'&&left>0&&stageLiveActivo;
+    const active=brebOrder.state==='pending'&&left>0&&stageLiveActivo&&!brebOrder.song_playing;
     pay.hidden=!active;clock.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
     next.hidden=!['matched','cancelled','expired'].includes(brebOrder.state);
-    el.textContent=brebOrder.state==='matched'?'Pago confirmado. Se aplicó la prioridad a tu canción.':brebOrder.state==='cancelled'?'Orden cancelada. Si pagaste, contacta al anfitrión.':!active?'Orden vencida o directo cerrado. Si ya pagaste, no repitas el pago; consulta al anfitrión.':'Esperando confirmación de Nu. Si el nombre no coincide, el anfitrión podrá revisar el pago.';
+    el.textContent=brebOrder.state==='matched'?'Pago confirmado. Tu canción tiene prioridad o protección si ya está sonando.':brebOrder.state==='cancelled'?'Orden cancelada. Si pagaste, contacta al anfitrión.':brebOrder.gift_conflict?'Tu canción recibió Gafas. No transfieras. Si ya pagaste, contacta al anfitrión para revisar el pago.':brebOrder.state==='pending'&&brebOrder.song_playing?'Tu canción ya está sonando. No transfieras ahora; si ya pagaste, espera la confirmación.':!active?'Orden vencida o directo cerrado. Si ya pagaste, no repitas el pago; consulta al anfitrión.':'Esperando confirmación de Nu. Si el nombre no coincide, el anfitrión podrá revisar el pago.';
 }
 async function brebPoll(){
     if(!brebOrder||brebChecking||!document.getElementById('breb-status'))return;brebChecking=true;const id=brebOrder.order_id;
-    try{const d=await brebPost('/breb/order-status',{order_id:id});if(brebOrder?.order_id!==id)return;if(['pending','matched','expired','cancelled'].includes(d.state)){const previous=brebOrder.state;brebSave({...brebOrder,state:d.state});brebPaint();if(d.state==='matched'&&previous!=='matched')cargarStageHistorial();}}
+    try{const d=await brebPost('/breb/order-status',{order_id:id});if(brebOrder?.order_id!==id)return;if(['pending','matched','expired','cancelled'].includes(d.state)){const previous=brebOrder.state;brebSave({...brebOrder,state:d.state,song_playing:d.song_playing===true,gift_conflict:d.gift_conflict===true});brebPaint();if(d.state==='matched'&&previous!=='matched')cargarStageHistorial();}}
     catch(_){const el=document.getElementById('breb-status');if(el)el.textContent='No se pudo consultar el pago. No repitas la transferencia.';}
     finally{brebChecking=false;}
 }
@@ -2639,7 +2639,7 @@ const porcentaje = Math.min(
                 encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "¡META ALCANZADA!", "EL LIVE LA DESBLOQUEÓ");
             } else if (evento.rating_pending) {
                 encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "¡META ALCANZADA!", "GRACIAS POR LOS TAP TAPS");
-            } else {
+            } else if (["gafas","breb","paypal"].includes(evento.exempt_reason)) {
                 const proteccion = evento.exempt_reason === "gafas" ? "PROTEGIDA POR GAFAS 😎" : evento.exempt_reason === "breb" ? "PROTEGIDA POR BRE-B ✓" : "PROTEGIDA POR PAYPAL ✓";
                 encolarEventoStage("goal", "🛡️", "META DE TAP TAPS COMPLETADA", "LA CANCIÓN CONTINÚA", proteccion);
             }
