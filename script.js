@@ -290,6 +290,9 @@ async function comprobarEstadoLive() {
             stageHistorialDesbloqueado = false;
             stagePrimeraCarga = true;
             stageAvatarCache.clear();
+            stageGoalInicializado = false;
+            stageGoalEventKey = null;
+            resetStageAlerts();
 
             /*
              * No seguir procesando datos antiguos
@@ -2037,7 +2040,23 @@ function renderizarListaFiltradaStage() {
 
 function detectarEventosRequests(requests, playing, queue) {
     if (stagePrimeraCarga) return;
-
+    const pagosNuevos = new Set();
+    for (const item of requests) {
+        const previo = stageRequestsAnterior.get(item.id);
+        const method = item.tap_exempt_reason;
+        if (previo && ['paypal','breb'].includes(method) && previo.tap_exempt_reason !== method) {
+            pagosNuevos.add(item.id);
+            const breb = method === 'breb';
+            encolarEventoStage(method, breb ? 'NU' : 'P', breb ? 'PAGO BRE-B CONFIRMADO · $8.000 COP' : 'PAGO PAYPAL CONFIRMADO · $2 USD', textoSolicitud(item), usuarioSolicitud(item));
+        }
+        const nota = Number(item.rating);
+        if (item.status === 'played' && item.rating != null && nota >= 1 && nota <= 10 && (!previo || previo.status !== 'played' || previo.rating == null)) {
+            encolarEventoStage(nota >= 9 ? 'rating-epic' : nota >= 7 ? 'rating-high' : nota >= 5 ? 'rating-mid' : 'rating-low', nota.toFixed(1) + ' / 10', 'CALIFICACIÓN FINAL', textoSolicitud(item), usuarioSolicitud(item));
+        }
+    }
+    if (playing && playing.id !== stagePlayingId) {
+        encolarEventoStage('next', '▶▶', 'SIGUIENTE CANCIÓN', String(playing.text || playing.raw_comment || '').trim(), usuarioSolicitud(playing));
+    }
     requests.forEach((item) => {
         const anterior = stageRequestsAnterior.get(item.id);
         if (!anterior) {
@@ -2081,14 +2100,11 @@ function detectarEventosRequests(requests, playing, queue) {
     });
 
     queue.forEach((item, index) => {
+        if (pagosNuevos.has(item.id)) return;
         const posicionAnterior = stageQueueAnterior.get(item.id);
         if (posicionAnterior !== undefined && index < posicionAnterior && stagePlayingId === playing?.id) {
             const salto = posicionAnterior - index;
-            if (item.tap_exempt_reason === "paypal" && index === 0) {
-                encolarEventoStage("paypal", "✓", "PAGO CONFIRMADO · SALTÓ AL #1", textoSolicitud(item), usuarioSolicitud(item));
-            } else {
-                encolarEventoStage("move", "↑", `ADELANTÓ ${salto} ${salto === 1 ? "PUESTO" : "PUESTOS"}`, textoSolicitud(item), usuarioSolicitud(item));
-            }
+            encolarEventoStage("move", "↑", `ADELANTÓ ${salto} ${salto === 1 ? "PUESTO" : "PUESTOS"}`, textoSolicitud(item), usuarioSolicitud(item));
         }
     });
 }
@@ -2166,6 +2182,7 @@ async function comprobarLiveEvent() {
     }
 
     liveEventConsultaActiva = true;
+    const epoch = stageSessionEpoch;
 
     try {
 
@@ -2183,6 +2200,7 @@ async function comprobarLiveEvent() {
         }
 
         const data = await response.json();
+        if (!stageLiveActivo || epoch !== stageSessionEpoch) return;
 
         const evento = data?.event;
 
@@ -2435,94 +2453,51 @@ stageHistorialDesbloqueado = true;
     if (!anuncio) console.info("El navegador bloqueó la pestaña del anuncio.");
 }
 
-function encolarEventoStage(tipo, icono, kicker, titulo, usuario = "") {
-    stageEventosPendientes.push({ tipo, icono, kicker, titulo, usuario });
+// ETAPA 06 — alertas secuenciales, sin modificar pagos ni cola.
+let stageAlertGeneration = 0;
+const stageSonidos = Object.fromEntries(Object.entries({added:'added',gift:'gafas',paypal:'paypal',move:'move',goal:'goal',breb:'breb','rating-epic':'rating_epic','rating-high':'rating_high','rating-mid':'rating_mid','rating-low':'rating_low',next:'next'}).map(([k,v])=>[k,new Audio('sounds/'+v+(k==='breb'?'.wav':'.mp3'))]));
+Object.values(stageSonidos).forEach(a=>{a.preload='none';a.volume=1;});
+function detenerSonidosStage(){
+    for(const a of Object.values(stageSonidos)){a.pause();try{a.currentTime=0;}catch(_) {}}
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+}
+function resetStageAlerts(){
+    stageAlertGeneration++;stageEventosPendientes.length=0;stageEventoActivo=false;
+    detenerSonidosStage();document.getElementById('stage-event')?.classList.remove('show');
+}
+function encolarEventoStage(tipo,icono,kicker,titulo,usuario=''){
+    if(!stageLiveActivo)return;
+    stageEventosPendientes.push({tipo,icono,kicker,titulo,usuario});
     mostrarSiguienteEventoStage();
 }
-
-// ============ SONIDOS DE ALERTAS ============
-
-const stageSonidos = {
-    added: new Audio("sounds/added.mp3"),
-    gift: new Audio("sounds/gafas.mp3"),
-    paypal: new Audio("sounds/paypal.mp3"),
-    move: new Audio("sounds/move.mp3"),
-    goal: new Audio("sounds/goal.mp3")
-};
-
-Object.values(stageSonidos).forEach((audio) => {
-    audio.preload = "auto";
-    audio.volume = 1;
-});
-
-function reproducirSonidoStage(tipo) {
-    const audio = stageSonidos[tipo];
-
-    if (!audio) return;
-
-    audio.pause();
-    audio.currentTime = 0;
-
-    audio.play().catch((error) => {
-        console.warn("No se pudo reproducir sonido:", tipo, error);
-    });
+function reproducirSonidoStage(tipo){
+    const audio=stageSonidos[tipo];if(!audio)return;
+    audio.play().catch(e=>console.warn('Sonido no disponible:',tipo,e));
 }
-
-// ============ VOZ ANOTADO ============
-
-function hablarAnotadoStage(comentario) {
-    if (!("speechSynthesis" in window)) return;
-
-    const voces = speechSynthesis.getVoices();
-
-    const voz =
-        voces.find(v => v.name.includes("Paulina")) ||
-        voces.find(v => v.lang === "es-MX") ||
-        voces.find(v => v.lang.startsWith("es"));
-
-    const mensaje = new SpeechSynthesisUtterance(
-        `${comentario}. Anotado en la lista.`
-    );
-
-    if (voz) mensaje.voice = voz;
-
-    mensaje.lang = voz?.lang || "es-MX";
-    mensaje.rate = 1.10;
-    mensaje.pitch = 0.95;
-    mensaje.volume = 1;
-
-    speechSynthesis.cancel();
-    speechSynthesis.speak(mensaje);
+function hablarEventoStage(texto,tipo){
+    if(!('speechSynthesis' in window))return;
+    const voces=speechSynthesis.getVoices();
+    const voz=voces.find(v=>v.name.includes('Paulina'))||voces.find(v=>v.lang==='es-MX')||voces.find(v=>v.lang.startsWith('es'));
+    const msg=new SpeechSynthesisUtterance(texto.slice(0,220));
+    if(voz)msg.voice=voz;
+    msg.lang=voz?.lang||'es-MX';msg.rate=tipo==='next'?.92:1.10;msg.pitch=tipo==='next'?.82:.95;msg.volume=1;
+    speechSynthesis.speak(msg);
 }
-
-function mostrarSiguienteEventoStage() {
-    if (stageEventoActivo || stageEventosPendientes.length === 0) return;
-    const evento = stageEventosPendientes.shift();
-    const overlay = document.getElementById("stage-event");
-    if (!overlay) return;
-    stageEventoActivo = true;
-    overlay.className = `stage-event stage-event-${evento.tipo}`;
-    document.getElementById("stage-event-icon").textContent = evento.icono;
-    document.getElementById("stage-event-kicker").textContent = evento.kicker;
-    document.getElementById("stage-event-title").textContent = evento.titulo;
-    document.getElementById("stage-event-user").textContent = evento.usuario;
-
-reproducirSonidoStage(evento.tipo);
-
-if (evento.tipo === "added") {
-    setTimeout(() => {
-        hablarAnotadoStage(evento.titulo);
-    }, 900);
-}
-
-requestAnimationFrame(() => overlay.classList.add("show"));
-    setTimeout(() => {
-        overlay.classList.remove("show");
-        setTimeout(() => {
-            stageEventoActivo = false;
-            mostrarSiguienteEventoStage();
-        }, 450);
-    }, evento.tipo === "goal" ? 5200 : 3800);
+function mostrarSiguienteEventoStage(){
+    if(!stageLiveActivo||stageEventoActivo||!stageEventosPendientes.length)return;
+    const overlay=document.getElementById('stage-event');if(!overlay)return;
+    const evento=stageEventosPendientes.shift(), generation=++stageAlertGeneration;
+    stageEventoActivo=true;detenerSonidosStage();
+    overlay.className='stage-event stage-event-'+evento.tipo;
+    document.getElementById('stage-event-icon').textContent=evento.icono;
+    document.getElementById('stage-event-kicker').textContent=evento.kicker;
+    document.getElementById('stage-event-title').textContent=evento.titulo;
+    document.getElementById('stage-event-user').textContent=evento.usuario;
+    overlay.classList.add('show');reproducirSonidoStage(evento.tipo);
+    const speech=evento.tipo==='added'?evento.titulo+'. Anotado en la lista.':evento.tipo==='next'?'Siguiente canción. '+evento.titulo:null;
+    if(speech)setTimeout(()=>{if(generation!==stageAlertGeneration)return;Object.values(stageSonidos).forEach(a=>a.pause());hablarEventoStage(speech,evento.tipo);},900);
+    const duration=speech?Math.max(5200,Math.min(18000,1800+speech.length*90)):evento.tipo==='goal'?5200:4000;
+    setTimeout(()=>{if(generation!==stageAlertGeneration)return;detenerSonidosStage();overlay.classList.remove('show');setTimeout(()=>{if(generation!==stageAlertGeneration)return;stageEventoActivo=false;mostrarSiguienteEventoStage();},450);},duration);
 }
 
 function actualizarRankingStage(topUsers) {
@@ -2568,6 +2543,7 @@ async function cargarStageLiveLikes() {
     }
 
     stageCargaLikesActiva = true;
+    const epoch = stageSessionEpoch;
     try {
         const liveLikesRequestURL =
     `${liveLikesURL}?live&t=${Date.now()}`;
@@ -2580,6 +2556,7 @@ const response = await fetch(
 );
         if (!response.ok) return;
         const data = await response.json();
+        if (!stageLiveActivo || epoch !== stageSessionEpoch) return;
 
 // No descartamos los datos de Tap Taps
 // por el estado visual de /status.
@@ -2620,9 +2597,9 @@ const porcentaje = Math.min(
         } else if (eventKey && eventKey !== stageGoalEventKey) {
             const evento = data.last_goal_event;
             if (evento.song_changed) {
-                encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "¡SIGUIENTE CANCIÓN!", "EL LIVE LA DESBLOQUEÓ");
+                encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "¡META ALCANZADA!", "EL LIVE LA DESBLOQUEÓ");
             } else if (evento.rating_pending) {
-                encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "ESPERANDO CALIFICACIÓN", "DURO CALIFICA ANTES DE AVANZAR");
+                encolarEventoStage("goal", "❤️", "META DE TAP TAPS COMPLETADA", "¡META ALCANZADA!", "GRACIAS POR LOS TAP TAPS");
             } else {
                 const proteccion = evento.exempt_reason === "gafas" ? "PROTEGIDA POR GAFAS 😎" : evento.exempt_reason === "breb" ? "PROTEGIDA POR BRE-B ✓" : "PROTEGIDA POR PAYPAL ✓";
                 encolarEventoStage("goal", "🛡️", "META DE TAP TAPS COMPLETADA", "LA CANCIÓN CONTINÚA", proteccion);
