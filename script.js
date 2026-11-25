@@ -254,6 +254,31 @@ async function duroPollJSON(url, options={}, timeout=8000, includeStatus=false) 
         ]);
     } finally { clearTimeout(timer); }
 }
+// Clear only session-scoped display data; never call this on a network failure.
+function duroLimpiarVisualSesion() {
+    const currentDisplay = document.getElementById("stage-current-display");
+    if (currentDisplay) {
+        currentDisplay.innerHTML = '<div class="stage-current-empty"><span class="stage-card-label">AHORA SUENA</span><strong>Cargando directo...</strong></div>';
+    }
+    document.getElementById("stage-live-list")?.remove();
+    for (const [id, text] of Object.entries({
+        "live-likes-count": "—",
+        "live-likes-goal": "—",
+        "live-likes-total": "—",
+        "live-likes-message": "CARGANDO TAP TAPS…",
+        "live-likes-ranking-list": "Cargando ranking…"
+    })) {
+        const element = document.getElementById(id);
+        if (element) element.textContent = text;
+    }
+    const progress = document.getElementById("live-likes-progress");
+    if (progress) progress.style.width = "0%";
+    document.body.classList.remove("likes-50k", "likes-100k", "likes-150k", "likes-200k");
+    stageAvatarCache.clear();
+    stageFiltro = "all";
+    stageBusqueda = "";
+}
+
 async function comprobarEstadoLive() {
     // Ignore out-of-order responses; an older request cannot undo a newer applied status.
     const consulta=++comprobarEstadoLive.consulta;
@@ -274,7 +299,9 @@ async function comprobarEstadoLive() {
             colaActual=[]; stageRequestsAnterior.clear(); stageQueueAnterior.clear();
             stageUltimosDatos={played:[],playing:null,queue:[]}; stagePlayingId=null;
             stagePrimeraCarga=true; stageRequestsFirma=''; stageGoalInicializado=false; stageGoalEventKey=null;
+            detenerPollingDatosStage();
             resetStageAlerts(); cerrarMenu();
+            duroLimpiarVisualSesion();
         }
         actualizarAperturaStage(estaEnVivo ? data.opening : null);
 
@@ -320,26 +347,7 @@ async function comprobarEstadoLive() {
              * Limpiar completamente el estado visual del LIVE.
              */
 
-            const currentDisplay =
-                document.getElementById("stage-current-display");
-
-            const liveList =
-                document.getElementById("stage-live-list");
-
-            const liveListItems =
-                document.getElementById("stage-live-list-items");
-
-            if (currentDisplay) {
-                currentDisplay.innerHTML = "";
-            }
-
-            if (liveListItems) {
-                liveListItems.innerHTML = "";
-            }
-
-            if (liveList) {
-                liveList.remove();
-            }
+            duroLimpiarVisualSesion();
 
             /*
              * Limpiar datos almacenados en memoria.
