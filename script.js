@@ -977,8 +977,8 @@ const MISIONES_GRATUITAS_REQUERIDAS = [
     "uraba",
     "artista_angelito",
     "artista_jlopez",
+    "artista_jlopez_2",
     "gafas_club",
-    "instagram_like",
     "instagram_follow",
     "facebook_follow"
 ];
@@ -1126,19 +1126,19 @@ function mostrarOpcionesSubir() {
             <div class="action-right"><span class="action-reward">+15</span><span class="action-arrow">›</span></div>
         </div>
 
-        <div class="action-card" data-mission-action="artista_jlopez" onclick="mostrarPrueba('artista_jlopez','Suscríbete, dale Me gusta y comenta en el video de J López','+15','https://www.youtube.com/watch?v=Hmuqjha1uUk')">
-            <div class="action-left"><span class="action-icon">🎤</span><div><div class="action-title">Misión del artista — J López</div><div class="action-description">Mira el video, suscríbete, dale Me gusta y comenta. Luego envía una captura.</div></div></div>
+        <div class="action-card" data-mission-action="artista_jlopez" onclick="mostrarPrueba('artista_jlopez','Suscríbete, dale Me gusta y comenta en el video de Todo Contigo de J López.','+15','https://www.youtube.com/watch?v=Hmuqjha1uUk')">
+            <div class="action-left"><span class="action-icon">🎤</span><div><div class="action-title">J López — Todo Contigo</div><div class="action-description">Mira el video, suscríbete, dale Me gusta y comenta. Luego envía una captura.</div></div></div>
+            <div class="action-right"><span class="action-reward">+15</span><span class="action-arrow">›</span></div>
+        </div>
+
+        <div class="action-card" data-mission-action="artista_jlopez_2" onclick="mostrarPrueba('artista_jlopez_2',&quot;Suscríbete, dale Me gusta y comenta en el video de Chingon Pa' Trabajar! de J López.&quot;,'+15','https://www.youtube.com/watch?v=4pas_0nRT5Y')">
+            <div class="action-left"><span class="action-icon">🎤</span><div><div class="action-title">J López — Chingon Pa' Trabajar!</div><div class="action-description">Mira el video, suscríbete, dale Me gusta y comenta. Luego envía una captura.</div></div></div>
             <div class="action-right"><span class="action-reward">+15</span><span class="action-arrow">›</span></div>
         </div>
 
         <div class="action-card" data-mission-action="gafas_club" onclick="mostrarPrueba('gafas_club','Guardar playlist GAFAS CLUB','+5','https://open.spotify.com/playlist/1vHnGiv1cbU77FhbQFtO3P')">
             <div class="action-left"><span class="action-icon">🎵</span><div><div class="action-title">Guardar playlist GAFAS CLUB</div></div></div>
             <div class="action-right"><span class="action-reward">+5</span><span class="action-arrow">›</span></div>
-        </div>
-
-        <div class="action-card" data-mission-action="instagram_like" onclick="mostrarPrueba('instagram_like','Dar like a la última publicación','+2','https://www.instagram.com/p/DYXjV8YkTiA/')">
-            <div class="action-left"><span class="action-icon">❤️</span><div><div class="action-title">Dar like a la última publicación</div></div></div>
-            <div class="action-right"><span class="action-reward">+2</span><span class="action-arrow">›</span></div>
         </div>
 
         <div class="action-card" data-mission-action="instagram_follow" onclick="mostrarPrueba('instagram_follow','Seguir en Instagram','+1','https://instagram.com/brayan_trampa')">
